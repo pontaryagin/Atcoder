@@ -301,7 +301,6 @@ struct linear_t {
 
 
 int main() {
-
 	ll N;
 	cin >> N;
 	vll a(N);
