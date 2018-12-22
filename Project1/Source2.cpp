@@ -301,46 +301,80 @@ struct linear_t {
 
 
 int main() {
-	ll H, W, N;
-	cin >> H >> W >> N;
-	vpll z(N);
-	auto comp=  [](pll x, pll y) {return pll{ x.first - x.second, x.first } < pll{ y.first - y.second, y.first }; };
-	rep(i, 0, N)cin >> z[i].first>>z[i].second;
-	sort(all(z), comp);
-	
-	ll addmissible=-1;
-	pll* z_tmp=0;
-	auto new_grid = [](pll z) {return z.first - z.second; };
-
-
+	ll N;
+	cin >> N;
+	vll a(N);
 	rep(i, 0, N) {
-		if (z[i].first < z[i].second) {}
-		else if (z[i].first == z[i].second) {
-			if (!z_tmp)z_tmp = &z[i];
+		cin >> a[i];
+	}
+	ll neg = count_if(all(a), [](ll x) {return x < 0; });
+	ll pos = N - neg;
+	ll tmpNeg=0;
+	ll tmpPos = neg;
+	ll m_ind = 0;
+	ll M_ind = 0;
+
+	vll table_m(N+1);
+	vll table_M(N+1);
+	//fill tabel_m :
+	//count of times of <0
+	vll b = a;
+	rep(i, 0, N + 1) {
+		if (i == 0 ) {
+			table_m[i] = 0;
 		}
-		else{
-			if (!z_tmp) {
-				cout << z[i].first - 1;
-				return 0;
-			}
+		else if (i == 1) {
+			table_m[i] = 0;
 
-			if (z_tmp->second > z[i].second) {
-				cout << z[i].first - 1;
-				return 0;
+			if (i > 0 && b[i - 1] >= 0) b[i - 1] *= -2;
+		}
+		else {
+			if (i > 0 && b[i - 1] >= 0) b[i-1]*=-2;
+			//calc num i>1
+			rrep(j, 1, i) {
+				while (b[j] < b[j - 1]) {
+					table_m[i]+=2;
+					b[j - 1] *=4;
+				}
 			}
-			if (new_grid(*z_tmp)+1 < new_grid(z[i])) {
-				cout << z[i].first - 1;
-				return 0;
-			}
-			if (new_grid(*z_tmp) + 1 == new_grid(z[i])) {
-				z_tmp = &z[i];
-			}
-
+			table_m[i] += table_m[i - 1];
 		}
 	}
 
-	cout << W;
+	rrep(i, 0, N + 1) {
+		if (i == N) {
+			table_M[i] = 0;
+		}
+		else if (i == N-1) {
+			table_M[i] = 0;
 
+			if (i > 0 && b[i - 1] >= 0) b[i - 1] *= -2;
+		}
+		else {
+			if (i > 0 && b[i - 1] >= 0) b[i - 1] *= -2;
+			//calc num i>1
+			rep(j, i, N-1) {
+				while (b[j] > b[j + 1]) {
+					table_M[i] += 2;
+					b[j +1] *=4;
+				}
+			}
+			table_M[i] += table_M[i + 1];
+		}
+	}
+
+	vll res(N + 1);
+	rep(i, 0, N + 1) {
+		ll cnt = 0;
+		if (i > 0 && a[i - 1] >= 0) tmpNeg++;
+		if (i > 0 && a[i - 1] < 0) tmpPos--;
+		cnt += tmpNeg + tmpPos;
+		cnt += table_m[i];
+		cnt += table_M[i];
+
+		res[i] = cnt;
+	}
+	cout << *min_element(all(res));
 
 	return 0;
 }
