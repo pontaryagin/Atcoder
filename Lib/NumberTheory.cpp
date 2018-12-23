@@ -107,6 +107,13 @@ public:
 	}
 };
 
+
+ll choose(int n, int r) { // O(r) for small n
+	ll acc = 1;
+	rep(i, 0, r) acc = acc * (n - i) / (i + 1);
+	return acc;
+}
+
 vll getDivisors(ll n) {
 	// O(sqrt(n))
 	vll res;
@@ -141,10 +148,4 @@ vll getDivisors(ll n, ll m) {
 ll gcd(ll a, ll b) {
 	if (a%b == 0) return b;
 	else return gcd(b, a%b);
-}
-
-ll choose(int n, int r) { // O(r) for small n
-	ll acc = 1;
-	rep(i,0, r) acc = acc * (n - i) / (i + 1);
-	return acc;
 }
