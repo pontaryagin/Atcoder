@@ -328,20 +328,30 @@ int main() {
 		else if (i == 1) {
 			table_m[i] = 0;
 
-			if (i > 0 && b[i - 1] >= 0) b[i - 1] *= -2;
+			if (i > 0 && b[i - 1] >= 0) {
+				table_m[i]++;
+				b[i - 1] *= -2;
+			}
 		}
 		else {
-			if (i > 0 && b[i - 1] >= 0) b[i-1]*=-2;
+			if (i > 0 && b[i - 1] >= 0) {
+				table_m[i]++;
+				b[i - 1] *= -2;
+			}
 			//calc num i>1
 			rrep(j, 1, i) {
-				while (b[j] < b[j - 1]) {
-					table_m[i]+=2;
-					b[j - 1] *=4;
+				if (b[j] < b[j - 1]) {
+					while (b[j] < b[j - 1]) {
+						table_m[i] += 2;
+						b[j - 1] *= 4;
+					}
 				}
+				else break;
 			}
 			table_m[i] += table_m[i - 1];
 		}
 	}
+	vll c = a;
 
 	rrep(i, 0, N + 1) {
 		if (i == N) {
@@ -350,15 +360,26 @@ int main() {
 		else if (i == N-1) {
 			table_M[i] = 0;
 
-			if (i > 0 && b[i - 1] >= 0) b[i - 1] *= -2;
+			if (i > 0 && c[N - 1] < 0) {
+				table_M[i]++;
+				c[N - 1] *= -2;
+			}
 		}
 		else {
-			if (i > 0 && b[i - 1] >= 0) b[i - 1] *= -2;
+			if (i > 0 && c[i] < 0) { 
+				c[i] *= -2; 
+				table_M[i]++;
+			}
 			//calc num i>1
 			rep(j, i, N-1) {
-				while (b[j] > b[j + 1]) {
-					table_M[i] += 2;
-					b[j +1] *=4;
+				if (c[j] > c[j + 1]) {
+					while (c[j] > c[j + 1]) {
+						table_M[i] += 2;
+						c[j + 1] *= 4;
+					}
+				}
+				else {
+					break;
 				}
 			}
 			table_M[i] += table_M[i + 1];
@@ -368,9 +389,9 @@ int main() {
 	vll res(N + 1);
 	rep(i, 0, N + 1) {
 		ll cnt = 0;
-		if (i > 0 && a[i - 1] >= 0) tmpNeg++;
-		if (i > 0 && a[i - 1] < 0) tmpPos--;
-		cnt += tmpNeg + tmpPos;
+		//if (i > 0 && a[i - 1] >= 0) tmpNeg++;
+		//if (i > 0 && a[i - 1] < 0) tmpPos--;
+		//cnt += tmpNeg + tmpPos;
 		cnt += table_m[i];
 		cnt += table_M[i];
 
