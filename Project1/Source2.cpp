@@ -20,6 +20,8 @@
 #include <array>
 #include <cassert>
 #include <typeinfo>
+#include <time.h>
+#include "boost/variant.hpp"
 
 // #include "bits/stdc++.h"
 
@@ -297,11 +299,150 @@ struct linear_t {
 	}
 };
 
+enum class AA {
+	a1,
+	a2,
+	a3,
 
+};
 
+enum class BB {
+	a1,
+	a2,
+	a3,
+
+};
+struct var_printer {
+	void operator()(int x) const
+	{
+		std::cout << x << std::endl;
+	}
+
+	void operator()(std::string& s) const
+	{
+		std::cout << s << std::endl;
+	}
+
+	void operator()(double x) const
+	{
+		std::cout << x << std::endl;
+	}
+};
+
+using namespace boost;
 
 int main() {
+	vector<vector<variant<string, int, ll>>> X(1000000);
+	for (int i = 0; i < 1000000;i++) {
+		X[i] = { i, i + 1, i + 2, i + 3, i + 4 };
+	}
 
+	//int
+	map<int, int> m0;
+	for (int i = 0; i < 1000000; i++)
+	{
+		m0[i] = i;
+	}
+	vector<int> x(1000000);
+
+	auto start = clock();
+	for (int i = 0; i < 1000000; i++)
+	{
+		x[i] = m0[i];
+	}
+	auto end = clock();
+	cout << "Time : " << (double)(end - start) << endl;
+	//vector
+	map<vector<int>, int> m;
+	for(int i=0; i< 1000000;i++)
+	{
+		m[vector<int>{i, i + 1, i + 2, i + 3, i + 4}] = i;
+	}
+
+	start = clock();
+	for (int i = 0; i < 1000000; i++)
+	{
+		x[i] = m[vector<int>{i, i + 1, i + 2, i + 3, i + 4}];
+	}
+	end = clock();
+	cout << "Time : " << (double)(end - start)<<endl;
+
+	//string
+	map<string, int> m2;
+	for (int i = 0; i < 1000000; i++)
+	{
+		m2[to_string(i)] = i;
+	}
+
+	start = clock();
+	for (int i = 0; i < 1000000; i++)
+	{
+		x[i] = m2[to_string(i)];
+	}
+	end = clock();
+	cout << "Time : " << (double)(end - start) << endl;
+
+	using namespace boost;
+	//variant
+	map<variant<char, ll,short, int,vector<int>>, int> m3;
+	for (int i = 0; i < 1000000; i++)
+	{
+		m3[vector<int>{i, i + 1, i + 2, i + 3, i + 4}] = i;
+	}
+
+	start = clock();
+	for (int i = 0; i < 1000000; i++)
+	{
+		x[i] = m3[vector<int>{i, i + 1, i + 2, i + 3, i + 4}];
+	}
+	end = clock();
+	cout << "Time : " << (double)(end - start) << endl;
+
+	//variant vector
+	map<variant<int,vector<variant<string, int, ll>>>, int> m4;
+	for (int i = 0; i < 1000000; i++)
+	{
+		m4[X[i]] = i;
+	}
+
+	start = clock();
+	for (int i = 0; i < 1000000; i++)
+	{
+		x[i] = m4[X[i]];
+	}
+	end = clock();
+	cout << "Time : " << (double)(end - start) << endl;
+
+	//variant vector
+	map<vector<variant< int, ll>>, int> m5;
+	for (int i = 0; i < 1000000; i++)
+	{
+		m5[{i, i + 1,(i + 2), (i + 2), (i + 2)}] = i;
+	}
+
+	start = clock();
+	for (int i = 0; i < 1000000; i++)
+	{
+		x[i] = m5[{i, i + 1, (i + 2), (i + 2), (i + 2)}];
+	}
+	end = clock();
+	cout << "Time : " << (double)(end - start) << endl;
+
+
+	//string vector
+	map<vector<string>, int> m6;
+	for (int i = 0; i < 1000000; i++)
+	{
+		m6[{to_string(i + 2), to_string(i + 2), to_string(i + 2), to_string(i + 2), to_string(i + 2)}] = i;
+	}
+
+	start = clock();
+	for (int i = 0; i < 1000000; i++)
+	{
+		x[i] = m6[{to_string(i + 2), to_string(i + 2), to_string(i + 2), to_string(i + 2), to_string(i + 2)}];
+	}
+	end = clock();
+	cout << "Time : " << (double)(end - start) << endl;
 
 	ll N;
 	cin >> N;
