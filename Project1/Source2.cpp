@@ -21,7 +21,7 @@
 #include <cassert>
 #include <typeinfo>
 #include <time.h>
-#include "boost/variant.hpp"
+//#include "boost/variant.hpp"
 
 // #include "bits/stdc++.h"
 
@@ -58,7 +58,7 @@ using pq_greater = priority_queue<T, vector<T>, greater<T>>;
 #define vec(a) vector<a>
 #define perm(c) sort(all(c));for(bool c##perm=1;c##perm;c##perm=next_permutation(all(c)))
 
-ll POW_(ll n, ll m) {
+constexpr ll POW_(ll n, ll m) {
 	ll res = 1;
 	rep(i, 0, m) {
 		res *= n;
@@ -67,7 +67,7 @@ ll POW_(ll n, ll m) {
 }
 
 template<int mod=0>
-ll POW(ll x, ll n) {
+constexpr ll POW(ll x, ll n) {
 	if (x == 2)
 	{
 		return (1LL << n) % mod;
@@ -78,7 +78,7 @@ ll POW(ll x, ll n) {
 	return ((POW_(POW<mod>(x, n / 2, mod), 2LL) % mod)*(x%mod)) % mod;
 }
 template<>
-ll POW<0>(ll x, ll n) {
+constexpr ll POW<0>(ll x, ll n) {
 	if (x == 2)
 	{
 		return 1LL << n;
@@ -175,6 +175,18 @@ template<
 void sort_by(Inputs& inputs, Functor f) {
 	std::sort(std::begin(inputs), std::end(inputs),
 		[&f](const T& lhs, const T& rhs) { return f(lhs) < f(rhs); });
+}
+
+template<
+	typename Inputs,
+	typename Functor,
+	typename ValType = typename Inputs::value_type>
+Inputs::const_iterator binary_solve(Inputs& inputs, ValType val,  Functor f)
+{
+	auto left = inputs.end();
+	auto right = inputs.begin();
+
+
 }
 
 
@@ -299,246 +311,69 @@ struct linear_t {
 	}
 };
 
-enum class AA {
-	a1,
-	a2,
-	a3,
 
-};
 
-enum class BB {
-	a1,
-	a2,
-	a3,
 
-};
-struct var_printer {
-	void operator()(int x) const
-	{
-		std::cout << x << std::endl;
-	}
-
-	void operator()(std::string& s) const
-	{
-		std::cout << s << std::endl;
-	}
-
-	void operator()(double x) const
-	{
-		std::cout << x << std::endl;
-	}
-};
-
-using namespace boost;
 
 int main() {
-	vector<vector<variant<string, int, ll>>> X(1000000);
-	for (int i = 0; i < 1000000;i++) {
-		X[i] = { i, i + 1, i + 2, i + 3, i + 4 };
+	ll n, q;
+	cin >> n >> q;
+	vll a(n);
+	vll x(q);
+	rep(i, 0, n) cin>> a[i];
+	rep(i, 0, q) cin >>x[i];
+
+	vll S(n+1,0), SE(n/2 + 1,0);
+	rep(i, 1, n+1) {
+		S[i] = S[i - 1] + a[i-1];
+
+	}
+	rep(i, 1, n/2+1) {
+		// sum of x where <2*i
+		SE[i] = S[i - 1] + a[2 * i -2];
 	}
 
-	//int
-	map<int, int> m0;
-	for (int i = 0; i < 1000000; i++)
-	{
-		m0[i] = i;
-	}
-	vector<int> x(1000000);
+	rep(i, 0, q) {
 
-	auto start = clock();
-	for (int i = 0; i < 1000000; i++)
-	{
-		x[i] = m0[i];
-	}
-	auto end = clock();
-	cout << "Time : " << (double)(end - start) << endl;
-	//vector
-	map<vector<int>, int> m;
-	for(int i=0; i< 1000000;i++)
-	{
-		m[vector<int>{i, i + 1, i + 2, i + 3, i + 4}] = i;
-	}
-
-	start = clock();
-	for (int i = 0; i < 1000000; i++)
-	{
-		x[i] = m[vector<int>{i, i + 1, i + 2, i + 3, i + 4}];
-	}
-	end = clock();
-	cout << "Time : " << (double)(end - start)<<endl;
-
-	//string
-	map<string, int> m2;
-	for (int i = 0; i < 1000000; i++)
-	{
-		m2[to_string(i)] = i;
-	}
-
-	start = clock();
-	for (int i = 0; i < 1000000; i++)
-	{
-		x[i] = m2[to_string(i)];
-	}
-	end = clock();
-	cout << "Time : " << (double)(end - start) << endl;
-
-	using namespace boost;
-	//variant
-	map<variant<char, ll,short, int,vector<int>>, int> m3;
-	for (int i = 0; i < 1000000; i++)
-	{
-		m3[vector<int>{i, i + 1, i + 2, i + 3, i + 4}] = i;
-	}
-
-	start = clock();
-	for (int i = 0; i < 1000000; i++)
-	{
-		x[i] = m3[vector<int>{i, i + 1, i + 2, i + 3, i + 4}];
-	}
-	end = clock();
-	cout << "Time : " << (double)(end - start) << endl;
-
-	//variant vector
-	map<variant<int,vector<variant<string, int, ll>>>, int> m4;
-	for (int i = 0; i < 1000000; i++)
-	{
-		m4[X[i]] = i;
-	}
-
-	start = clock();
-	for (int i = 0; i < 1000000; i++)
-	{
-		x[i] = m4[X[i]];
-	}
-	end = clock();
-	cout << "Time : " << (double)(end - start) << endl;
-
-	//variant vector
-	map<vector<variant< int, ll>>, int> m5;
-	for (int i = 0; i < 1000000; i++)
-	{
-		m5[{i, i + 1,(i + 2), (i + 2), (i + 2)}] = i;
-	}
-
-	start = clock();
-	for (int i = 0; i < 1000000; i++)
-	{
-		x[i] = m5[{i, i + 1, (i + 2), (i + 2), (i + 2)}];
-	}
-	end = clock();
-	cout << "Time : " << (double)(end - start) << endl;
+		
+		// calc  p , 1<= p <=n/2
+		ll m = 1, M = (n+1)/2 + 1;
+		
 
 
-	//string vector
-	map<vector<string>, int> m6;
-	for (int i = 0; i < 1000000; i++)
-	{
-		m6[{to_string(i + 2), to_string(i + 2), to_string(i + 2), to_string(i + 2), to_string(i + 2)}] = i;
-	}
 
-	start = clock();
-	for (int i = 0; i < 1000000; i++)
-	{
-		x[i] = m6[{to_string(i + 2), to_string(i + 2), to_string(i + 2), to_string(i + 2), to_string(i + 2)}];
-	}
-	end = clock();
-	cout << "Time : " << (double)(end - start) << endl;
+		auto isOK = [&](ll p) {
+			return abs(x[i] - a[max(n - 2 * p +1  , 0LL)]) <= abs(x[i] - a[max(n - p, 0LL)]);
+		};
 
-	ll N;
-	cin >> N;
-	vll a(N);
-	rep(i, 0, N) {
-		cin >> a[i];
-	}
-	ll neg = count_if(all(a), [](ll x) {return x < 0; });
-	ll pos = N - neg;
-	ll tmpNeg=0;
-	ll tmpPos = neg;
-	ll m_ind = 0;
-	ll M_ind = 0;
+		while (M!= m+1 ) {
+			ll p = (m + M) / 2;
 
-	vll table_m(N+1);
-	vll table_M(N+1);
-	//fill tabel_m :
-	//count of times of <0
-	vll b = a;
-	rep(i, 0, N + 1) {
-		if (i == 0 ) {
-			table_m[i] = 0;
-		}
-		else if (i == 1) {
-			table_m[i] = 0;
-
-			if (i > 0 && b[i - 1] >= 0) {
-				table_m[i]++;
-				b[i - 1] *= -2;
+			bool ok = isOK(p);
+			if (ok) {
+				m = p;
 			}
+			else {
+				M = p;
+				p = (m + p) / 2;
+			}
+		}
+
+		ll p = m;
+
+		ll sum = S[n] - S[n - p];
+		if (n % 2 == 0) {
+			sum += S[max(n-2*p,0LL)] - SE[max((n - 2 * p ) / 2, 0LL)];
 		}
 		else {
-			if (i > 0 && b[i - 1] >= 0) {
-				table_m[i]++;
-				b[i - 1] *= -2;
-			}
-			//calc num i>1
-			rrep(j, 1, i) {
-				if (b[j] < b[j - 1]) {
-					while (b[j] < b[j - 1]) {
-						table_m[i] += 2;
-						b[j - 1] *= 4;
-					}
-				}
-				else break;
-			}
-			table_m[i] += table_m[i - 1];
+			sum += SE[max((n - 2 * p +1 ) / 2 , 0LL)];
 		}
-	}
-	vll c = a;
 
-	rrep(i, 0, N + 1) {
-		if (i == N) {
-			table_M[i] = 0;
-		}
-		else if (i == N-1) {
-			table_M[i] = 0;
+		cout << sum << endl;
 
-			if (i > 0 && c[N - 1] < 0) {
-				table_M[i]++;
-				c[N - 1] *= -2;
-			}
-		}
-		else {
-			if (i > 0 && c[i] < 0) { 
-				c[i] *= -2; 
-				table_M[i]++;
-			}
-			//calc num i>1
-			rep(j, i, N-1) {
-				if (c[j] > c[j + 1]) {
-					while (c[j] > c[j + 1]) {
-						table_M[i] += 2;
-						c[j + 1] *= 4;
-					}
-				}
-				else {
-					break;
-				}
-			}
-			table_M[i] += table_M[i + 1];
-		}
 	}
 
-	vll res(N + 1);
-	rep(i, 0, N + 1) {
-		ll cnt = 0;
-		//if (i > 0 && a[i - 1] >= 0) tmpNeg++;
-		//if (i > 0 && a[i - 1] < 0) tmpPos--;
-		//cnt += tmpNeg + tmpPos;
-		cnt += table_m[i];
-		cnt += table_M[i];
 
-		res[i] = cnt;
-	}
-	cout << *min_element(all(res));
-
+	
 	return 0;
 }
