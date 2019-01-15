@@ -177,13 +177,22 @@ void sort_by(Inputs& inputs, Functor f) {
 		[&f](const T& lhs, const T& rhs) { return f(lhs) < f(rhs); });
 }
 
+template<
+	typename Inputs,
+	typename Functor,
+	typename T = typename Inputs::value_type>
+	void stable_sort_by(Inputs& inputs, Functor f) {
+	std::stable_sort(std::begin(inputs), std::end(inputs),
+		[&f](const T& lhs, const T& rhs) { return f(lhs) < f(rhs); });
+}
+
 // Functor is expected to be functional<val ,bool>
 // This function returns the maximum iterator that stisfies f(*it) == f(* inputs.begin())
 template<
 	typename Inputs,
 	typename Functor,
 	typename ValType = typename Inputs::value_type>
-pair<typename Inputs::const_iterator, typename Inputs::const_iterator> binary_solve(Inputs& inputs,  Functor f)
+pair<typename Inputs::iterator, typename Inputs::iterator> binary_solve(Inputs& inputs,  Functor f)
 {
 
 	auto left = inputs.begin();
@@ -342,72 +351,32 @@ struct linear_t {
 
 
 int main() {
+	ll R, C, K,N;
+	cin >> R >> C >> K>>N;
+	vll r(N), c(N);
+	vpll z(N);
+	vpll rowT(R), colT(C);
+	rep(i, 0, R) {
+		rowT[i] = { 0,i };
+	}
+	rep(i,0,C){
+		colT[i] = { 0,i };
+	}
+	rep(i, 0, N) {
+		cin >> r[i] >> c[i];
+		r[i]--;
+		c[i]--;
+		z[i] = { r[i],c[i] };
+		rowT[r[i]].first++;
+		colT[c[i]].first++;
+	}
 
-	vll v = { 4 , 6, 6, 2, 1 };
-	auto it = binary_solve(v, [](ll x) {return x <= 2; }).first;
-	auto a = it - v.begin();
-	return 0;
+	sort_by(rowT, [](pll x) {return x.first; });
+	sort_by(colT, [](pll x) {return x.first; });
 
-
-
-	//ll n, q;
-	//cin >> n >> q;
-	//vll a(n);
-	//vll x(q);
-	//rep(i, 0, n) cin>> a[i];
-	//rep(i, 0, q) cin >>x[i];
-
-	//vll S(n+1,0), SE(n/2 + 1,0);
-	//rep(i, 1, n+1) {
-	//	S[i] = S[i - 1] + a[i-1];
-
-	//}
-	//rep(i, 1, n/2+1) {
-	//	// sum of x where <2*i
-	//	SE[i] = S[i - 1] + a[2 * i -2];
-	//}
-
-	//rep(i, 0, q) {
-
-	//	
-	//	// calc  p , 1<= p <=n/2
-	//	ll m = 1, M = (n+1)/2 + 1;
-	//	
-
-
-
-	//	auto isOK = [&](ll p) {
-	//		return abs(x[i] - a[max(n - 2 * p +1  , 0LL)]) <= abs(x[i] - a[max(n - p, 0LL)]);
-	//	};
-
-	//	while (M!= m+1 ) {
-	//		ll p = (m + M) / 2;
-
-	//		bool ok = isOK(p);
-	//		if (ok) {
-	//			m = p;
-	//		}
-	//		else {
-	//			M = p;
-	//			p = (m + p) / 2;
-	//		}
-	//	}
-
-	//	ll p = m;
-
-	//	ll sum = S[n] - S[n - p];
-	//	if (n % 2 == 0) {
-	//		sum += S[max(n-2*p,0LL)] - SE[max((n - 2 * p ) / 2, 0LL)];
-	//	}
-	//	else {
-	//		sum += SE[max((n - 2 * p +1 ) / 2 , 0LL)];
-	//	}
-
-	//	cout << sum << endl;
-
-	//}
-
-
+	for(i,0,)
 	
 
+
+	return 0;
 }
