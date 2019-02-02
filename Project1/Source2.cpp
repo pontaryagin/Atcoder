@@ -350,33 +350,53 @@ struct linear_t {
 
 
 
+
 int main() {
-	ll R, C, K,N;
-	cin >> R >> C >> K>>N;
-	vll r(N), c(N);
-	vpll z(N);
-	vpll rowT(R), colT(C);
-	rep(i, 0, R) {
-		rowT[i] = { 0,i };
+	ll N,M;
+	cin >> N>>M;
+	ll edgeNum = N - 1 + M;
+	vvll adjList(N );
+	vll inDegree(N);
+	vll A(edgeNum), B(edgeNum);
+	rep(i, 0, edgeNum) {
+		cin >> A[i] >> B[i];
+		adjList[--A[i]].push_back(--B[i]);
+		inDegree[B[i]]++;
 	}
-	rep(i,0,C){
-		colT[i] = { 0,i };
+	
+	vll resTable(N - 1 + M);
+	vll trueParents(N,-1);
+	// find root
+	ll root;
+	rep(i, 0, N) {
+		if (inDegree[i] == 0) {
+			root = i;
+		}
+	}
+
+	stack<ll> parents;
+	parents.push(root);
+	while(!parents.empty()) {
+		ll parent = parents.top(); 
+		parents.pop();
+		//sorted.push_back(parent);
+		for (ll sibling : adjList[parent]) {
+			inDegree[sibling]--;
+			if (inDegree[sibling] == 0) {
+				parents.push(sibling);
+				trueParents[sibling] = parent;
+			}
+		}
+
 	}
 	rep(i, 0, N) {
-		cin >> r[i] >> c[i];
-		r[i]--;
-		c[i]--;
-		z[i] = { r[i],c[i] };
-		rowT[r[i]].first++;
-		colT[c[i]].first++;
+		if (i == root) {
+			cout << 0 << endl;
+		}
+		else {
+			cout << trueParents[i]+1 <<endl;
+		}
 	}
-
-	sort_by(rowT, [](pll x) {return x.first; });
-	sort_by(colT, [](pll x) {return x.first; });
-
-	for(i,0,)
-	
-
 
 	return 0;
 }
