@@ -7,5 +7,6 @@
     <ClCompile Include="..\Project1\memo.cpp" />
     <ClCompile Include="NumberTheory.cpp" />
     <ClCompile Include="SegmentTree.cpp" />
+    <ClCompile Include="Graph.cpp" />
   </ItemGroup>
 </Project>

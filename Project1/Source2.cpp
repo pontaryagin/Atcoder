@@ -347,7 +347,49 @@ struct linear_t {
 };
 
 
+struct Graph
+{
+	using EdgesType = vector<pair< ll, ll>>;
+	using NodesType = vector<ll>;
+	vvll adjacentList_;
+	//EdgesType edges_;
+	//NodesType nodes_;
+	ll node_size;
+	ll edge_size;
 
+	Graph(const AdjacentListType& adjacentList) noexcept
+		: adjacentList_(adjacentList)
+	{
+	}
+
+	Graph(const EdgesType& edges) noexcept
+	{
+		for (const auto& edge : edges)
+		{
+			adjacentList_[edge.first].push_back(edge.second);
+		}
+	}
+
+	void topological_sort()
+	{
+		map<ll, ll> in_degree;
+		for (const auto& sib : adjacentList_)
+		{
+			for(const auto& to_node: sib.second)
+			{
+				if (in_degree.find(to_node) != in_degree.end())
+					in_degree[to_node]++;
+				else
+					in_degree[to_node] = 0;
+			}
+		}
+		// get root
+		NodesType roots;
+
+	}
+
+
+};
 
 
 
@@ -397,6 +439,6 @@ int main() {
 			cout << trueParents[i]+1 <<endl;
 		}
 	}
-
+	auto&& x= decltype(trueParents)(trueParents);
 	return 0;
 }
