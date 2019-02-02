@@ -53,10 +53,14 @@ typedef vector<string> vs;
 template<typename T>
 using pq_greater = priority_queue<T, vector<T>, greater<T>>;
 
+
 #define all(a)  (a).begin(),(a).end()
 #define rall(a) (a).rbegin(), (a).rend()
 #define vec(a) vector<a>
 #define perm(c) sort(all(c));for(bool c##perm=1;c##perm;c##perm=next_permutation(all(c)))
+
+template<typename T1, typename T2> void chmin(T1 &a, T2 b) { if (a > b) a = b; }
+template<typename T1, typename T2> void chmax(T1 &a, T2 b) { if (a < b) a = b; }
 
 constexpr ll POW_(ll n, ll m) {
 	ll res = 1;
@@ -338,6 +342,7 @@ struct min_t {
 	static underlying_type unit() { return numeric_limits<T>::max(); }
 	static underlying_type append(underlying_type a, underlying_type b) { return min(a, b); }
 };
+
 struct linear_t {
 	typedef pd underlying_type;
 	static underlying_type unit() { return underlying_type{ 1.,0. }; }
@@ -349,34 +354,44 @@ struct linear_t {
 
 
 
-
 int main() {
-	ll R, C, K,N;
-	cin >> R >> C >> K>>N;
-	vll r(N), c(N);
-	vpll z(N);
-	vpll rowT(R), colT(C);
-	rep(i, 0, R) {
-		rowT[i] = { 0,i };
-	}
-	rep(i,0,C){
-		colT[i] = { 0,i };
-	}
-	rep(i, 0, N) {
-		cin >> r[i] >> c[i];
-		r[i]--;
-		c[i]--;
-		z[i] = { r[i],c[i] };
-		rowT[r[i]].first++;
-		colT[c[i]].first++;
-	}
 
-	sort_by(rowT, [](pll x) {return x.first; });
-	sort_by(colT, [](pll x) {return x.first; });
-
-	for(i,0,)
+	ll N, M;
+	cin >> N >> M;
+	vll A(N - 1 + M), B(N - 1 + M);
+	rep(i, 0, N - 1 + M) {
+		cin >> A[i] >> B[i];
+		A[i]--;
+		B[i]--;
+	}
 	
+	vector<pair<set<ll>,ll>> tree(N, { set<ll>(),-1 });
+	rep(i, 0, N - 1 + M) {
+		if (tree[B[i]].first.empty()) {
+			//first
+			tree[B[i]] = { set<ll>{ A[i]},1 };
 
+		}
+		else {
+			tree[B[i]].first.insert(A[i]);
+			
+			// trim
+			for (auto x : tree[A[i]].first)
+			{
+				auto it =tree[B[i]].first.find(x);
+				if (it != tree[B[i]].first.end()) {
+					tree[B[i]].first.erase(it);
+				}
+			}
+		}
+	}
 
+	for (auto x : tree) {
+		if (x.first.empty())cout << 0<< endl;
+		else		cout << *x.first.begin()+1<<endl;
+	}
+
+label_:;
+	
 	return 0;
 }
