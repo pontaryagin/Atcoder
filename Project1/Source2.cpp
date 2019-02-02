@@ -352,46 +352,98 @@ struct linear_t {
 };
 
 
+struct Graph
+{
+	using EdgesType = vector<pair< ll, ll>>;
+	using NodesType = vector<ll>;
+	vvll adjacentList_;
+	//EdgesType edges_;
+	//NodesType nodes_;
+	ll node_size;
+	ll edge_size;
+
+	Graph(const AdjacentListType& adjacentList) noexcept
+		: adjacentList_(adjacentList)
+	{
+	}
+
+	Graph(const EdgesType& edges) noexcept
+	{
+		for (const auto& edge : edges)
+		{
+			adjacentList_[edge.first].push_back(edge.second);
+		}
+	}
+
+	void topological_sort()
+	{
+		map<ll, ll> in_degree;
+		for (const auto& sib : adjacentList_)
+		{
+			for(const auto& to_node: sib.second)
+			{
+				if (in_degree.find(to_node) != in_degree.end())
+					in_degree[to_node]++;
+				else
+					in_degree[to_node] = 0;
+			}
+		}
+		// get root
+		NodesType roots;
+
+	}
+
+
+};
+
 
 
 int main() {
-
-	ll N, M;
-	cin >> N >> M;
-	vll A(N - 1 + M), B(N - 1 + M);
-	rep(i, 0, N - 1 + M) {
+	ll N,M;
+	cin >> N>>M;
+	ll edgeNum = N - 1 + M;
+	vvll adjList(N );
+	vll inDegree(N);
+	vll A(edgeNum), B(edgeNum);
+	rep(i, 0, edgeNum) {
 		cin >> A[i] >> B[i];
-		A[i]--;
-		B[i]--;
+		adjList[--A[i]].push_back(--B[i]);
+		inDegree[B[i]]++;
 	}
 	
-	vector<pair<set<ll>,ll>> tree(N, { set<ll>(),-1 });
-	rep(i, 0, N - 1 + M) {
-		if (tree[B[i]].first.empty()) {
-			//first
-			tree[B[i]] = { set<ll>{ A[i]},1 };
-
+	vll resTable(N - 1 + M);
+	vll trueParents(N,-1);
+	// find root
+	ll root;
+	rep(i, 0, N) {
+		if (inDegree[i] == 0) {
+			root = i;
 		}
-		else {
-			tree[B[i]].first.insert(A[i]);
-			
-			// trim
-			for (auto x : tree[A[i]].first)
-			{
-				auto it =tree[B[i]].first.find(x);
-				if (it != tree[B[i]].first.end()) {
-					tree[B[i]].first.erase(it);
-				}
+	}
+
+	stack<ll> parents;
+	parents.push(root);
+	while(!parents.empty()) {
+		ll parent = parents.top(); 
+		parents.pop();
+		//sorted.push_back(parent);
+		for (ll sibling : adjList[parent]) {
+			inDegree[sibling]--;
+			if (inDegree[sibling] == 0) {
+				parents.push(sibling);
+				trueParents[sibling] = parent;
 			}
 		}
-	}
 
-	for (auto x : tree) {
-		if (x.first.empty())cout << 0<< endl;
-		else		cout << *x.first.begin()+1<<endl;
 	}
-
-label_:;
-	
+	rep(i, 0, N) {
+		if (i == root) {
+			cout << 0 << endl;
+		}
+		else {
+			cout << trueParents[i]+1 <<endl;
+		}
+	}
+	auto&& x= decltype(trueParents)(trueParents);
 	return 0;
 }

@@ -118,6 +118,7 @@
     <ClCompile Include="..\Project1\Dijkstra.cpp" />
     <ClCompile Include="..\Project1\memo.cpp" />
     <ClCompile Include="Algorithm.cpp" />
+    <ClCompile Include="Graph.cpp" />
     <ClCompile Include="NumberTheory.cpp" />
     <ClCompile Include="SegmentTree.cpp" />
   </ItemGroup>
