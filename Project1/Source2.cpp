@@ -352,49 +352,47 @@ struct linear_t {
 };
 
 
-struct Graph
+
+vll get_topologically_sorted_nodes(const vvll& graph)
 {
-	using EdgesType = vector<pair< ll, ll>>;
-	using NodesType = vector<ll>;
-	vvll adjacentList_;
-	//EdgesType edges_;
-	//NodesType nodes_;
-	ll node_size;
-	ll edge_size;
-
-	Graph(const AdjacentListType& adjacentList) noexcept
-		: adjacentList_(adjacentList)
+	// graph needs to be represented by adjacent list.
+	ll nodeSize = graph.size();
+	
+	// find root
+	vll roots;
+	vll inDegree(nodeSize);
+	rep(i, 0, nodeSize) 
 	{
-	}
-
-	Graph(const EdgesType& edges) noexcept
-	{
-		for (const auto& edge : edges)
-		{
-			adjacentList_[edge.first].push_back(edge.second);
+		for (ll sibling : graph[i]) {
+			inDegree[sibling]++;
 		}
 	}
 
-	void topological_sort()
-	{
-		map<ll, ll> in_degree;
-		for (const auto& sib : adjacentList_)
-		{
-			for(const auto& to_node: sib.second)
-			{
-				if (in_degree.find(to_node) != in_degree.end())
-					in_degree[to_node]++;
-				else
-					in_degree[to_node] = 0;
+	rep(i, 0, nodeSize) {
+		if (inDegree[i] == 0) {
+			roots.push_back(i);
+		}
+	}
+
+	stack<ll> parents;
+	for(ll i: roots) 
+		parents.push(i);
+	
+	vll sortedNodes;
+	while (!parents.empty()) {
+		ll parent = parents.top();
+		parents.pop();
+		sortedNodes.push_back(parent);
+		for (ll sibling : graph[parent]) {
+			inDegree[sibling]--;
+			if (inDegree[sibling] == 0) {
+				parents.push(sibling);
 			}
 		}
-		// get root
-		NodesType roots;
-
 	}
+	return sortedNodes;
+}
 
-
-};
 
 
 
@@ -411,39 +409,18 @@ int main() {
 		inDegree[B[i]]++;
 	}
 	
-	vll resTable(N - 1 + M);
-	vll trueParents(N,-1);
-	// find root
-	ll root;
+	auto sorted = get_topologically_sorted_nodes(adjList);
+	vll res(N);
+	res[sorted[0]] = 0;
 	rep(i, 0, N) {
-		if (inDegree[i] == 0) {
-			root = i;
+		ll ind = sorted[i];
+		for (ll sib : adjList[ind]) {
+			res[sib] = ind+1;
 		}
-	}
-
-	stack<ll> parents;
-	parents.push(root);
-	while(!parents.empty()) {
-		ll parent = parents.top(); 
-		parents.pop();
-		//sorted.push_back(parent);
-		for (ll sibling : adjList[parent]) {
-			inDegree[sibling]--;
-			if (inDegree[sibling] == 0) {
-				parents.push(sibling);
-				trueParents[sibling] = parent;
-			}
-		}
-
 	}
 	rep(i, 0, N) {
-		if (i == root) {
-			cout << 0 << endl;
-		}
-		else {
-			cout << trueParents[i]+1 <<endl;
-		}
+		cout << res[i] << endl;
 	}
-	auto&& x= decltype(trueParents)(trueParents);
+
 	return 0;
 }
