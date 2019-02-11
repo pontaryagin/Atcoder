@@ -437,7 +437,7 @@ struct UnionFind_2 {
 	set<ll> roots;
 	vector<set<ll>> under;
 	vector<set<ll>> under_2;
-	UnionFind_2(ll size, vll p) : data(size, -1), querySize_(size, 0), under(size),under_2(size){
+	UnionFind_2(ll size, vll p) : data(size, -1), querySize_(size, 0), under(size), under_2(size) {
 		;
 		rep(i, 0, size)  roots.insert(i);
 		rep(i, 0, size) under[i].insert(i);

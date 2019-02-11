@@ -53,10 +53,14 @@ typedef vector<string> vs;
 template<typename T>
 using pq_greater = priority_queue<T, vector<T>, greater<T>>;
 
+
 #define all(a)  (a).begin(),(a).end()
 #define rall(a) (a).rbegin(), (a).rend()
 #define vec(a) vector<a>
 #define perm(c) sort(all(c));for(bool c##perm=1;c##perm;c##perm=next_permutation(all(c)))
+
+template<typename T1, typename T2> void chmin(T1 &a, T2 b) { if (a > b) a = b; }
+template<typename T1, typename T2> void chmax(T1 &a, T2 b) { if (a < b) a = b; }
 
 constexpr ll POW_(ll n, ll m) {
 	ll res = 1;
@@ -109,7 +113,7 @@ ll get_bit<2>(ll i) {
 	return 1LL << i;
 }
 
-template<ll bit>
+template<ll bit = 2>
 ll get_max_bit(ll n) {
 	ll tmp = bit;
 	ll at = 0;
@@ -176,6 +180,53 @@ template<
 	std::sort(std::begin(inputs), std::end(inputs),
 		[&f](const T& lhs, const T& rhs) { return f(lhs) < f(rhs); });
 }
+
+template<
+	typename Inputs,
+	typename Functor,
+	typename T = typename Inputs::value_type>
+	void stable_sort_by(Inputs& inputs, Functor f) {
+	std::stable_sort(std::begin(inputs), std::end(inputs),
+		[&f](const T& lhs, const T& rhs) { return f(lhs) < f(rhs); });
+}
+
+// Functor is expected to be functional<val ,bool>
+// This function returns the maximum iterator that stisfies f(*it) == f(* inputs.begin())
+template<
+	typename Inputs,
+	typename Functor,
+	typename ValType = typename Inputs::value_type>
+	pair<typename Inputs::iterator, typename Inputs::iterator> binary_solve(Inputs& inputs, Functor f)
+{
+
+	auto left = inputs.begin();
+	auto right = inputs.end();
+	auto n = inputs.size();
+
+	auto left_val = f(*left);
+	auto right_val = f(*(right - 1));
+
+	// check 
+	assert(n >= 2);
+	assert(left_val != right_val);
+
+	while (left + 1 != right)
+	{
+		auto mid = left + (right - left) / 2;
+		if (f(*mid) == left_val)
+		{
+			left = mid;
+		}
+		else
+		{
+			right = mid;
+		}
+	}
+
+	return { left,right };
+}
+
+
 
 
 template<int I>
@@ -291,6 +342,7 @@ struct min_t {
 	static underlying_type unit() { return numeric_limits<T>::max(); }
 	static underlying_type append(underlying_type a, underlying_type b) { return min(a, b); }
 };
+
 struct linear_t {
 	typedef pd underlying_type;
 	static underlying_type unit() { return underlying_type{ 1.,0. }; }
@@ -301,95 +353,97 @@ struct linear_t {
 
 
 
-int main() {
-	ll H, W;
-	cin >> H >> W;
-	vs S(H);
-	vvll SS(H, vll(W));
-	rep(i, 0, H) {
-		cin >> S[i];
-		/*rep(j, 0, W) {
-			if (S[i][j] = '.') {
-				SS[i][j]
-			}
-		}*/
-	}
+vll get_topologically_sorted_nodes(const vvll& graph)
+{
+	// graph needs to be represented by adjacent list.
+	// complexity: O( node size + edge size)
+	ll nodeSize = graph.size();
 
-	vector<vector<ll>> Ind(H, vector<ll>(W, 0));
-	map<ll, pll> tbl;
-
-	ll index = 1;
-
-	auto isBlack = [&](ll i, ll j) {
-		return S[i][j] == '#';
-	};
-
-
-	auto cntBNbhd = [&](ll i, ll j) {
-		pair<ll, vll> cnt = { 0,vll() };
-		if (i > 0 && S[i - 1][j] == '#') { cnt.first++; cnt.second.push_back(Ind[i - 1][j]); }
-		if (i < H - 1 && S[i + 1][j] == '#') { cnt.first++; cnt.second.push_back(Ind[i + 1][j]); }
-		if (j > 0 && S[i][j - 1] == '#') { cnt.first++;  cnt.second.push_back(Ind[i][j - 1]); }
-		if (j < W - 1 && S[i][j + 1] == '#') { cnt.first++;  cnt.second.push_back(Ind[i][j + 1]); }
-		return cnt;
-	};
-
-
-	auto cntWNbhd = [&](ll i, ll j) {
-		pair<ll, vll> cnt = { 0,vll() };
-		if (i > 0 && S[i - 1][j] == '.') { cnt.first++; cnt.second.push_back(Ind[i - 1][j]); }
-		if (i < H - 1 && S[i + 1][j] == '.') { cnt.first++; cnt.second.push_back(Ind[i + 1][j]); }
-		if (j > 0 && S[i][j - 1] == '.') { cnt.first++;  cnt.second.push_back(Ind[i][j - 1]); }
-		if (j < W - 1 && S[i][j + 1] == '.') { cnt.first++;  cnt.second.push_back(Ind[i][j + 1]); }
-		return cnt;
-	};
-
-	auto getInd = [&](ll i, ll j) {
-		pll ind = { 0,0 };
-		if (isBlack(i, j)) {
-			if (i > 0 && S[i - 1][j] == '.') cnt++;
-			if (i < H - 1 && S[i + 1][j] == '.') cnt++;
-			if (j > 0 && S[i][j - 1] == '.') cnt++;
-			if (j < W - 1 && S[i][j + 1] == '.') cnt++;
-		}
-	};
-
-
-	// initialize index 
-	map < ll, set < pll >> IDMap;
-
-	rep(i, 0, H) {
-		rep(j, 0, W) {
-			if (isBlack(i, j)) {
-				auto cnt = cntWNbhd(i, j);
-				if (cnt.first > 0) {
-					IDMap[]
-				}
-			}
-			else {
-
-			}
+	// find root
+	vll roots;
+	vll inDegree(nodeSize);
+	rep(i, 0, nodeSize)
+	{
+		for (ll sibling : graph[i]) {
+			inDegree[sibling]++;
 		}
 	}
 
-
-	rep(h, 0, H) {
-		rep(w, 0, W) {
-			if (isBlack(h, w)) {
-
-			}
-			else {
-
-			}
+	rep(i, 0, nodeSize) {
+		if (inDegree[i] == 0) {
+			roots.push_back(i);
 		}
 	}
 
+	stack<ll> parents;
+	for (ll i : roots)
+		parents.push(i);
 
-
-
-	return 0;
+	vll sortedNodes;
+	while (!parents.empty()) {
+		ll parent = parents.top();
+		parents.pop();
+		sortedNodes.push_back(parent);
+		for (ll sibling : graph[parent]) {
+			inDegree[sibling]--;
+			if (inDegree[sibling] == 0) {
+				parents.push(sibling);
+			}
+		}
+	}
+	return sortedNodes;
 }
 
-2 2
-.#
-..
+ll Eval(ll k, map<ll, ll>& dp, vll& bitNum, vll & a) {
+
+	if (k == 0) {
+		return accumulate(all(a), 0LL);
+	}
+	ll k_max = get_max_bit(k);
+	ll res = max(dp[POW(2, k_max - 1)], Eval(k - POW(2, k_max), dp, bitNum, a) + POW(2, k_max) * (max(bitNum[k_max], n - 2 * bitNum[k_max])));
+
+	return res;
+};
+
+
+
+
+int main() {
+	ll n, k;
+	cin >> n >> k;
+	vll a(n);
+	rep(i, 0, n)cin >> a[i];
+
+	ll k_max = get_max_bit(k);
+	vll bitNum(45);
+	map<ll, ll> dp;
+
+	rep(i, 0, 45)
+	{
+		rep(j, 0, n) {
+			if (at_bit<2>(a[j], i))
+			{
+				bitNum[i]++;
+			}
+		}
+	}
+
+	auto feeEval = [&](ll k_m) {
+		ll num = POW(2, k_m);
+		ll res = 0;
+		rep(i, 0, k_m + 1) {
+			if (bitNum[i] > n / 2) {
+
+			}
+			else {
+				res += POW(2, i)*(n - bitNum[i] * 2);
+			}
+			dp[POW(2, i)] = max(res + (i > 0 ? dp[POW(2, i - 1)] : 0), );
+		}
+	};
+	feeEval(k_max);
+
+	ll res = Eval(k, dp, bitNum, a);
+	cout << res;
+	return 0;
+}
