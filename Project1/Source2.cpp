@@ -398,7 +398,7 @@ struct UnionFind {
 	vector<ll> data;
 	vll querySize_;
 	set<ll> roots;
-	UnionFind(ll size) : data(size, -1), querySize_(size,0) {
+	UnionFind(ll size) : data(size, -1), querySize_(size, 0) {
 		roots.insert(data.begin(), data.end());
 	}
 
@@ -407,7 +407,7 @@ struct UnionFind {
 		if (x != y) {
 			if (data[y] < data[x]) swap(x, y);
 			data[x] += data[y]; data[y] = x;
-			querySize_[x] += querySize_[y]+1;
+			querySize_[x] += querySize_[y] + 1;
 			roots.erase(y);
 		}
 		else {
@@ -428,9 +428,8 @@ struct UnionFind {
 	}
 	const set<ll>& getRoots() {
 		return roots;
-	};
-	
-
+	}
+};
 
 struct UnionFind_2 {
 	vector<ll> data;
