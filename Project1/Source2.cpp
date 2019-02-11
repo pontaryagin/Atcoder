@@ -431,8 +431,6 @@ struct UnionFind {
 	};
 	
 
-};
-
 
 struct UnionFind_2 {
 	vector<ll> data;
