@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <math.h>
 #include <vector>
@@ -53,10 +52,14 @@ typedef vector<string> vs;
 template<typename T>
 using pq_greater = priority_queue<T, vector<T>, greater<T>>;
 
+
 #define all(a)  (a).begin(),(a).end()
 #define rall(a) (a).rbegin(), (a).rend()
 #define vec(a) vector<a>
 #define perm(c) sort(all(c));for(bool c##perm=1;c##perm;c##perm=next_permutation(all(c)))
+
+template<typename T1, typename T2> void chmin(T1 &a, T2 b) { if (a > b) a = b; }
+template<typename T1, typename T2> void chmax(T1 &a, T2 b) { if (a < b) a = b; }
 
 constexpr ll POW_(ll n, ll m) {
 	ll res = 1;
@@ -66,7 +69,7 @@ constexpr ll POW_(ll n, ll m) {
 	return res;
 }
 
-template<int mod=0>
+template<int mod = 0>
 constexpr ll POW(ll x, ll n) {
 	if (x == 2)
 	{
@@ -84,9 +87,9 @@ constexpr ll POW<0>(ll x, ll n) {
 		return 1LL << n;
 	}
 	if (n == 0)return 1;
-	if (n == 1)return x ;
+	if (n == 1)return x;
 	if (n % 2 == 0) return POW_(POW(x, n / 2), 2);
-	return (POW_(POW(x, n / 2), 2))*x ;
+	return (POW_(POW(x, n / 2), 2))*x;
 }
 
 template<ll bit>
@@ -96,12 +99,12 @@ ll at_bit(ll n, ll i) {
 
 template<>
 ll at_bit<2>(ll n, ll i) {
-	return (n >>i) % 2LL;
+	return (n >> i) % 2LL;
 }
 
 template<ll bit>
 ll get_bit(ll i) {
-	return POW(bit,i);
+	return POW(bit, i);
 }
 
 template<>
@@ -109,13 +112,13 @@ ll get_bit<2>(ll i) {
 	return 1LL << i;
 }
 
-template<ll bit>
+template<ll bit = 2>
 ll get_max_bit(ll n) {
 	ll tmp = bit;
-	ll at=0;
+	ll at = 0;
 	while (tmp <= n) {
 		at++;
-		tmp*= bit;
+		tmp *= bit;
 	}
 	return at;
 }
@@ -172,7 +175,7 @@ template<
 	typename Inputs,
 	typename Functor,
 	typename T = typename Inputs::value_type>
-void sort_by(Inputs& inputs, Functor f) {
+	void sort_by(Inputs& inputs, Functor f) {
 	std::sort(std::begin(inputs), std::end(inputs),
 		[&f](const T& lhs, const T& rhs) { return f(lhs) < f(rhs); });
 }
@@ -192,7 +195,7 @@ template<
 	typename Inputs,
 	typename Functor,
 	typename ValType = typename Inputs::value_type>
-pair<typename Inputs::iterator, typename Inputs::iterator> binary_solve(Inputs& inputs,  Functor f)
+	pair<typename Inputs::iterator, typename Inputs::iterator> binary_solve(Inputs& inputs, Functor f)
 {
 
 	auto left = inputs.begin();
@@ -200,13 +203,13 @@ pair<typename Inputs::iterator, typename Inputs::iterator> binary_solve(Inputs& 
 	auto n = inputs.size();
 
 	auto left_val = f(*left);
-	auto right_val = f(*(right-1));
+	auto right_val = f(*(right - 1));
 
 	// check 
 	assert(n >= 2);
 	assert(left_val != right_val);
 
-	while (left + 1 != right) 
+	while (left + 1 != right)
 	{
 		auto mid = left + (right - left) / 2;
 		if (f(*mid) == left_val)
@@ -257,14 +260,14 @@ vector<pll >prime_factorize(ll n) {
 }
 
 
-ll MOD = 1000000007;
+ll MOD = 998244353;//1000000007;
 ll INF = 1LL << 60;
 ll n;
 
 template <class T> using reversed_priority_queue = priority_queue<T, vector<T>, greater<T> >;
 
 template <typename Monoid>
-struct segment_tree 
+struct segment_tree
 {
 
 	using underlying_type = typename  Monoid::underlying_type;
@@ -338,6 +341,7 @@ struct min_t {
 	static underlying_type unit() { return numeric_limits<T>::max(); }
 	static underlying_type append(underlying_type a, underlying_type b) { return min(a, b); }
 };
+
 struct linear_t {
 	typedef pd underlying_type;
 	static underlying_type unit() { return underlying_type{ 1.,0. }; }
@@ -347,46 +351,132 @@ struct linear_t {
 };
 
 
-struct Graph
+
+vll get_topologically_sorted_nodes(const vvll& graph)
 {
-	using EdgesType = vector<pair< ll, ll>>;
-	using NodesType = vector<ll>;
-	vvll adjacentList_;
-	//EdgesType edges_;
-	//NodesType nodes_;
-	ll node_size;
-	ll edge_size;
+	// graph needs to be represented by adjacent list.
+	// complexity: O( node size + edge size)
+	ll nodeSize = graph.size();
 
-	Graph(const AdjacentListType& adjacentList) noexcept
-		: adjacentList_(adjacentList)
+	// find root
+	vll roots;
+	vll inDegree(nodeSize);
+	rep(i, 0, nodeSize)
 	{
-	}
-
-	Graph(const EdgesType& edges) noexcept
-	{
-		for (const auto& edge : edges)
-		{
-			adjacentList_[edge.first].push_back(edge.second);
+		for (ll sibling : graph[i]) {
+			inDegree[sibling]++;
 		}
 	}
 
-	void topological_sort()
-	{
-		map<ll, ll> in_degree;
-		for (const auto& sib : adjacentList_)
-		{
-			for(const auto& to_node: sib.second)
-			{
-				if (in_degree.find(to_node) != in_degree.end())
-					in_degree[to_node]++;
-				else
-					in_degree[to_node] = 0;
+	rep(i, 0, nodeSize) {
+		if (inDegree[i] == 0) {
+			roots.push_back(i);
+		}
+	}
+
+	stack<ll> parents;
+	for (ll i : roots)
+		parents.push(i);
+
+	vll sortedNodes;
+	while (!parents.empty()) {
+		ll parent = parents.top();
+		parents.pop();
+		sortedNodes.push_back(parent);
+		for (ll sibling : graph[parent]) {
+			inDegree[sibling]--;
+			if (inDegree[sibling] == 0) {
+				parents.push(sibling);
 			}
 		}
-		// get root
-		NodesType roots;
+	}
+	return sortedNodes;
+}
+
+
+struct UnionFind {
+	vector<ll> data;
+	vll querySize_;
+	set<ll> roots;
+	UnionFind(ll size) : data(size, -1), querySize_(size,0) {
+		roots.insert(data.begin(), data.end());
+	}
+
+	void unite(ll x, ll y) {
+		x = root(x); y = root(y);
+		if (x != y) {
+			if (data[y] < data[x]) swap(x, y);
+			data[x] += data[y]; data[y] = x;
+			querySize_[x] += querySize_[y]+1;
+			roots.erase(y);
+		}
+		else {
+			querySize_[x]++;
+		}
+	}
+	bool find(ll x, ll y) {
+		return root(x) == root(y);
+	}
+	ll root(ll x) {
+		return data[x] < 0 ? x : data[x] = root(data[x]);
+	}
+	ll size(ll x) {
+		return -data[root(x)];
+	}
+	ll  query_size(ll x) {
+		return querySize_[root(x)];
+	}
+	const set<ll>& getRoots() {
+		return roots;
+	};
+	
+
+};
+
+
+struct UnionFind_2 {
+	vector<ll> data;
+	vll querySize_;
+	set<ll> roots;
+	vector<set<ll>> under;
+	vector<set<ll>> under_2;
+	UnionFind_2(ll size, vll p) : data(size, -1), querySize_(size, 0), under(size),under_2(size){
+		;
+		rep(i, 0, size)  roots.insert(i);
+		rep(i, 0, size) under[i].insert(i);
+		rep(i, 0, size)under_2[i].insert(p[i]);
 
 	}
+
+	void unite(ll x, ll y) {
+		x = root(x); y = root(y);
+		if (x != y) {
+			if (data[y] < data[x]) swap(x, y);
+			data[x] += data[y]; data[y] = x;
+			querySize_[x] += querySize_[y] + 1;
+			roots.erase(y);
+			under[x].insert(all(under[y]));
+			under_2[x].insert(all(under_2[y]));
+		}
+		else {
+			querySize_[x]++;
+		}
+	}
+	bool find(ll x, ll y) {
+		return root(x) == root(y);
+	}
+	ll root(ll x) {
+		return data[x] < 0 ? x : data[x] = root(data[x]);
+	}
+	ll size(ll x) {
+		return -data[root(x)];
+	}
+	ll  query_size(ll x) {
+		return querySize_[root(x)];
+	}
+	const set<ll>& getRoots() {
+		return roots;
+	};
 
 
 };
@@ -394,51 +484,33 @@ struct Graph
 
 
 int main() {
-	ll N,M;
-	cin >> N>>M;
-	ll edgeNum = N - 1 + M;
-	vvll adjList(N );
-	vll inDegree(N);
-	vll A(edgeNum), B(edgeNum);
-	rep(i, 0, edgeNum) {
-		cin >> A[i] >> B[i];
-		adjList[--A[i]].push_back(--B[i]);
-		inDegree[B[i]]++;
+	ll n, m;
+	cin >> n >> m;
+	vll p(n);
+	rep(i, 0, n) {
+		cin >> p[i];
+		p[i]--;
 	}
-	
-	vll resTable(N - 1 + M);
-	vll trueParents(N,-1);
-	// find root
-	ll root;
-	rep(i, 0, N) {
-		if (inDegree[i] == 0) {
-			root = i;
-		}
-	}
-
-	stack<ll> parents;
-	parents.push(root);
-	while(!parents.empty()) {
-		ll parent = parents.top(); 
-		parents.pop();
-		//sorted.push_back(parent);
-		for (ll sibling : adjList[parent]) {
-			inDegree[sibling]--;
-			if (inDegree[sibling] == 0) {
-				parents.push(sibling);
-				trueParents[sibling] = parent;
-			}
-		}
+	vll x(m), y(m);
+	rep(i, 0, m) {
+		cin >> x[i] >> y[i];
+		x[i]--;
+		y[i]--;
 
 	}
-	rep(i, 0, N) {
-		if (i == root) {
-			cout << 0 << endl;
-		}
-		else {
-			cout << trueParents[i]+1 <<endl;
-		}
+	auto uf = UnionFind_2(n, p);
+	rep(i, 0, m) {
+		uf.unite(x[i], y[i]);
 	}
-	auto&& x= decltype(trueParents)(trueParents);
+	ll cnt = 0;
+	for (ll root : uf.getRoots()) {
+		auto&& under = uf.under[root];
+		auto&& under2 = uf.under_2[root];
+		set<ll> join;
+
+		set_intersection(all(under), all(under2), inserter(join, join.end()));
+		cnt += join.size();
+	}
+	cout << cnt << endl;
 	return 0;
 }
