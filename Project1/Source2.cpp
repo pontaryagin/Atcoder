@@ -393,121 +393,78 @@ vll get_topologically_sorted_nodes(const vvll& graph)
 	return sortedNodes;
 }
 
-
 struct UnionFind {
 	vector<ll> data;
 	vll querySize_;
 	set<ll> roots;
 	UnionFind(ll size) : data(size, -1), querySize_(size, 0) {
-		roots.insert(data.begin(), data.end());
+		rep(i ,0 ,size) roots.insert(i);
 	}
 
-	void unite(ll x, ll y) {
-		x = root(x); y = root(y);
+	ll unite(ll x, ll y) {
+		// return: root
+		x = operator()(x); y = operator()(y);
 		if (x != y) {
 			if (data[y] < data[x]) swap(x, y);
 			data[x] += data[y]; data[y] = x;
 			querySize_[x] += querySize_[y] + 1;
 			roots.erase(y);
+			return x;
 		}
 		else {
 			querySize_[x]++;
+			return x;
 		}
 	}
-	bool find(ll x, ll y) {
-		return root(x) == root(y);
+	bool operator()(ll x, ll y) {
+		// check whether x and y are connected
+		return operator()(x) == operator()(y);
 	}
-	ll root(ll x) {
-		return data[x] < 0 ? x : data[x] = root(data[x]);
+	ll operator()(ll x) {
+		// get root
+		return data[x] < 0 ? x : data[x] = operator()(data[x]);
 	}
 	ll size(ll x) {
-		return -data[root(x)];
+		return -data[operator()(x)];
 	}
 	ll  query_size(ll x) {
-		return querySize_[root(x)];
+		return querySize_[operator()(x)];
 	}
 	const set<ll>& getRoots() {
 		return roots;
 	}
+	ll rank(ll x) {
+		return -data[operator()(x)];
+	}
 };
 
-struct UnionFind_2 {
-	vector<ll> data;
-	vll querySize_;
-	set<ll> roots;
-	vector<set<ll>> under;
-	vector<set<ll>> under_2;
-	UnionFind_2(ll size, vll p) : data(size, -1), querySize_(size, 0), under(size), under_2(size) {
-		;
-		rep(i, 0, size)  roots.insert(i);
-		rep(i, 0, size) under[i].insert(i);
-		rep(i, 0, size)under_2[i].insert(p[i]);
-
-	}
-
-	void unite(ll x, ll y) {
-		x = root(x); y = root(y);
-		if (x != y) {
-			if (data[y] < data[x]) swap(x, y);
-			data[x] += data[y]; data[y] = x;
-			querySize_[x] += querySize_[y] + 1;
-			roots.erase(y);
-			under[x].insert(all(under[y]));
-			under_2[x].insert(all(under_2[y]));
-		}
-		else {
-			querySize_[x]++;
-		}
-	}
-	bool find(ll x, ll y) {
-		return root(x) == root(y);
-	}
-	ll root(ll x) {
-		return data[x] < 0 ? x : data[x] = root(data[x]);
-	}
-	ll size(ll x) {
-		return -data[root(x)];
-	}
-	ll  query_size(ll x) {
-		return querySize_[root(x)];
-	}
-	const set<ll>& getRoots() {
-		return roots;
-	};
-
-
-};
 
 
 
 int main() {
 	ll n, m;
 	cin >> n >> m;
-	vll p(n);
-	rep(i, 0, n) {
-		cin >> p[i];
-		p[i]--;
-	}
-	vll x(m), y(m);
+	vll a(m), b(m);
 	rep(i, 0, m) {
-		cin >> x[i] >> y[i];
-		x[i]--;
-		y[i]--;
+		cin >> a[i] >> b[i];
+		a[i]--; b[i]--;
+	}
+
+	ll q;
+	cin >> q;
+	vll x(q), y(q), z(q);
+	rep(i, 0, q) {
+		cin >> x[i] >> y[i] >> z[i];
+		x[i]--; y[i]--;
+	}
+
+	UnionFind uf(n);
+	auto cnt = [&]() {
 
 	}
-	auto uf = UnionFind_2(n, p);
-	rep(i, 0, m) {
-		uf.unite(x[i], y[i]);
-	}
-	ll cnt = 0;
-	for (ll root : uf.getRoots()) {
-		auto&& under = uf.under[root];
-		auto&& under2 = uf.under_2[root];
-		set<ll> join;
 
-		set_intersection(all(under), all(under2), inserter(join, join.end()));
-		cnt += join.size();
-	}
 	cout << cnt << endl;
+
 	return 0;
 }
+
