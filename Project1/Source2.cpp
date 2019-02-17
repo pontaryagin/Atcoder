@@ -457,13 +457,14 @@ int main() {
 		cin >> x[i] >> y[i] >> z[i];
 		x[i]--; y[i]--;
 	}
-
-	UnionFind uf(n);
-	auto cnt = [&]() {
-
+	
+	vvll tbl(n);
+	rep(i, 0, q) {
+		tbl[x[i]].push_back(i);
+		tbl[y[i]].push_back(i);
 	}
+	
 
-	cout << cnt << endl;
 
 	return 0;
 }
