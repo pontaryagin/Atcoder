@@ -456,63 +456,29 @@ int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 
-
-	ll n, m;
-	cin >> n >> m;
-	vll a(m), b(m);
-	rep(i, 0, m) {
-		cin >> a[i] >> b[i];
-		a[i]--; b[i]--;
-	}
-
-	ll q;
-	cin >> q;
-	vll x(q), y(q), z(q);
+	ll a, b, q;
+	cin >> a >> b>> q;
+	vll s(a), t(b), x(q);
+	rep(i, 0, a) cin >> s[i];
+	rep(i, 0, b) cin >> t[i];
+	rep(i, 0, q) cin >> x[i];
+	vll res;
 	rep(i, 0, q) {
-		cin >> x[i] >> y[i] >> z[i];
-		x[i]--; y[i]--;
-	}
 
-	vll ok(q,m);
-	vll ng(q, 0);
-	vll med(q);
-	vvll checkList(m);
-	UnionFind uf(n);
-
-
-	rep(i, 0, 20) {
-		// update med
-		uf.initialize();
-		fill(all(checkList), vll());
-		rep(i, 0, q) {
-			med[i] = (ok[i] + ng[i]) / 2;
-			checkList[med[i]].push_back(i);
-		}
-
-		// check
-		rep(j, 0, m) {
-			uf.unite(a[j], b[j]);
-			
-			for (ll  k: checkList[j]) {
-				ll sz = uf.size(x[k]);
-				if (uf[x[k]] != uf[y[k]]) {
-					sz += uf.size(y[k]);
-				}
-				if (sz >= z[k]) {
-					//ok
-					ok[k] = j;
-				}
-				else {
-					ng[k] = j;
-				}
-			}
-		}
-
-	}
+		auto ls = lower_bound(all(s), x[i]);
+		ll lsv =(ls==s.end()? INF :*ls - x[i]);
+		ll rsv = (ls == s.begin() ? -INF : x[i] - *(ls - 1));
+		auto rt = lower_bound(all(t), x[i]);
+		ll ltv = (rt == t.end() ? INF : *rt - x[i]);
+		ll rtv = (rt == t.begin() ? INF : x[i] - *(rt - 1));
+		vll tmp = { max(lsv,ltv),max(rsv,rtv), rtv + 2 * lsv, 2 * rtv + lsv , rsv + 2 * ltv, 2 * rsv + ltv };
+		res.push_back(*min_element(all(tmp)));
+		
 	
-	rep(i, 0, q) {
-		cout << ok[i]+1 << endl;
 	}
+
+	rep(i, 0, q)cout << res[i]<<endl;
+	
 
 	return 0;
 }
