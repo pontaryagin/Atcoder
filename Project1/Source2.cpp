@@ -468,9 +468,9 @@ int main() {
 		auto ls = lower_bound(all(s), x[i]);
 		ll lsv =(ls==s.end()? INF :*ls - x[i]);
 		ll rsv = (ls == s.begin() ? -INF : x[i] - *(ls - 1));
-		auto rt = lower_bound(all(t), x[i]);
-		ll ltv = (rt == t.end() ? INF : *rt - x[i]);
-		ll rtv = (rt == t.begin() ? INF : x[i] - *(rt - 1));
+		auto lt = lower_bound(all(t), x[i]);
+		ll ltv = (lt == t.end() ? INF : *lt - x[i]);
+		ll rtv = (lt == t.begin() ? INF : x[i] - *(lt - 1));
 		vll tmp = { max(lsv,ltv),max(rsv,rtv), rtv + 2 * lsv, 2 * rtv + lsv , rsv + 2 * ltv, 2 * rsv + ltv };
 		res.push_back(*min_element(all(tmp)));
 		
