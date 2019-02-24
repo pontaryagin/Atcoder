@@ -61,6 +61,12 @@ using pq_greater = priority_queue<T, vector<T>, greater<T>>;
 template<typename T1, typename T2> void chmin(T1 &a, T2 b) { if (a > b) a = b; }
 template<typename T1, typename T2> void chmax(T1 &a, T2 b) { if (a < b) a = b; }
 
+vll seq(ll i, ll j) { 
+	vll res(j - i); 
+	rep(k, i, j) res[k] = i + k; 
+	return res; 
+}
+
 constexpr ll POW_(ll n, ll m) {
 	ll res = 1;
 	rep(i, 0, m) {
@@ -195,7 +201,7 @@ template<
 	typename Inputs,
 	typename Functor,
 	typename ValType = typename Inputs::value_type>
-	pair<typename Inputs::iterator, typename Inputs::iterator> binary_solve(Inputs& inputs, Functor f)
+pair<typename Inputs::iterator, typename Inputs::iterator> binary_solve(Inputs& inputs, Functor f)
 {
 
 	auto left = inputs.begin();
@@ -403,7 +409,7 @@ struct UnionFind {
 
 	ll unite(ll x, ll y) {
 		// return: root
-		x = operator()(x); y = operator()(y);
+		x = operator[](x); y = operator[](y);
 		if (x != y) {
 			if (data[y] < data[x]) swap(x, y);
 			data[x] += data[y]; data[y] = x;
@@ -416,25 +422,30 @@ struct UnionFind {
 			return x;
 		}
 	}
-	bool operator()(ll x, ll y) {
+	bool is_same(ll x, ll y) {
 		// check whether x and y are connected
-		return operator()(x) == operator()(y);
+		return operator[](x) == operator[](y);
 	}
-	ll operator()(ll x) {
+	ll operator[](ll x) {
 		// get root
-		return data[x] < 0 ? x : data[x] = operator()(data[x]);
+		return data[x] < 0 ? x : data[x] = operator[](data[x]);
 	}
 	ll size(ll x) {
-		return -data[operator()(x)];
+		return -data[operator[](x)];
 	}
 	ll  query_size(ll x) {
-		return querySize_[operator()(x)];
+		return querySize_[operator[](x)];
 	}
 	const set<ll>& getRoots() {
 		return roots;
 	}
 	ll rank(ll x) {
-		return -data[operator()(x)];
+		return -data[operator[](x)];
+	}
+	void initialize() {
+		for(auto& i : data) {
+			i = -1;
+		}
 	}
 };
 
@@ -442,6 +453,10 @@ struct UnionFind {
 
 
 int main() {
+	cin.tie(0);
+	ios::sync_with_stdio(false);
+
+
 	ll n, m;
 	cin >> n >> m;
 	vll a(m), b(m);
@@ -457,14 +472,47 @@ int main() {
 		cin >> x[i] >> y[i] >> z[i];
 		x[i]--; y[i]--;
 	}
-	
-	vvll tbl(n);
-	rep(i, 0, q) {
-		tbl[x[i]].push_back(i);
-		tbl[y[i]].push_back(i);
+
+	vll ok(q,m);
+	vll ng(q, 0);
+	vll med(q);
+	vvll checkList(m);
+	UnionFind uf(n);
+
+
+	rep(i, 0, 20) {
+		// update med
+		uf.initialize();
+		fill(all(checkList), vll());
+		rep(i, 0, q) {
+			med[i] = (ok[i] + ng[i]) / 2;
+			checkList[med[i]].push_back(i);
+		}
+
+		// check
+		rep(j, 0, m) {
+			uf.unite(a[j], b[j]);
+			
+			for (ll  k: checkList[j]) {
+				ll sz = uf.size(x[k]);
+				if (uf[x[k]] != uf[y[k]]) {
+					sz += uf.size(y[k]);
+				}
+				if (sz >= z[k]) {
+					//ok
+					ok[k] = j;
+				}
+				else {
+					ng[k] = j;
+				}
+			}
+		}
+
 	}
 	
-
+	rep(i, 0, q) {
+		cout << ok[i]+1 << endl;
+	}
 
 	return 0;
 }
