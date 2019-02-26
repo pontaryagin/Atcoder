@@ -61,10 +61,10 @@ using pq_greater = priority_queue<T, vector<T>, greater<T>>;
 template<typename T1, typename T2> void chmin(T1 &a, T2 b) { if (a > b) a = b; }
 template<typename T1, typename T2> void chmax(T1 &a, T2 b) { if (a < b) a = b; }
 
-vll seq(ll i, ll j) { 
-	vll res(j - i); 
-	rep(k, i, j) res[k] = i + k; 
-	return res; 
+vll seq(ll i, ll j) {
+	vll res(j - i);
+	rep(k, i, j) res[k] = i + k;
+	return res;
 }
 
 constexpr ll POW_(ll n, ll m) {
@@ -201,7 +201,7 @@ template<
 	typename Inputs,
 	typename Functor,
 	typename ValType = typename Inputs::value_type>
-pair<typename Inputs::iterator, typename Inputs::iterator> binary_solve(Inputs& inputs, Functor f)
+	pair<typename Inputs::iterator, typename Inputs::iterator> binary_solve(Inputs& inputs, Functor f)
 {
 
 	auto left = inputs.begin();
@@ -267,7 +267,7 @@ vector<pll >prime_factorize(ll n) {
 
 
 ll MOD = 998244353;//1000000007;
-ll INF = 1LL << 60;
+ll INF = 1LL << 50;
 ll n;
 
 template <class T> using reversed_priority_queue = priority_queue<T, vector<T>, greater<T> >;
@@ -404,7 +404,7 @@ struct UnionFind {
 	vll querySize_;
 	set<ll> roots;
 	UnionFind(ll size) : data(size, -1), querySize_(size, 0) {
-		rep(i ,0 ,size) roots.insert(i);
+		rep(i, 0, size) roots.insert(i);
 	}
 
 	ll unite(ll x, ll y) {
@@ -443,7 +443,7 @@ struct UnionFind {
 		return -data[operator[](x)];
 	}
 	void initialize() {
-		for(auto& i : data) {
+		for (auto& i : data) {
 			i = -1;
 		}
 	}
@@ -451,34 +451,52 @@ struct UnionFind {
 
 
 
-
 int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 
-	ll a, b, q;
-	cin >> a >> b>> q;
-	vll s(a), t(b), x(q);
-	rep(i, 0, a) cin >> s[i];
-	rep(i, 0, b) cin >> t[i];
-	rep(i, 0, q) cin >> x[i];
-	vll res;
-	rep(i, 0, q) {
-
-		auto ls = lower_bound(all(s), x[i]);
-		ll lsv =(ls==s.end()? INF :*ls - x[i]);
-		ll rsv = (ls == s.begin() ? -INF : x[i] - *(ls - 1));
-		auto lt = lower_bound(all(t), x[i]);
-		ll ltv = (lt == t.end() ? INF : *lt - x[i]);
-		ll rtv = (lt == t.begin() ? INF : x[i] - *(lt - 1));
-		vll tmp = { max(lsv,ltv),max(rsv,rtv), rtv + 2 * lsv, 2 * rtv + lsv , rsv + 2 * ltv, 2 * rsv + ltv };
-		res.push_back(*min_element(all(tmp)));
-		
-	
+	ll h, w;
+	cin >> h >> w;
+	vector<char> c(h*(w));
+	UnionFind uf(h*w);
+	ll s;
+	ll g;
+	rep(i, 0, h*w) {
+		cin >> c[i];
+		if (c[i] == 's')
+			s = i;
+		if (c[i] == 'g')
+			g = i;
 	}
 
-	rep(i, 0, q)cout << res[i]<<endl;
-	
+	vb visited(h*w, 0);
+	stack<ll> toGo;
+	toGo.push(s);
+	visited[s] = 1;
+	bool ok = false;
+	while (!toGo.empty()) {
+		ll x = toGo.top(); toGo.pop();
+		if (x == g) {
+			ok = true;
+			break;
+		}
+		auto in = [&](ll i) {
+			if (0 <= x + i && x + i < h*w && c[x+i] == '.' && !visited[x+i] ) {
+				toGo.push(x + i);
+				visited[x + i]=1;
+			}
+		};
+		in(1);
+		in(-1);
+		in(w);
+		in(-w);
+
+	}
+
+
+
+	cout << (ok ? "Yes" : "No");
+
 
 	return 0;
 }
