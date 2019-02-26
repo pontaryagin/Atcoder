@@ -481,7 +481,7 @@ int main() {
 			break;
 		}
 		auto in = [&](ll i) {
-			if (0 <= x + i && x + i < h*w && c[x+i] == '.' && !visited[x+i] ) {
+			if (0 <= && x + i < h*w && (c[x + i] == '.' || c[x + i] == 'g') && !visited[x + i]) {
 				toGo.push(x + i);
 				visited[x + i]=1;
 			}
