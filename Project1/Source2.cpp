@@ -455,47 +455,74 @@ int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 
-	ll h, w;
-	cin >> h >> w;
-	vector<char> c(h*(w));
-	UnionFind uf(h*w);
-	ll s;
-	ll g;
+	ll h, w, x;
+	cin >> h >> w>> x;
+
+	vector<char> s;
+	ll start, goal;
+	rep(i, 0, h) {
+		string ss;
+		cin >> ss;
+		s.insert(s.end(), ss.begin(), ss.end());
+		
+
+	}
+	// delete 
+	auto getNeighbor = [&](ll i) {
+		ll H = i / w;
+		ll W = i % w;
+		vll res;
+		if (H > 0) res.push_back(i - w);
+		if (H < h - 1) res.push_back(i + w);
+		if (W > 0)res.push_back(i - 1);
+		if (W < w - 1)res.push_back(i + 1);
+		return res;
+	};
+	queue<pll> del;
+	vb visited= vb(h*w, 0LL);
+
 	rep(i, 0, h*w) {
-		cin >> c[i];
-		if (c[i] == 's')
-			s = i;
-		if (c[i] == 'g')
-			g = i;
-	}
-
-	vb visited(h*w, 0);
-	stack<ll> toGo;
-	toGo.push(s);
-	visited[s] = 1;
-	bool ok = false;
-	while (!toGo.empty()) {
-		ll x = toGo.top(); toGo.pop();
-		if (x == g) {
-			ok = true;
-			break;
+		if (s[i] == 'S') {
+			start = i;
+			visited[i] = 1;
 		}
-		auto in = [&](ll i) {
-			if (0 <= && x + i < h*w && (c[x + i] == '.' || c[x + i] == 'g') && !visited[x + i]) {
-				toGo.push(x + i);
-				visited[x + i]=1;
+		if (s[i] == 'G') {
+			goal = i;
+		}
+		if (s[i] == '@') {
+			del.push({ i,x });
+			visited[i] = 1;
+		}
+	}
+	while (!del.empty()) {
+		pll u = del.back();
+		del.pop();
+		for (ll i : getNeighbor(u.first)) {
+			if ((s[i] == '.' || s[i] == 'G' )&& !visited[i] && u.second > 0) {
+				visited[i] = 1;
+				del.push({ i ,u.second-1});
 			}
-		};
-		in(1);
-		in(-1);
-		in(w);
-		in(-w);
-
+		}
+	}
+	
+	// dijkstra
+	vll len(h*w,INF);
+	queue<ll> pq;
+	pq.push(start);
+	len[start] = 0;
+	while (!pq.empty())
+	{
+		ll curr = pq.back(); pq.pop();
+		for (ll i : getNeighbor(curr)) {
+			if ((s[i] == '.' || s[i] == 'G') && !visited[i]) {
+				visited[i] = 1;
+				pq.push(i);
+				len[i] =min( len[curr] + 1,len[i]);
+			}
+		}
 	}
 
-
-
-	cout << (ok ? "Yes" : "No");
+	cout << (len[goal] == INF ? -1 : len[goal]);
 
 
 	return 0;
