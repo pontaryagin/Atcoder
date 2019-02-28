@@ -450,10 +450,11 @@ struct UnionFind {
 };
 
 
-
+int dx[4] = { 0, 1, 0, -1 }, dy[4] = { -1, 0, 1, 0 };
 int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
+
 
 	ll h, w, x;
 	cin >> h >> w>> x;
@@ -495,7 +496,7 @@ int main() {
 		}
 	}
 	while (!del.empty()) {
-		pll u = del.back();
+		pll u = del.front();
 		del.pop();
 		for (ll i : getNeighbor(u.first)) {
 			if ((s[i] == '.' || s[i] == 'G' )&& !visited[i] && u.second > 0) {
@@ -512,7 +513,7 @@ int main() {
 	len[start] = 0;
 	while (!pq.empty())
 	{
-		ll curr = pq.back(); pq.pop();
+		ll curr = pq.front(); pq.pop();
 		for (ll i : getNeighbor(curr)) {
 			if ((s[i] == '.' || s[i] == 'G') && !visited[i]) {
 				visited[i] = 1;

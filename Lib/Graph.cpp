@@ -105,4 +105,20 @@ vll get_topologically_sorted_nodes(const vvll& graph)
 	return sortedNodes;
 }
 
+// ================= Rectangle Area Problem =====================
+auto getNeighbor = [&](ll i, ll w, ll h) {
+	ll H = i / w;
+	ll W = i % w;
+	vll res;
+	if (H > 0) res.push_back(i - w);
+	if (H < h - 1) res.push_back(i + w);
+	if (W > 0)res.push_back(i - 1);
+	if (W < w - 1)res.push_back(i + 1);
+	return res;
+};
 
+auto getHW = [&](ll i, ll w) {
+	ll H = i / w;
+	ll W = i % w;
+	return pll{ H,W };
+};
