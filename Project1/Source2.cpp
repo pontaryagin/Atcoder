@@ -58,8 +58,12 @@ using pq_greater = priority_queue<T, vector<T>, greater<T>>;
 #define vec(a) vector<a>
 #define perm(c) sort(all(c));for(bool c##perm=1;c##perm;c##perm=next_permutation(all(c)))
 
-template<typename T1, typename T2> void chmin(T1 &a, T2 b) { if (a > b) a = b; }
-template<typename T1, typename T2> void chmax(T1 &a, T2 b) { if (a < b) a = b; }
+template<typename T> void chmin(T &a, T b) {
+	if (a > b) a = b;
+}
+template<typename T> void chmax(T &a, T b) {
+	if (a < b) a = b;
+}
 
 vll seq(ll i, ll j) {
 	vll res(j - i);
@@ -98,7 +102,7 @@ constexpr ll POW<0>(ll x, ll n) {
 	return (POW_(POW(x, n / 2), 2))*x;
 }
 
-template<ll bit>
+template<ll bit = 2LL>
 ll at_bit(ll n, ll i) {
 	return n / POW(bit, i) % bit;
 }
@@ -455,77 +459,37 @@ int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 
-
-	ll h, w, x;
-	cin >> h >> w>> x;
-
-	vector<char> s;
-	ll start, goal;
-	rep(i, 0, h) {
-		string ss;
-		cin >> ss;
-		s.insert(s.end(), ss.begin(), ss.end());
-		
-
+	ll n, m;
+	cin >> n >> m;
+	vll x(m), y(m);
+	set<pll> rel;
+	rep(i, 0, m) {
+		cin >> x[i] >> y[i];
+		rel.insert({ x[i] - 1,y[i] - 1 });
+		rel.insert({ y[i] - 1,x[i] - 1 });
 	}
-	// delete 
-	auto getNeighbor = [&](ll i) {
-		ll H = i / w;
-		ll W = i % w;
-		vll res;
-		if (H > 0) res.push_back(i - w);
-		if (H < h - 1) res.push_back(i + w);
-		if (W > 0)res.push_back(i - 1);
-		if (W < w - 1)res.push_back(i + 1);
-		return res;
-	};
-	queue<pll> del;
-	vb visited= vb(h*w, 0LL);
 
-	rep(i, 0, h*w) {
-		if (s[i] == 'S') {
-			start = i;
-			visited[i] = 1;
+	ll res = -1;
+	rep(subset, 0, (1 << n)) {
+		vll Giin;
+		rep(i, 0, n) {
+			if (subset &(1 << i))
+				Giin.push_back(i);
 		}
-		if (s[i] == 'G') {
-			goal = i;
-		}
-		if (s[i] == '@') {
-			del.push({ i,x });
-			visited[i] = 1;
-		}
-	}
-	while (!del.empty()) {
-		pll u = del.front();
-		del.pop();
-		for (ll i : getNeighbor(u.first)) {
-			if ((s[i] == '.' || s[i] == 'G' )&& !visited[i] && u.second > 0) {
-				visited[i] = 1;
-				del.push({ i ,u.second-1});
+		//check
+		bool ok = true;
+		for (ll j : Giin) {
+			for (ll k : Giin) {
+				if (j < k &&  rel.find({ j,k }) == rel.end()) {
+					ok = false;
+				}
 			}
 		}
+		if (ok)
+			chmax(res, (ll)Giin.size());
+
 	}
-	
-	// dijkstra
-	vll len(h*w,INF);
-	queue<ll> pq;
-	pq.push(start);
-	len[start] = 0;
-	while (!pq.empty())
-	{
-		ll curr = pq.front(); pq.pop();
-		for (ll i : getNeighbor(curr)) {
-			if ((s[i] == '.' || s[i] == 'G') && !visited[i]) {
-				visited[i] = 1;
-				pq.push(i);
-				len[i] =min( len[curr] + 1,len[i]);
-			}
-		}
-	}
-
-	cout << (len[goal] == INF ? -1 : len[goal]);
-
-
+	cout << res << endl;
 	return 0;
 }
 

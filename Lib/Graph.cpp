@@ -80,6 +80,7 @@ vll get_topologically_sorted_nodes(const vvll& graph)
 		}
 	}
 
+
 	rep(i, 0, nodeSize) {
 		if (inDegree[i] == 0) {
 			roots.push_back(i);
