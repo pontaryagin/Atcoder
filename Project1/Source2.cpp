@@ -79,7 +79,7 @@ constexpr ll POW_(ll n, ll m) {
 	return res;
 }
 
-template<int mod = 0>
+template<ll mod = 0>
 constexpr ll POW(ll x, ll n) {
 	if (x == 2)
 	{
@@ -88,7 +88,7 @@ constexpr ll POW(ll x, ll n) {
 	if (n == 0)return 1;
 	if (n == 1)return x % mod;
 	if (n % 2 == 0)return POW_(POW<mod>(x, n / 2), 2LL) % mod;
-	return ((POW_(POW<mod>(x, n / 2, mod), 2LL) % mod)*(x%mod)) % mod;
+	return ((POW_(POW<mod>(x, n / 2), 2LL) % mod)*(x%mod)) % mod;
 }
 template<>
 constexpr ll POW<0>(ll x, ll n) {
@@ -101,6 +101,33 @@ constexpr ll POW<0>(ll x, ll n) {
 	if (n % 2 == 0) return POW_(POW(x, n / 2), 2);
 	return (POW_(POW(x, n / 2), 2))*x;
 }
+
+template<ll mod>
+constexpr ll Plus(ll x, ll y) {
+	return (x + y) % mod;
+}
+
+template<ll mod>
+constexpr ll Minus(ll x, ll y) {
+	return (x + mod - y) % mod;
+}
+
+template<ll mod>
+constexpr ll Prod(ll x, ll y) {
+	return (x * y) % mod;
+}
+
+template<ll mod>
+constexpr ll Inv(ll x) {
+	assert(x%mod != 0);
+	return POW<mod>(x, mod - 1);
+}
+
+template<ll mod>
+constexpr ll Dev(ll x, ll y) {
+	return x * Inv<mod>(y);
+}
+
 
 template<ll bit = 2LL>
 ll at_bit(ll n, ll i) {
@@ -270,7 +297,7 @@ vector<pll >prime_factorize(ll n) {
 }
 
 
-ll MOD = 998244353;//1000000007;
+constexpr ll MOD = 1000000007;
 ll INF = 1LL << 50;
 ll n;
 
@@ -453,43 +480,42 @@ struct UnionFind {
 	}
 };
 
+ll POW_3(ll x, ll y) {
+	return y == 0 ? 1 : (POW_3(x, y - 1) * x) % MOD;
+}
 
 int dx[4] = { 0, 1, 0, -1 }, dy[4] = { -1, 0, 1, 0 };
 int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 
-	ll n, m;
-	cin >> n >> m;
-	vll x(m), y(m);
-	set<pll> rel;
-	rep(i, 0, m) {
-		cin >> x[i] >> y[i];
-		rel.insert({ x[i] - 1,y[i] - 1 });
-		rel.insert({ y[i] - 1,x[i] - 1 });
-	}
+	string S;
+	cin >> S;
 
-	ll res = -1;
-	rep(subset, 0, (1 << n)) {
-		vll Giin;
-		rep(i, 0, n) {
-			if (subset &(1 << i))
-				Giin.push_back(i);
+
+	ll N = S.size();
+	vvll dp(N+1, vll(4));
+	dp[0][0] = 1;
+	rep(i, 0, N) {
+		if (S[i] == '?') {
+			dp[i + 1][0] = (dp[i][0] * 3) % MOD;
+			dp[i + 1][1] = (dp[i][0]);
 		}
-		//check
-		bool ok = true;
-		for (ll j : Giin) {
-			for (ll k : Giin) {
-				if (j < k &&  rel.find({ j,k }) == rel.end()) {
-					ok = false;
-				}
-			}
+		else {
+			dp[i + 1][0];
+			dp[i + 1][1] = (dp[i][0]);
 		}
-		if (ok)
-			chmax(res, (ll)Giin.size());
+
+		if (S[i] == 'A') {
+			dp[i][0] = dp[i][0];
+		}
+		else {
+
+		}
 
 	}
-	cout << res << endl;
+
+
 	return 0;
 }
 
