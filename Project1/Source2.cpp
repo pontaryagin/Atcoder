@@ -120,7 +120,7 @@ constexpr ll Prod(ll x, ll y) {
 template<ll mod>
 constexpr ll Inv(ll x) {
 	assert(x%mod != 0);
-	return POW<mod>(x, mod - 1);
+	return POW<mod>(x, mod - 2);
 }
 
 template<ll mod>
@@ -262,7 +262,33 @@ template<
 	return { left,right };
 }
 
+template<
+	typename Functor>
+	pair<ll, ll > binary_solve(ll left, ll right, Functor f)
+{
+	auto left_val = f(left);
+	auto right_val = f(right);
 
+	// check 
+	assert(left < right);
+	if (right_val == left_val)
+		throw invalid_argument("right_val == left_val");
+
+	while (left + 1 != right)
+	{
+		auto mid = left + (right - left) / 2;
+		if (f(mid) == left_val)
+		{
+			left = mid;
+		}
+		else
+		{
+			right = mid;
+		}
+	}
+
+	return { left,right };
+}
 
 
 template<int I>
@@ -298,10 +324,7 @@ vector<pll >prime_factorize(ll n) {
 
 
 constexpr ll MOD = 1000000007;
-ll INF = 1LL << 50;
-ll n;
-
-template <class T> using reversed_priority_queue = priority_queue<T, vector<T>, greater<T> >;
+constexpr ll INF = 1LL << 62;
 
 template <typename Monoid>
 struct segment_tree
@@ -480,42 +503,40 @@ struct UnionFind {
 	}
 };
 
-ll POW_3(ll x, ll y) {
-	return y == 0 ? 1 : (POW_3(x, y - 1) * x) % MOD;
-}
-
 int dx[4] = { 0, 1, 0, -1 }, dy[4] = { -1, 0, 1, 0 };
 int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 
-	string S;
-	cin >> S;
+	ll xx = -1;
+	ll yy = 3;
+	cout << xx / yy;
 
-
-	ll N = S.size();
-	vvll dp(N+1, vll(4));
-	dp[0][0] = 1;
-	rep(i, 0, N) {
-		if (S[i] == '?') {
-			dp[i + 1][0] = (dp[i][0] * 3) % MOD;
-			dp[i + 1][1] = (dp[i][0]);
-		}
-		else {
-			dp[i + 1][0];
-			dp[i + 1][1] = (dp[i][0]);
-		}
-
-		if (S[i] == 'A') {
-			dp[i][0] = dp[i][0];
-		}
-		else {
-
-		}
+	ll n;
+	cin >> n;
+	vll h(n), s(n);
+	rep(i, 0, n) {
+		cin >> h[i] >> s[i];
 
 	}
 
+	auto calc = [&](ll x) {
+		vll cnt(n);
+		rep(i, 0, n) {
+			if (x < h[i]) return false;
+			cnt[i] = (x - h[i]) / s[i];
+		}
+		sort(all(cnt));
+		rep(i, 0, n) {
+			if (cnt[i] < i)
+				return false;
+		}
+		return true;
 
+	};
+	auto res = binary_solve(-1, INF, calc).second;
+	cout << res <<endl;
+	
 	return 0;
 }
 
