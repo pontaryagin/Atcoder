@@ -1,5 +1,5 @@
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include <vector>
 #include <stack>
 #include <cstdio>
@@ -262,9 +262,17 @@ template<
 	return { left,right };
 }
 
-template<
-	typename Functor>
-	pair<ll, ll > binary_solve(ll left, ll right, Functor f)
+template<typename T>
+bool check_binary_solve(T left, T right) {
+	return left != right;
+}
+template<>
+bool check_binary_solve<double>(double left, double right) {
+	return abs(left - right) > 0.0000000000001;
+}
+
+template<typename T, typename Functor>
+	pair<T, T > binary_solve(T left, T right, Functor f)
 {
 	auto left_val = f(left);
 	auto right_val = f(right);
@@ -274,7 +282,7 @@ template<
 	if (right_val == left_val)
 		throw invalid_argument("right_val == left_val");
 
-	while (left + 1 != right)
+	while (check_binary_solve<T>(left, right))
 	{
 		auto mid = left + (right - left) / 2;
 		if (f(mid) == left_val)
@@ -502,41 +510,38 @@ struct UnionFind {
 		}
 	}
 };
-
+#include <iomanip>
 int dx[4] = { 0, 1, 0, -1 }, dy[4] = { -1, 0, 1, 0 };
 int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 
-	ll xx = -1;
-	ll yy = 3;
-	cout << xx / yy;
+	ll N, W;
+	cin >> N >> W;
 
-	ll n;
-	cin >> n;
-	vll h(n), s(n);
-	rep(i, 0, n) {
-		cin >> h[i] >> s[i];
+	vll v(N), w(N);
+	rep(i, 0, N) {
+		cin >> v[i] >> w[i];
+	}
+
+	if (N <= 30) {
+		// first case
+		// ”¼•ª‘S—ñ‹“
+		map<ll, ll> tbl1, tbl2;
+
+		rep(i, 0,POW(2, N / 2))rep(j,0,N/2) {
+			
+			ll tmpv=0, tmpw=0;
+			if (at_bit(i, j)) {
+
+			}
+		}
 
 	}
 
-	auto calc = [&](ll x) {
-		vll cnt(n);
-		rep(i, 0, n) {
-			if (x < h[i]) return false;
-			cnt[i] = (x - h[i]) / s[i];
-		}
-		sort(all(cnt));
-		rep(i, 0, n) {
-			if (cnt[i] < i)
-				return false;
-		}
-		return true;
 
-	};
-	auto res = binary_solve(-1, INF, calc).second;
-	cout << res <<endl;
-	
+
+
 	return 0;
 }
 
