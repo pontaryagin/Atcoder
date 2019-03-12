@@ -20,6 +20,7 @@
 #include <cassert>
 #include <typeinfo>
 #include <time.h>
+#include <iomanip>
 //#include "boost/variant.hpp"
 
 // #include "bits/stdc++.h"
@@ -461,6 +462,63 @@ vll get_topologically_sorted_nodes(const vvll& graph)
 	return sortedNodes;
 }
 
+struct Edge
+{
+	ll from;
+	ll to;
+	ll cost;
+};
+
+using Graph = vector<vector<Edge>>;
+
+pair<vll, vll> dijkstra(const Graph& graph, size_t start) {
+	// graph: weighted directed graph of adjacent representation
+	// start: index of start point
+	// return1: minimum path length from start
+	// return2: concrete shortest path info
+	ll node_size = graph.size();
+	vll dist(node_size, 1LL<< 60);
+	vll from_list(node_size,-1);
+	dist[start] = 0;
+	pq_greater<pair<ll,pll>> pq;
+	pq.push({ 0, {start, start} });
+	while (!pq.empty()) {
+		auto node = pq.top(); pq.pop();
+		// if not shortest path fixed, fix
+		ll from = node.second.first;
+		ll to = node.second.second;
+		if (from_list[to] != -1)
+			continue;
+		from_list[to] = from;
+		
+		for(Edge edge : graph[to]) {
+			ll adj = edge.to;
+			ll cost = dist[to] + edge.cost;
+			if (dist[adj] > cost) {
+				dist[adj] = min(dist[adj], cost);
+				pq.push({ cost ,{to, adj} });
+			}
+		}
+	}
+	return { dist, from_list };
+
+}
+
+vll shortest_path(const vll& from_list, ll start,  ll goal) {
+	vll path;
+	path.emplace_back(goal);
+	while(true) {
+		ll from = from_list[goal];
+		path.emplace_back(from);
+		if (from == start) {
+			break;
+		}
+		goal = from;
+	}
+	reverse(all(path));
+	return path;
+}
+
 struct UnionFind {
 	vector<ll> data;
 	vll querySize_;
@@ -510,36 +568,34 @@ struct UnionFind {
 		}
 	}
 };
-#include <iomanip>
-int dx[4] = { 0, 1, 0, -1 }, dy[4] = { -1, 0, 1, 0 };
+
+
 int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 
-	ll N, W;
-	cin >> N >> W;
-
-	vll v(N), w(N);
-	rep(i, 0, N) {
-		cin >> v[i] >> w[i];
+	ll h, w;
+	cin >> h >> w;
+	Graph c(10, vector<Edge>(10));
+	rep(i, 0, 10)rep(j, 0, 10) {
+		ll tmp;
+		cin >> tmp;
+		c[j][i] = Edge{ j ,i,tmp };
+	}
+	vll A(h*w);
+	rep(i, 0, h*w) {
+		cin >> A[i];
 	}
 
-	if (N <= 30) {
-		// first case
-		// ”¼•ª‘S—ñ‹“
-		map<ll, ll> tbl1, tbl2;
-
-		rep(i, 0,POW(2, N / 2))rep(j,0,N/2) {
-			
-			ll tmpv=0, tmpw=0;
-			if (at_bit(i, j)) {
-
-			}
-		}
-
+	auto res = dijkstra(c, 1);
+	
+	ll cost = 0;
+	rep(i, 0, h*w) {
+		if(A[i]!=-1)
+			cost += res.first[A[i]];
 	}
 
-
+	cout << cost;
 
 
 	return 0;
