@@ -573,31 +573,9 @@ struct UnionFind {
 int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
-
-	ll h, w;
-	cin >> h >> w;
-	Graph c(10, vector<Edge>(10));
-	rep(i, 0, 10)rep(j, 0, 10) {
-		ll tmp;
-		cin >> tmp;
-		c[j][i] = Edge{ j ,i,tmp };
-	}
-	vll A(h*w);
-	rep(i, 0, h*w) {
-		cin >> A[i];
-	}
-
-	auto res = dijkstra(c, 1);
 	
-	ll cost = 0;
-	rep(i, 0, h*w) {
-		if(A[i]!=-1)
-			cost += res.first[A[i]];
-	}
 
-	cout << cost;
 
 
 	return 0;
 }
-
