@@ -39,10 +39,19 @@ typedef pair<double, double> pd;
 typedef long long ll;
 typedef unsigned long long ull;
 typedef pair<ll, ll> pll;
-typedef tuple<ll, ll, ll> tll;
-typedef tuple<ll, ll, ll, ll> tll4;
-typedef tuple<ll, ll, ll, ll, ll> tll5;
-typedef tuple<ll, ll, ll, ll, ll, ll> tll6;
+
+template<int n>
+struct tll_impl {
+	using type = decltype(tuple_cat(tuple<ll>(), declval<typename tll_impl<n - 1>::type>()));
+};
+template<>
+struct tll_impl<1> {
+	using type = tuple<ll>;
+};
+template<int n> 
+using tll = typename tll_impl<n>::type;
+// check 
+static_assert(is_same<tll<4>, tuple< ll, ll, ll,ll>>::value, "");
 
 typedef vector<ll> vll;
 typedef vector<vll> vvll;
@@ -574,7 +583,69 @@ int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 	
+	ll n;
+	cin >> n;
+	
+	vector<tll<3>> all;
+	rep(j, 0, POW(4, 3)) {
+		ll fir = j / 16 % 4;
+		ll sec = j / 4 % 4;
+		ll thir = j % 4;
 
+		all.push_back(tll<3>{fir,sec,thir});
+	}
+	vs ACGT = { "A","C","G","T" };
+	vector<map<tll<3>,ll>> data(n+1);
+	ll fir, sec, thir;
+	for(auto j: all) {
+		tie(fir, sec, thir) = j;
+		string str = ACGT[fir] + ACGT[sec] + ACGT[thir];
+		data[3][j] = (str == "AGC" || str == "GAC" || str == "ACG")?0:1;
+	}
+
+	rep(i, 4, n + 1)for (auto j : all) {
+		tie(fir, sec, thir) = j;
+
+		ll val = data[i-1][j];
+		vll ng;
+
+		if (sec == 2 && thir == 0) {
+			// *GA
+			ng.push_back(1);
+		}
+		if (fir == 0  && thir == 2) {
+			// A*G
+			ng.push_back(1);
+		}
+		if (fir == 0 && sec == 2) {
+			// AG*
+			ng.push_back(1);
+		}
+		if (sec == 0 && thir == 2 ) {
+			//*AG
+			ng.push_back(1);
+		}
+		if (sec == 0 && thir == 1) {
+			//*AC
+			ng.push_back(2);
+		}
+		rep(k, 0, 4) {
+			if (find(all(ng),k) == ng.end())
+			{
+				data[i][tll<3>{sec, thir, k}] += val;
+				data[i][tll<3>{sec, thir, k}] %= MOD;
+			}
+		}
+	}
+
+
+	ll res = 0;
+	for (auto x : data[n ]) {
+		res += x.second;
+		res %= MOD;
+	}
+
+	cout << res;
 
 
 	return 0;
