@@ -574,8 +574,39 @@ int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 	
+	cout<< bitset<100>(36)<<endl;
+	cout<< bitset<100>(-36);
 
-
-
+	ll n, m;
+	cin >> n >> m;
+	vll a(m), b(m);
+	vll cnt(n);
+	rep(i, 0, m) {
+		cin >> a[i] >> b[i];
+		a[i]--; b[i]--;
+		cnt[a[i]]++;
+		cnt[b[i]]++;
+	}
+	ll M=0;
+	rep(i, 0, n) {
+		if (cnt[i] % 2 == 1) {
+			cout << "No";
+			return 0;
+		}
+		chmax(M, cnt[i]);
+	}
+	if (M >= 6) {
+		cout << "Yes";
+		return 0;
+	}
+	else if (M == 4 && n+2 < m) {
+		cout << "Yes";
+		return 0;
+	}
+	else {
+		cout << "No";
+		return 0;
+	}
 	return 0;
 }
+
