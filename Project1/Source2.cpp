@@ -39,10 +39,48 @@ typedef pair<double, double> pd;
 typedef long long ll;
 typedef unsigned long long ull;
 typedef pair<ll, ll> pll;
-typedef tuple<ll, ll, ll> tll;
-typedef tuple<ll, ll, ll, ll> tll4;
-typedef tuple<ll, ll, ll, ll, ll> tll5;
-typedef tuple<ll, ll, ll, ll, ll, ll> tll6;
+
+template<int n>
+struct tll_impl {
+	using type = decltype(tuple_cat(tuple<ll>(), declval<typename tll_impl<n - 1>::type>()));
+};
+template<>
+struct tll_impl<1> {
+	using type = tuple<ll>;
+};
+template<int n> 
+using tll = typename tll_impl<n>::type;
+// check 
+static_assert(is_same<tll<4>, tuple< ll, ll, ll,ll>>::value, "");
+
+
+template<typename T>
+vector<T> make_v(size_t a) { return vector<T>(a); }
+
+template<typename T, typename... Ts>
+auto make_v(size_t a, Ts... ts) {
+	return vector<decltype(make_v<T>(ts...))>(a, make_v<T>(ts...));
+}
+// ex:  auto dp =  make_v<ll>(4,5) => vector<vector<ll>> dp(4,vector<ll>(5));
+
+// check if T is vector
+template < typename T >
+struct is_vector : std::false_type {};
+
+template < typename T >
+struct is_vector<vector<T>> : std::true_type {};
+
+template<typename T, typename V>
+typename enable_if<!is_vector<T>::value>::type
+fill_v(T& t, const V& v) { t = v; }
+
+template<typename T, typename V>
+typename enable_if<is_vector<T>::value>::type
+fill_v(T& t, const V& v) {
+	for (auto &x : t)
+		fill_v(x, v);
+}
+// ex:  fill_v(dp, INF);
 
 typedef vector<ll> vll;
 typedef vector<vll> vvll;
@@ -573,40 +611,16 @@ struct UnionFind {
 int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
-	
-	cout<< bitset<100>(36)<<endl;
-	cout<< bitset<100>(-36);
 
-	ll n, m;
-	cin >> n >> m;
-	vll a(m), b(m);
-	vll cnt(n);
-	rep(i, 0, m) {
-		cin >> a[i] >> b[i];
-		a[i]--; b[i]--;
-		cnt[a[i]]++;
-		cnt[b[i]]++;
-	}
-	ll M=0;
-	rep(i, 0, n) {
-		if (cnt[i] % 2 == 1) {
-			cout << "No";
-			return 0;
-		}
-		chmax(M, cnt[i]);
-	}
-	if (M >= 6) {
-		cout << "Yes";
-		return 0;
-	}
-	else if (M == 4 && n+2 < m) {
-		cout << "Yes";
-		return 0;
-	}
-	else {
-		cout << "No";
-		return 0;
-	}
+	auto dp = make_v<int>(4, 4, 4);
+	fill_v(dp, 0);
+
+	auto vt = make_v<tuple<int, double> >(3, 3);
+	fill_v(vt, tuple<int,double>{ 2, 0.5 });
+	cout << get<0>(vt[0][0]) << endl;
+	cout << get<1>(vt[2][2]) << endl;
+
+
+
 	return 0;
 }
-
