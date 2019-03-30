@@ -53,6 +53,35 @@ using tll = typename tll_impl<n>::type;
 // check 
 static_assert(is_same<tll<4>, tuple< ll, ll, ll,ll>>::value, "");
 
+
+template<typename T>
+vector<T> make_v(size_t a) { return vector<T>(a); }
+
+template<typename T, typename... Ts>
+auto make_v(size_t a, Ts... ts) {
+	return vector<decltype(make_v<T>(ts...))>(a, make_v<T>(ts...));
+}
+// ex:  auto dp =  make_v<ll>(4,5) => vector<vector<ll>> dp(4,vector<ll>(5));
+
+// check if T is vector
+template < typename T >
+struct is_vector : std::false_type {};
+
+template < typename T >
+struct is_vector<vector<T>> : std::true_type {};
+
+template<typename T, typename V>
+typename enable_if<!is_vector<T>::value>::type
+fill_v(T& t, const V& v) { t = v; }
+
+template<typename T, typename V>
+typename enable_if<is_vector<T>::value>::type
+fill_v(T& t, const V& v) {
+	for (auto &x : t)
+		fill_v(x, v);
+}
+// ex:  fill_v(dp, INF);
+
 typedef vector<ll> vll;
 typedef vector<vll> vvll;
 typedef vector<pll> vpll;
@@ -582,70 +611,15 @@ struct UnionFind {
 int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
-	
-	ll n;
-	cin >> n;
-	
-	vector<tll<3>> all;
-	rep(j, 0, POW(4, 3)) {
-		ll fir = j / 16 % 4;
-		ll sec = j / 4 % 4;
-		ll thir = j % 4;
 
-		all.push_back(tll<3>{fir,sec,thir});
-	}
-	vs ACGT = { "A","C","G","T" };
-	vector<map<tll<3>,ll>> data(n+1);
-	ll fir, sec, thir;
-	for(auto j: all) {
-		tie(fir, sec, thir) = j;
-		string str = ACGT[fir] + ACGT[sec] + ACGT[thir];
-		data[3][j] = (str == "AGC" || str == "GAC" || str == "ACG")?0:1;
-	}
+	auto dp = make_v<int>(4, 4, 4);
+	fill_v(dp, 0);
 
-	rep(i, 4, n + 1)for (auto j : all) {
-		tie(fir, sec, thir) = j;
+	auto vt = make_v<tuple<int, double> >(3, 3);
+	fill_v(vt, tuple<int,double>{ 2, 0.5 });
+	cout << get<0>(vt[0][0]) << endl;
+	cout << get<1>(vt[2][2]) << endl;
 
-		ll val = data[i-1][j];
-		vll ng;
-
-		if (sec == 2 && thir == 0) {
-			// *GA
-			ng.push_back(1);
-		}
-		if (fir == 0  && thir == 2) {
-			// A*G
-			ng.push_back(1);
-		}
-		if (fir == 0 && sec == 2) {
-			// AG*
-			ng.push_back(1);
-		}
-		if (sec == 0 && thir == 2 ) {
-			//*AG
-			ng.push_back(1);
-		}
-		if (sec == 0 && thir == 1) {
-			//*AC
-			ng.push_back(2);
-		}
-		rep(k, 0, 4) {
-			if (find(all(ng),k) == ng.end())
-			{
-				data[i][tll<3>{sec, thir, k}] += val;
-				data[i][tll<3>{sec, thir, k}] %= MOD;
-			}
-		}
-	}
-
-
-	ll res = 0;
-	for (auto x : data[n ]) {
-		res += x.second;
-		res %= MOD;
-	}
-
-	cout << res;
 
 
 	return 0;
