@@ -1,49 +1,15 @@
-
-#include <iostream>
-#include <math.h>
-#include <vector>
-#include <stack>
-#include <cstdio>
-#include <string>
-#include <bitset>
-#include <list>
-#include <set>
-#include <algorithm>
-#include <numeric>
-#include <unordered_map>
-#include <functional>
-#include <queue>
-// #include "bits/stdc++.h"
-
-using namespace std;
-//debug
-
-#define rep(i, N) for (int i = 0; i < N; i++)
-
-#define pb push_back
-
-typedef long long ll;
-typedef pair<ll, ll> pll;
-typedef vector<ll> vll;
-typedef vector<vll> vvll;
-typedef vector<string> vs;
-
-
-
-#define all(a)  (a).begin(),(a).end()
-#define rall(a) (a).rbegin(), (a).rend()
-#define vec(a) vector<a>
-
+#pragma once
+#include "MyHeader.h"
 
 int _Dijk() {
 	ll n;
 	cin >> n;
 	vector<vector<pll > > adj(n);//adj:—×ÚƒŠƒXƒgBadj[NodeFrom][j]=(wight,NodeTo)
 	ll u, k, v, c;
-	rep(i, n) {
+	rep(i,0, n) {
 		cin >> u >> k;
 		adj[i].resize(k);
-		rep(j, k) {
+		rep(j,0, k) {
 			cin >> v >> c;
 			adj[i][j] = make_pair(c, v);
 		}
@@ -72,7 +38,7 @@ int _Dijk() {
 		}
 	}
 
-	rep(i, n) {
+	rep(i,0, n) {
 		cout << i << " " << res[i] << endl;
 	}
 	return 0;

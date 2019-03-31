@@ -1,4 +1,6 @@
 #pragma once
+#include "MyHeader.h"
+
 
 template<class T>
 T atbit(T n, T i) {

@@ -1,3 +1,6 @@
+#pragma once
+#include "MyHeader.h"
+
 template<
 	typename Inputs,
 	typename Functor,

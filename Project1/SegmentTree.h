@@ -1,27 +1,6 @@
-#include <iostream>
-#include <math.h>
-#include <vector>
-#include <stack>
-#include <cstdio>
-#include <string>
-#include <bitset>
-#include <list>
-#include <set>
-#include <algorithm>
-#include <numeric>
-#include <unordered_map>
-#include <functional>
-#include <queue>
-#include <regex>
-#include <cassert>
-#include <map>
-#include <type_traits>
-#include <array>
-#include <cassert>
+#pragma once
+#include "MyHeader.h"
 
-using namespace std;
-
-typedef pair<double, double> pd;
 
 template<typename T, typename S = nullptr_t>
 struct has_unit
@@ -45,8 +24,6 @@ struct has_append<T, typename conditional<false, decltype(T::append(T::underlyin
 	:public true_type
 {
 };
-
-
 
 
 template <typename Monoid>
