@@ -78,6 +78,97 @@ vector<pll >prime_factorize(ll n) {
 	return res;
 }
 
+template <std::uint_fast64_t Modulus = 1000000007> class modint {
+	using u64 = std::uint_fast64_t;
+
+public:
+	u64 a;
+
+	constexpr modint(const u64 x = 0) noexcept : a(x % Modulus) {}
+	//constexpr modint(const modint& rhs) noexcept {
+	//	this->a = rhs.value();
+	//}
+	//constexpr modint &operator=(const modint &rhs) noexcept {
+	//	this->a = rhs.value();
+	//	return *this;
+	//}
+	constexpr u64 value() const noexcept { return a; }
+	constexpr modint operator+(const modint rhs) const noexcept {
+		return modint(*this) += rhs;
+	}
+	constexpr modint operator-(const modint rhs) const noexcept {
+		return modint(*this) -= rhs;
+	}
+	constexpr modint operator*(const modint rhs) const noexcept {
+		return modint(*this) *= rhs;
+	}
+	constexpr modint operator/(const modint rhs) const noexcept {
+		return modint(*this) /= rhs;
+	}
+	modint &operator+=(const modint rhs) noexcept {
+		a += rhs.a;
+		if (a >= Modulus) {
+			a -= Modulus;
+		}
+		return *this;
+	}
+	modint &operator-=(const modint rhs) noexcept {
+		if (a < rhs.a) {
+			a += Modulus;
+		}
+		a -= rhs.a;
+		return *this;
+	}
+	modint &operator*=(const modint rhs) noexcept {
+		a = a * rhs.a % Modulus;
+		return *this;
+	}
+	modint &operator/=(modint rhs) noexcept {
+		u64 exp = Modulus - 2;
+		while (exp) {
+			if (exp % 2) {
+				*this *= rhs;
+			}
+			rhs *= rhs;
+			exp /= 2;
+		}
+		return *this;
+	}
+	modint &operator++() noexcept {
+		return *this += modint(1);
+	}
+	modint &operator++(int) noexcept {
+		auto t = *this;
+		*this += modint(1);
+		return t;
+	}
+	modint &operator--() noexcept {
+		return *this -= modint(1);
+	}
+	modint &operator--(int) noexcept {
+		auto t = *this;
+		*this -= modint(1);
+		return t;
+	}
+
+};
+template<uint_fast64_t Modulus>
+ostream& operator <<(ostream &o, const modint<Modulus> &t) {
+	o << t.value();
+	return o;
+}
+template<uint_fast64_t Modulus>
+istream& operator >>(istream &in, modint<Modulus> &t) {
+	uint_fast64_t x;
+	in >> x;
+	t = modint<Modulus>(x);
+	return in;
+}
+template<uint_fast64_t Modulus>
+modint<Modulus> POW(modint<Modulus> x, ll n) {
+	return modint<Modulus>(POW<Modulus>(x.value(), n));
+}
+
 class Combination {
 	// this calculates combination (nCk).
 	// Constructor runs in O(MAX).
@@ -89,21 +180,31 @@ class Combination {
 	vll inv;
 public:
 	Combination(ll MAX = 210000, ll MOD = 1000000007)
-		:MOD(MOD), MAX(MAX), fac(vll(MAX)), finv(vll(MAX)), inv(vll(MAX)) {
+		:MOD(MOD), MAX(max(MAX, 2LL)), fac(vll(MAX + 1)), finv(vll(MAX + 1)), inv(vll(MAX + 1)) {
 		fac[0] = fac[1] = 1;
 		finv[0] = finv[1] = 1;
 		inv[1] = 1;
-		rep(i, 2, MAX) {
+		pre_process(2LL, MAX + 1);
+	}
+
+	ll get(ll n, ll k) {
+		if (MAX < n)
+			pre_process(MAX + 1, n + 1);
+
+		if (n < k)return 0;
+		if (n < 0 || k < 0)return 0;
+		return fac[n] * (finv[k] * finv[n - k] % MOD) % MOD;
+	}
+private:
+	void pre_process(ll m, ll n) {
+		if (MAX < n) {
+			fac.resize(n); inv.resize(n); finv.resize(n);
+		}
+		rep(i, m, n) {
 			fac[i] = fac[i - 1] * i % MOD;
 			inv[i] = MOD - inv[MOD%i] * (MOD / i) % MOD;
 			finv[i] = finv[i - 1] * inv[i] % MOD;
 		}
-	}
-
-	ll get(ll n, ll k) {
-		if (n < k)return 0;
-		if (n < 0 || k < 0)return 0;
-		return fac[n] * (finv[k] * finv[n - k] % MOD) % MOD;
 	}
 };
 

@@ -607,20 +607,64 @@ struct UnionFind {
 	}
 };
 
+//struct EdgeWithRev { ll to, cap, rev; };
+//using Weight = ll;
+//#define RESIDUE(s,t) (capacity[s][t]-flow[s][t])
+//Weight augment(const Graph &g, const vvll &capacity, vvll &flow,
+//	const vector<int> &level, vector<bool> &finished, int u, int t, Weight cur) {
+//	if (u == t || cur == 0) return cur;
+//	if (finished[u]) return 0;
+//	finished[u] = true;
+//	FOR(e, g[u]) if (level[e->dst] > level[u]) {
+//		Weight f = augment(g, capacity, flow, level, finished,
+//			e->dst, t, min(cur, RESIDUE(u, e->dst)));
+//		if (f > 0) {
+//			flow[u][e->dst] += f; flow[e->dst][u] -= f;
+//			finished[u] = false;
+//			return f;
+//		}
+//	}
+//	return 0;
+//}
+//Weight maximumFlow(const Graph &g, int s, int t) {
+//	int n = g.size();
+//	vvll flow(n, vll(n)), capacity(n, vll(n)); // adj. matrix
+//	rep(u, 0,  n) for(auto e: g[u]) capacity[e.from][e.to] += e.cost;
+//
+//	Weight total = 0;
+//	for (bool cont = true; cont; ) {
+//		cont = false;
+//		vector<int> level(n, -1); level[s] = 0; // make layered network
+//		queue<int> Q; Q.push(s);
+//		for (int d = n; !Q.empty() && level[Q.front()] < d; ) {
+//			int u = Q.front(); Q.pop();
+//			if (u == t) d = level[u];
+//			for(auto &e: g[u]) if (RESIDUE(u, e->dst) > 0 && level[e->dst] == -1)
+//				Q.push(e->dst), level[e->dst] = level[u] + 1;
+//		}
+//		vector<bool> finished(n); // make blocking flows
+//		for (Weight f = 1; f > 0; ) {
+//			f = augment(g, capacity, flow, level, finished, s, t, INF);
+//			if (f == 0) break;
+//			total += f; cont = true;
+//		}
+//	}
+//	return total;
+//}
+
+
 
 int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 
-	auto dp = make_v<int>(4, 4, 4);
-	fill_v(dp, 0);
+	modint<31> x = 30, y;
 
-	auto vt = make_v<tuple<int, double> >(3, 3);
-	fill_v(vt, tuple<int,double>{ 2, 0.5 });
-	cout << get<0>(vt[0][0]) << endl;
-	cout << get<1>(vt[2][2]) << endl;
+	cout << POW(x, 2)<<endl;
 
-
-
+	Combination cb(2);
+	cout << cb.get(6, 2);
 	return 0;
 }
+
+
