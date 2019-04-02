@@ -359,3 +359,59 @@ struct Mint {
 	}
 };
 
+
+
+vll getDivisors(ll n) {
+	vll res;
+	ll i = 1;
+
+	for (; i*i < n; i++) {
+		if (n%i == 0) {
+			res.push_back(i);
+			res.push_back(n / i);
+		}
+	}
+	if (i*i == n)res.push_back(i);
+	sort(res.begin(), res.end());
+	return res;
+}
+
+vll getDivisors(ll n, ll m) {
+	if (n > m) swap(n, m);
+	vll res;
+	ll i = 1;
+
+	for (; i*i < n; i++) {
+		if (n%i == 0) {
+			if (m%i == 0) res.push_back(i);
+			if (m % (n / i) == 0) res.push_back(n / i);
+		}
+	}
+	if (i*i == n) if (m%i == 0) res.push_back(i);
+	sort(res.begin(), res.end());
+	return res;
+}
+
+vector<pll >prime_factorize(ll n) {
+	vector<pll> res;
+	for (ll p = 2; p*p <= n; ++p) {
+		if (n%p != 0)continue;
+		ll num = 0;
+		while (n%p == 0) { ++num; n /= p; }
+		res.push_back({ p,num });
+	}
+	if (n != 1) res.push_back(make_pair(n, 1));
+	return res;
+}
+
+
+
+
+ll gcd(ll a, ll b) {
+	if (a%b == 0) return b;
+	else return gcd(b, a%b);
+}
+
+
+
+

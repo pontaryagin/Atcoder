@@ -11,5 +11,6 @@
     <ClInclude Include="..\Project1\MyHeader.h" />
     <ClInclude Include="..\Project1\Algorithm.h" />
     <ClInclude Include="..\Project1\UnionFind.h" />
+    <ClInclude Include="..\Project1\Bit.h" />
   </ItemGroup>
 </Project>

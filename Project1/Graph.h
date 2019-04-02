@@ -117,3 +117,8 @@ auto getHW = [&](ll i, ll w) {
 	ll W = i % w;
 	return pll{ H,W };
 };
+
+class FordFulkerson {
+	struct Edge_ { ll from, to, cap, rev; };
+	vector<vector<Edge_>> G
+};

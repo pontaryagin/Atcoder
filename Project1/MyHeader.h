@@ -36,6 +36,9 @@ using namespace std;
 #define rrep(i, N, M)  for(ll i=(M)-1, i##_len=(N-1); i>i##_len; --i)
 #define pb push_back
 
+constexpr ll MOD = 1000000007;
+constexpr ll INF = 1LL << 62;
+
 typedef pair<double, double> pd;
 
 typedef long long ll;
@@ -51,9 +54,20 @@ struct tll_impl<1> {
 };
 template<int n>
 using tll = typename tll_impl<n>::type;
-// check 
-static_assert(is_same<tll<4>, tuple< ll, ll, ll, ll>>::value, "");
 
+
+template<int n, typename T>
+struct vec_t_impl {
+	using type = vector<typename vec_t_impl<n-1,T>::type>;
+};
+template<typename T>
+struct vec_t_impl<1,T> {
+	using type = vector<T>;
+};
+template<int n, typename T>
+using vec_t = typename vec_t_impl<n, T>::type;
+// check 
+static_assert(is_same<vec_t<3,ll>, vector<vector<vector<ll>>>>::value, "");
 
 template<typename T>
 vector<T> make_v(size_t a) { return vector<T>(a); }
@@ -95,7 +109,6 @@ using pq_greater = priority_queue<T, vector<T>, greater<T>>;
 
 #define all(a)  (a).begin(),(a).end()
 #define rall(a) (a).rbegin(), (a).rend()
-#define vec(a) vector<a>
 #define perm(c) sort(all(c));for(bool c##perm=1;c##perm;c##perm=next_permutation(all(c)))
 
 template<typename T> void chmin(T &a, T b) {
@@ -109,4 +122,55 @@ vll seq(ll i, ll j) {
 	vll res(j - i);
 	rep(k, i, j) res[k] = i + k;
 	return res;
+}
+
+constexpr ll POW_(ll n, ll m) {
+	ll res = 1;
+	rep(i, 0, m) {
+		res *= n;
+	}
+	return res;
+}
+
+template<ll mod = 0>
+constexpr ll POW(ll x, ll n) {
+	if (x == 2)
+	{
+		return (1LL << n) % mod;
+	}
+	if (n == 0)return 1;
+	if (n == 1)return x % mod;
+	if (n % 2 == 0)return POW_(POW<mod>(x, n / 2), 2LL) % mod;
+	return ((POW_(POW<mod>(x, n / 2), 2LL) % mod)*(x%mod)) % mod;
+}
+template<>
+constexpr ll POW<0>(ll x, ll n) {
+	if (x == 2)
+	{
+		return 1LL << n;
+	}
+	if (n == 0)return 1;
+	if (n == 1)return x;
+	if (n % 2 == 0) return POW_(POW(x, n / 2), 2);
+	return (POW_(POW(x, n / 2), 2))*x;
+}
+
+
+
+template<
+	typename Inputs,
+	typename Functor,
+	typename T = typename Inputs::value_type>
+	void sort_by(Inputs& inputs, Functor f) {
+	std::sort(std::begin(inputs), std::end(inputs),
+		[&f](const T& lhs, const T& rhs) { return f(lhs) < f(rhs); });
+}
+
+template<
+	typename Inputs,
+	typename Functor,
+	typename T = typename Inputs::value_type>
+	void stable_sort_by(Inputs& inputs, Functor f) {
+	std::stable_sort(std::begin(inputs), std::end(inputs),
+		[&f](const T& lhs, const T& rhs) { return f(lhs) < f(rhs); });
 }
