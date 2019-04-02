@@ -38,9 +38,5 @@ int _Dijk() {
 		}
 	}
 
-	rep(i,0, n) {
-		cout << i << " " << res[i] << endl;
-	}
-	return 0;
 }
 

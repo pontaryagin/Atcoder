@@ -36,13 +36,15 @@ using namespace std;
 #define rrep(i, N, M)  for(ll i=(M)-1, i##_len=(N-1); i>i##_len; --i)
 #define pb push_back
 
-constexpr ll MOD = 1000000007;
-constexpr ll INF = 1LL << 62;
+
 
 typedef pair<double, double> pd;
 
 typedef long long ll;
 typedef pair<ll, ll> pll;
+
+constexpr ll MOD = 1000000007;
+constexpr ll INF = 1LL << 62;
 
 template<int n>
 struct tll_impl {

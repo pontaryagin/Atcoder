@@ -115,7 +115,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Project1\Dijkstra.h" />
     <ClCompile Include="..\Project1\Graph.h" />
     <ClCompile Include="..\Project1\NumberTheory.h" />
     <ClCompile Include="..\Project1\SegmentTree.h" />

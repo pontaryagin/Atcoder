@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="..\Project1\BitCalc.h" />
-    <ClCompile Include="..\Project1\Dijkstra.h" />
     <ClCompile Include="..\Project1\NumberTheory.h" />
     <ClCompile Include="..\Project1\SegmentTree.h" />
     <ClCompile Include="..\Project1\Graph.h" />
