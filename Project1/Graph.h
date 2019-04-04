@@ -119,8 +119,8 @@ public:
 	}
 	vec_t<2, RevEdge> G;
 	void add_revedge(Edge e) {
-		G[e.from].push_back(RevEdge{ e.from, e.to ,e.cost, G[e.to].size() });
-		G[e.to].push_back(RevEdge{ e.to, e.from, 0 ,G[e.from].size() - 1 });
+		G[e.from].push_back(RevEdge{ e.from, e.to ,e.cost, SZ(G[e.to]) });
+		G[e.to].push_back(RevEdge{ e.to, e.from, 0 , SZ(G[e.from]) - 1 });
 	}
 
 	ll single_flow(ll from, ll to, ll flow) {
@@ -146,7 +146,7 @@ public:
 	ll max_flow(ll from, ll to) {
 		ll flow = 0;
 		while (true) {
-			fill_v(G, 0);
+			fill_v(usedNode, 0);
 			ll f = single_flow(from, to, INF);
 			if (f == 0)
 				return flow;
