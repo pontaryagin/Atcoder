@@ -57,6 +57,9 @@ struct tll_impl<1> {
 template<int n>
 using tll = typename tll_impl<n>::type;
 
+template<class T>
+constexpr ll SZ(T& v) { return static_cast<ll>(v.size()) };
+
 
 template<int n, typename T>
 struct vec_t_impl {
