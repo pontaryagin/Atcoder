@@ -102,19 +102,28 @@ vll get_topologically_sorted_nodes(const vvll& graph)
 
 
 class FordFulkerson {
+private:
+	vb usedNode;
+public:
+	struct RevEdge { ll from, to, cap, rev; };
+
 	FordFulkerson(ll n, Graph graph) 
 		:usedNode(vb(n)), G(vec_t<2,RevEdge>(n))
 	{
-		
+		rep(i, 0, graph.size()) {
+			for (Edge& e : graph[i]) {
+				add_revedge(e);
+			}
+		}
+
 	}
-	struct RevEdge{ ll from,to,cap, rev; };
 	vec_t<2, RevEdge> G;
 	void add_revedge(Edge e) {
 		G[e.from].push_back(RevEdge{ e.from, e.to ,e.cost, G[e.to].size() });
 		G[e.to].push_back(RevEdge{ e.to, e.from, 0 ,G[e.from].size() - 1 });
 	}
 
-	ll get_single_flow(ll from, ll to, ll flow) {
+	ll single_flow(ll from, ll to, ll flow) {
 		// from‚©‚çto‚ÉŒü‚©‚Á‚Äflow‚ğ’´‚¦‚È‚¢”ÍˆÍ‚Åˆê–{‚ÌFlow‚ğ—¬‚·B
 		if (from == to)
 			return flow;
@@ -123,7 +132,7 @@ class FordFulkerson {
 			RevEdge& e = G[from][i];
 			if (usedNode[e.to] || e.cap <= 0)
 				continue;
-			ll flow_from_e = get_single_flow(e.to, to, min(flow, e.cap));
+			ll flow_from_e = single_flow(e.to, to, min(flow, e.cap));
 			if (flow_from_e > 0) {
 				e.cap -= flow_from_e; assert(e.cap >= 0);
 				G[e.to][e.rev].cap += flow_from_e;
@@ -134,20 +143,19 @@ class FordFulkerson {
 		//‚·‚Å‚Éfrom‚©‚çæ‚·‚×‚Ä‚Ì•Ó‚ğ–K‚ê‚Ä‚¢‚½‚ ‚é‚¢‚Í‚·‚×‚Ä‚Ìcap‚ª0‚¾‚Á‚½‚ç—¬‚¹‚È‚¢B
 		return 0;
 	}
-	ll get_max_flow(ll from, ll to) {
+	ll max_flow(ll from, ll to) {
 		ll flow = 0;
 		while (true) {
 			fill_v(G, 0);
-			ll single_flow = get_single_flow(from, to, INF);
+			ll f = single_flow(from, to, INF);
 			if (f == 0)
 				return flow;
 			else
-				flow += single_flow;
+				flow += f;
 		}
 
 	}
-private:
-	vb usedNode;
+
 };
 
 
