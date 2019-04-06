@@ -97,7 +97,7 @@ fill_v(T& t, const V& v) { t = v; }
 template<typename T, typename V>
 typename enable_if<is_vector<T>::value>::type
 fill_v(T& t, const V& v) {
-	for (auto &x : t)
+	for (auto &&x : t)
 		fill_v(x, v);
 }
 // ex:  fill_v(dp, INF);
