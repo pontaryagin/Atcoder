@@ -124,7 +124,7 @@ public:
 	}
 
 	ll single_flow(ll from, ll to, ll flow) {
-		// from‚©‚çto‚ÉŒü‚©‚Á‚Äflow‚ğ’´‚¦‚È‚¢”ÍˆÍ‚Åˆê–{‚ÌFlow‚ğ—¬‚·B
+		// fromã‹ã‚‰toã«å‘ã‹ã£ã¦flowã‚’è¶…ãˆãªã„ç¯„å›²ã§ä¸€æœ¬ã®Flowã‚’æµã™ã€‚
 		if (from == to)
 			return flow;
 		usedNode[from] = 1;
@@ -136,11 +136,11 @@ public:
 			if (flow_from_e > 0) {
 				e.cap -= flow_from_e; assert(e.cap >= 0);
 				G[e.to][e.rev].cap += flow_from_e;
-				// ¡‚Ü‚Å‚æ‚è‚àÅ‘å—¬‚ğ‘‚â‚·‚±‚Æ‚É¬Œ÷‚µ‚½‚Ì‚Årerurn
+				// ä»Šã¾ã§ã‚ˆã‚Šã‚‚æœ€å¤§æµã‚’å¢—ã‚„ã™ã“ã¨ã«æˆåŠŸã—ãŸã®ã§rerurn
 				return flow_from_e;
 			}
 		}
-		//‚·‚Å‚Éfrom‚©‚çæ‚·‚×‚Ä‚Ì•Ó‚ğ–K‚ê‚Ä‚¢‚½‚ ‚é‚¢‚Í‚·‚×‚Ä‚Ìcap‚ª0‚¾‚Á‚½‚ç—¬‚¹‚È‚¢B
+		//ã™ã§ã«fromã‹ã‚‰å…ˆã™ã¹ã¦ã®è¾ºã‚’è¨ªã‚Œã¦ã„ãŸã‚ã‚‹ã„ã¯ã™ã¹ã¦ã®capãŒ0ã ã£ãŸã‚‰æµã›ãªã„ã€‚
 		return 0;
 	}
 	ll max_flow(ll from, ll to) {
@@ -160,7 +160,7 @@ public:
 
 
 // ================= Rectangle Area Problem =====================
-auto getNeighbor = [&](ll i, ll w, ll h) {
+auto getNeighbor = [](ll i, ll w, ll h) {
 	ll H = i / w;
 	ll W = i % w;
 	vll res;
@@ -171,7 +171,7 @@ auto getNeighbor = [&](ll i, ll w, ll h) {
 	return res;
 };
 
-auto getHW = [&](ll i, ll w) {
+auto getHW = [](ll i, ll w) {
 	ll H = i / w;
 	ll W = i % w;
 	return pll{ H,W };

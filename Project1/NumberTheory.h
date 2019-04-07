@@ -124,15 +124,8 @@ struct Mint {
 	Mint(signed v) :v(v) {}
 	Mint(long long t) { v = t % MOD; if (v < 0) v += MOD; }
 
-	Mint pow(long long k) {
-		Mint res(1), tmp(v);
-		while (k) {
-			if (k & 1) res *= tmp;
-			tmp *= tmp;
-			k >>= 1;
-		}
-		return res;
-	}
+
+
 
 	Mint inv() { return pow(MOD - 2); }
 
@@ -151,6 +144,16 @@ struct Mint {
 	bool operator==(const Mint a)const { return v == a.v; }
 	bool operator!=(const Mint a)const { return v != a.v; }
 	bool operator <(const Mint a)const { return v < a.v; }
+
+	static Mint pow(Mint v, long long k) {
+		Mint res(1), tmp(v);
+		while (k) {
+			if (k & 1) res *= tmp;
+			tmp *= tmp;
+			k >>= 1;
+		}
+		return res;
+	}
 
 	// find x s.t. a^x = b
 	static T log(Mint a, Mint b) {

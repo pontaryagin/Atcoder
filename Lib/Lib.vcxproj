@@ -120,9 +120,6 @@
     <ClCompile Include="..\Project1\SegmentTree.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Project1\BitCalc.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\Project1\Algorithm.h" />
     <ClInclude Include="..\Project1\Bit.h" />
     <ClInclude Include="..\Project1\MyHeader.h" />
