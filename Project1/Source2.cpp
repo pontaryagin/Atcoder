@@ -14,77 +14,44 @@ int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 
-	ll n;
-	cin >> n;
+	ll x, y, z, k;
+	cin >> x >> y >> z >> k;
+	vll a(x), b(y), c(z),a2(x),b2(y),c2(y);
+	rep(i, 0, x) {
+		cin >> a[i];
+	}
+	rep(i, 0, y) {
+		cin >> b[i];
+	}
+	rep(i, 0, z) {
+		cin >> c[i];
+	}
 
-	vs M(n);
-	rep(i, 0, n) cin >> M[i];
-
-	vector<vector<ll>> N(M.size());
-	rep(i, 0, M.size()) {
-		rep(j, 0, M[i].size()) {
-			N[i].push_back( M[i][j] - '0');
+	sort(all(a)), sort(all(b)), sort(all(c));
+	rep(i, 0, x) {
+		a2[i] = i == 0 ? 0 : a[i] - a[i - 1];
+	}
+	rep(i, 0, y) {
+		b2[i] = i == 0 ? 0 : b[i] - b[i - 1];
+	}
+	rep(i, 0, z) {
+		c2[i] = i == 0 ? 0 : c[i] - c[i - 1];
+	}
+	ll cnt = 1;
+	ll sum = a[0]+b[0]+c[0];
+	ll i_a=1, i_b=1,i_c=1;
+	while (cnt < k) {
+		ll m = min(a2[i_a], min(b2[i_b], c2[i_c]));
+		if (a2[i_a] == m) {
+			i_a++;
+			rep (i, 0, i_b) {
+				sum += b
+			}
 
 		}
 	}
 
-	auto calc = [&](vll & N) {
 
-		vector<ll> a, b;
-		if (N.size() == 1) {
-			if (N[0] == 5) {
-				a.push_back(4);
-				b.push_back(1);
-			}
-			else {
-				a.push_back(1);
-				b.push_back(N[0] - 1);
-			}
-		}
-		else {
-			bool b_on = false;
-			if (N[0] == 4) {
-				a.push_back(2);
-				b.push_back(2);
-
-			}
-			else {
-				a.push_back(N[0]);
-			}
-			rep(i, 1, N.size() ) {
-				if (N[i] == 5) {
-					a.push_back(2);
-					b.push_back(3);
-				}
-				else if(N[i]==0){
-					a.push_back(0);
-					b.push_back(0);
-				}
-				else {
-					a.push_back(N[i] - 1);
-					b.push_back(1);
-				}
-			}
-
-
-		}
-		return pair<vll, vll>{ a, b };
-	};
-
-
-	rep(i, 0, N.size()) {
-		auto res = calc(N[i]);
-		cout << "Case #" << i + 1 << ": ";
-		rep(j, 0, res.first.size()) {
-			cout << res.first[j];
-		}
-		cout << " ";
-		rep(j, 0, res.second.size()) {
-			cout << res.second[j];
-
-		}
-		cout << endl;
-	};
 
 	return 0;
 	
