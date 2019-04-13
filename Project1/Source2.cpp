@@ -6,6 +6,7 @@
 //#include "Graph.h"
 //#include "SegmentTree.h"
 //#include "Dijkstra.h"
+//#include "bits/stdc++.h"
 
 // ============================ Header  =================================
 
@@ -14,47 +15,62 @@ int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 
-	ll x, y, z, k;
-	cin >> x >> y >> z >> k;
-	vll a(x), b(y), c(z),a2(x),b2(y),c2(y);
-	rep(i, 0, x) {
-		cin >> a[i];
+	queue<ll> q;
+	ll n, k;
+	cin >> n >> k;
+	string S;
+	cin >> S;
+	ll m = 0;
+	q.push(0);
+	ll zero = 0;
+	if (S[0] == '0') {
+		zero++;
 	}
-	rep(i, 0, y) {
-		cin >> b[i];
-	}
-	rep(i, 0, z) {
-		cin >> c[i];
-	}
+	rep(i, 1, n) {
+		if (zero == k) {
+			if (S[i-1] - '0' == 1 && S[i ] - '0' == 0) {
 
-	sort(all(a)), sort(all(b)), sort(all(c));
-	rep(i, 0, x) {
-		a2[i] = i == 0 ? 0 : a[i] - a[i - 1];
-	}
-	rep(i, 0, y) {
-		b2[i] = i == 0 ? 0 : b[i] - b[i - 1];
-	}
-	rep(i, 0, z) {
-		c2[i] = i == 0 ? 0 : c[i] - c[i - 1];
-	}
-	ll cnt = 1;
-	ll sum = a[0]+b[0]+c[0];
-	ll i_a=1, i_b=1,i_c=1;
-	while (cnt < k) {
-		ll m = min(a2[i_a], min(b2[i_b], c2[i_c]));
-		if (a2[i_a] == m) {
-			i_a++;
-			rep (i, 0, i_b) {
-				sum += b
+				ll x = q.front(); q.pop();
+				m = max(m, i - x);
+
 			}
+			else if (S[i - 1] - '0' == 0 && S[i] - '0' ==1) {
+				q.push(i);
 
+
+			}
 		}
+		else {
+			if (S[i - 1] - '0' == 1 && S[i] - '0' == 0) {
+				k--;
+			}
+			else if (S[i - 1] - '0' == 0 && S[i] - '0' == 1) {
+				q.push(i);
+			}
+		}
+
 	}
-
-
+	m = max(m, n - q.front());
+	cout << m;
 
 	return 0;
 	
 }
 
-
+//
+//ll T;
+//cin >> T;
+//vll res(T);
+//rep(k, 0, T) {
+//	ll n;
+//	cin >> n;
+//	vll W(n);
+//	rep(i, 0, n) {
+//		cin >> W[i];
+//	}
+//
+//}
+//
+//rep(k, 0, T) {
+//	cout << "Case #" << k << ": " << res[k] << endl;
+//}

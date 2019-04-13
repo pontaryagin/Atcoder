@@ -17,6 +17,9 @@ b = np.array([1,3,5])
 
 plt.plot(a,b)
 plt.show()
+0
+1
+1
 
 
 
