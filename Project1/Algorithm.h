@@ -94,3 +94,22 @@ vll proj(T v) {
 	}
 	return res;
 }
+
+vll commulativeSum(const vll& vec) {
+	vll sum(vec.size() + 1);
+	rep(i, 0, vec.size()) {
+		sum[i + 1] = sum[i] + vec[i];
+	}
+	return sum;
+}
+vec_t<2, ll> commulativeSum(const vec_t<2, ll>& vec) {
+	auto sum = make_v<ll>(vec.size() + 1, vec[0].size() + 1);
+	rep(i, 0, vec.size()) {
+		auto sum_1 = commulativeSum(vec[i]);
+		rep(j, 0, vec[i].size()) {
+			sum[i + 1][j + 1] = sum[i][j + 1] + sum_1[j + 1];
+
+		}
+	}
+	return sum;
+}

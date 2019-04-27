@@ -75,6 +75,20 @@ using vec_t = typename vec_t_impl<n, T>::type;
 // check 
 static_assert(is_same<vec_t<3,ll>, vector<vector<vector<ll>>>>::value, "");
 
+// decompose vector into basetype and dimension.
+template<typename T> 
+struct vec_dec {
+	static constexpr int dim = 0;
+	using type  = T;
+};
+template<typename T>
+struct vec_dec<vector<T>> {
+	static constexpr int dim = vec_dec<T>::dim+1;
+	using type  = typename vec_dec<T>::type;
+};
+static_assert(is_same<typename vec_dec<vec_t<3, ll>>::type, ll>::value, "");
+static_assert(vec_dec<vec_t<3, ll>>::dim == 3, "");
+
 template<typename T>
 vector<T> make_v(size_t a) { return vector<T>(a); }
 
@@ -180,3 +194,4 @@ template<
 	std::stable_sort(std::begin(inputs), std::end(inputs),
 		[&f](const T& lhs, const T& rhs) { return f(lhs) < f(rhs); });
 }
+

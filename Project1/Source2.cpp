@@ -10,86 +10,72 @@
 
 // ============================ Header  =================================
 
-
 int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 
-	mt19937 rng(5);
-
-
-	
 	ll T;
 	cin >> T;
-	vll vR(T), vC(T);
+	rep(test, 1, T + 1) {
+		[&] {
+			ll r, c, h, v;
+			cin >> r >> c >> h >> v;
+			auto choco = make_v<ll>(r, c);
+			auto S = make_v<ll>(r + 1, c + 1);
 
-
-	rep(k, 0, T) {
-		cin >> vR[k] >> vC[k];
-
-	}
-	rep(k, 0, T) {
-		ll R = vR[k], C = vC[k];
-		auto check = [&](ll x, ll y) {
-			ll r = x / C;
-			ll rr = y / C;
-			ll c = x % C;
-			ll cc = y % C;
-
-			return !(r == rr || c == cc || r - c == rr - cc || r + c == rr + cc);
-		};
-		vll res;
-		set<ll> visited;
-		vvll data(R*C);
-		rep(i, 0, R * C)rep(j, 0, R * C) {
-			if(check(i,j))
-				data[i].push_back(j);
-
-		}
-		rep(i, 0, R* C) {
-			random_shuffle(data[i].begin(), data[i].end());
-		}
-		bool dfs_finished = false;
-		function<bool(ll)> dfs = [&](ll st) {
-			if (res.size() == R * C) {
-				return true;
-			}
-
-			for(ll i: data[st]) {
-
-				if (visited.find(i) == visited.end()) {
-					visited.insert(i);
-					res.push_back(i);
-					if (dfs(i))
-						return true;
+			rep(i, 0, r) {
+				//vll ss(c + 1);
+				rep(j, 0, c) {
+					char c;
+					cin >> c;
+					choco[i][j] = c == '@';
+					//ss[j + 1] = ss[j] + int(choco[i][j] == '@');
+					//S[i + 1][j + 1] = S[i][j + 1] + ss[j + 1];
 				}
 			}
-			visited.erase(st);
-			res.pop_back();
-			return false;
-		};
+			S = commulativeSum(choco);
+			vll rows;
+			vll columns;
 
-		cout << "Case #" << k + 1 << ": ";
-
-		[&]() {
-			rep(i, 0, R * C) {
-				visited.insert(i);
-				res.push_back(i);
-				dfs(i);
-				if (dfs(i)) {
-					cout << "POSSIBLE" << endl;
-					rep(i, 0, res.size()) {
-						cout << res[i] / C + 1 << " " << res[i] % C + 1 << endl;
-					}
+			ll divn = (h + 1) * (v + 1);
+			if (S[r][c] % (divn) != 0)
+			{
+				cout << "Case #" << test << ": IMPOSSIBLE" << endl;
+				return;
+			}
+			ll unit = S[r][c] / divn;
+			rep(i, 1, r) {
+				if ((rows.size() + 1) * (v + 1) * unit == S[i][c]) {
+					rows.push_back(i);
+					if (rows.size() == h)
+						break;
+				}
+			}
+			rep(i, 1, c) {
+				if ((columns.size() + 1) * (h + 1) * unit == S[r][i]) {
+					columns.push_back(i);
+					if (columns.size() == v)
+						break;
+				}
+			}
+			if (rows.size() != h || columns.size() != v) {
+				cout << "Case #" << test << ": IMPOSSIBLE" << endl;
+				return;
+			}
+			// check
+			rep(i, 0, h)rep(j, 0, v) {
+				if (S[rows[i]][columns[j]] != unit * (j + 1) * (i + 1)) {
+					cout << "Case #" << test << ": IMPOSSIBLE" << endl;
 					return;
+
 				}
+
+
 			}
-			cout << "IMPOSSIBLE" << endl;
+			cout << "Case #" << test << ": POSSIBLE" << endl;
 		}();
-		
 	}
-	
 
 	return 0;
-	
+
 }
