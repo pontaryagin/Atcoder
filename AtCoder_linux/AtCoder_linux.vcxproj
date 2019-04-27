@@ -86,6 +86,9 @@
   <ItemGroup>
     <ClCompile Include="..\Project1\Source2.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\Project1\testcase.txt" />
+  </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <CppLanguageStandard>c++14</CppLanguageStandard>

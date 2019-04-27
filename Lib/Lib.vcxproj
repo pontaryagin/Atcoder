@@ -23,6 +23,7 @@
     <ProjectGuid>{5682A1DE-E842-43CD-A3B9-4F0ADAA5228E}</ProjectGuid>
     <RootNamespace>Lib</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>AtCoder_</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -114,17 +115,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\Project1\Graph.h" />
-    <ClCompile Include="..\Project1\NumberTheory.h" />
-    <ClCompile Include="..\Project1\SegmentTree.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\Project1\Algorithm.h" />
-    <ClInclude Include="..\Project1\Bit.h" />
-    <ClInclude Include="..\Project1\MyHeader.h" />
-    <ClInclude Include="..\Project1\UnionFind.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
