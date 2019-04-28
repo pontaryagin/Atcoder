@@ -11,6 +11,8 @@
 
 
 int main() {
+
+
 	ll T;
 	cin >> T;
 	vll x;
