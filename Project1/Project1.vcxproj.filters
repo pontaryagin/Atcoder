@@ -3,4 +3,13 @@
   <ItemGroup>
     <ClCompile Include="Source2.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Algorithm.h" />
+    <ClInclude Include="Bit.h" />
+    <ClInclude Include="Graph.h" />
+    <ClInclude Include="MyHeader.h" />
+    <ClInclude Include="NumberTheory.h" />
+    <ClInclude Include="SegmentTree.h" />
+    <ClInclude Include="UnionFind.h" />
+  </ItemGroup>
 </Project>
