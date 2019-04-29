@@ -78,34 +78,54 @@ private:
 		}
 		rrep(i, 0, n - 1) a[i] = Monoid::append(a[2 * i + 1], a[2 * i + 2]); // propagate initial values
 	}
+
+
 };
 
-template <typename T>
-struct min_indexed_t {
-	typedef pair<T, ll> underlying_type;
-	static underlying_type make_indexed(vector<T> v)
-	{
-		underlying_type w(v.size());
-		rep(i, 0, v.size()) {
-			w[i] = { v[i],i };
+
+namespace Monoid{
+
+	template <typename T>
+	struct min_indexed_t {
+		typedef pair<T, ll> underlying_type;
+		static underlying_type make_indexed(vector<T> v)
+		{
+			underlying_type w(v.size());
+			rep(i, 0, v.size()) {
+				w[i] = { v[i],i };
+			}
+			return w;
 		}
-		return w;
-	}
-	static underlying_type unit() { return make_pair(numeric_limits<T>::max(), -1); }
-	static underlying_type append(underlying_type a, underlying_type b) { return min(a, b); }
-};
+		static underlying_type unit() { return make_pair(numeric_limits<T>::max(), -1); }
+		static underlying_type append(underlying_type a, underlying_type b) { return min(a, b); }
+	};
 
-template <typename T>
-struct min_t {
-	typedef T underlying_type;
-	static underlying_type unit() { return numeric_limits<T>::max(); }
-	static underlying_type append(underlying_type a, underlying_type b) { return min(a, b); }
-};
+	template <typename T>
+	struct min_t {
+		typedef T underlying_type;
+		static underlying_type unit() { return numeric_limits<T>::max(); }
+		static underlying_type append(underlying_type a, underlying_type b) { return min(a, b); }
+	};
 
-struct linear_t {
-	typedef pd underlying_type;
-	static underlying_type unit() { return underlying_type{ 1.,0. }; }
-	static underlying_type append(underlying_type a, underlying_type b) {
-		return underlying_type{ a.first*b.first, b.first*a.second + b.second };
-	}
-};
+	template <typename T>
+	struct max_t {
+		typedef T underlying_type;
+		static underlying_type unit() { return numeric_limits<T>::min(); }
+		static underlying_type append(underlying_type a, underlying_type b) { return max(a, b); }
+	};
+
+	struct linear_t {
+		typedef pd underlying_type;
+		static underlying_type unit() { return underlying_type{ 1.,0. }; }
+		static underlying_type append(underlying_type a, underlying_type b) {
+			return underlying_type{ a.first * b.first, b.first * a.second + b.second };
+		}
+	};
+
+
+}
+
+
+	
+
+
