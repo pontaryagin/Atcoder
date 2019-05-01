@@ -260,3 +260,6 @@ paket-files/
 __pycache__/
 *.pyc
 /TestCases/dp
+
+/Project1/main.out
+/Project1/.vscode
