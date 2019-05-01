@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "*.cls": "vb",
-        "xstring": "cpp",
-        "vector": "cpp"
-    }
-}
