@@ -89,10 +89,10 @@ struct vec_dec<vector<T>> {
 static_assert(is_same<typename vec_dec<vec_t<3, ll>>::type, ll>::value, "");
 static_assert(vec_dec<vec_t<3, ll>>::dim == 3, "");
 
-template<typename T>
+template<typename T = ll>
 vector<T> make_v(size_t a) { return vector<T>(a); }
 
-template<typename T, typename... Ts>
+template<typename T = ll, typename... Ts>
 auto make_v(size_t a, Ts... ts) {
 	return vector<decltype(make_v<T>(ts...))>(a, make_v<T>(ts...));
 }

@@ -1,9 +1,15 @@
+#! /usr/bin/perl
+
 use strict;
 
 my $source = 'Source2.cpp';
 my $out = 'main.cpp';
 my %used;
 my $res="";
+sub gpp{
+    #system("g++ -std=c++14 main.cpp -fsanitize=address");
+    system("g++ -std=c++14 main.cpp");
+}
 sub expand{
     $_ = `g++ -MM $_[0]`;
     my @files = split(" ", $_);
@@ -27,11 +33,21 @@ $res =~ s/#include\s+".*"//g ;
 $res =~ s/.*#pragma once.*//g;
 open(OUT, "> $out") or die;
 print OUT $res; 
+if(@ARGV == 0){exit(0);}
 
 # select problem 
-my ($what, $problemName, $problemNumber) = $ARGV; #test or submit or gen
+my ($what, $problemName, $problemNumber) = @ARGV; #test or submit or gen
 my $testCaseDir = "../TestCases";
 my $workspace = "$testCaseDir/$problemName/$problemNumber";
+# check online judge tool
+if(@ARGV == 2){
+    system("rm -f ./test/*");
+    print "oj dl $problemName";
+    system("oj dl $problemName") ;
+    gpp;
+    system("oj test");
+    exit(0);
+}
 #create testcase if not exist
 unless(-e "$testCaseDir/$problemName" ){
     print "generating testcase\n";
@@ -40,9 +56,7 @@ unless(-e "$testCaseDir/$problemName" ){
 }
 `cp -f $out $workspace`;
 chdir $workspace;
-if($what eq 'test'){
-    system("g++ -std=c++14 main.cpp -fsanitize=address");
-}
+gpp;
 print "starting test\n\n";
 system("atcoder-tools $what");
 print "\nWork space is here: $workspace\n";

@@ -89,10 +89,10 @@ struct vec_dec<vector<T>> {
 static_assert(is_same<typename vec_dec<vec_t<3, ll>>::type, ll>::value, "");
 static_assert(vec_dec<vec_t<3, ll>>::dim == 3, "");
 
-template<typename T>
+template<typename T = ll>
 vector<T> make_v(size_t a) { return vector<T>(a); }
 
-template<typename T, typename... Ts>
+template<typename T = ll, typename... Ts>
 auto make_v(size_t a, Ts... ts) {
 	return vector<decltype(make_v<T>(ts...))>(a, make_v<T>(ts...));
 }
@@ -594,11 +594,22 @@ int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 	
-	ll n;
-	cin >> n;
-	cout << "jij";
-	
-
+	ll N, W;
+	cin >> N>>W;
+	vll w(N), v(N);
+	rep(i, 0, N)cin >> w[i] >> v[i];
+	auto dp = make_v(N+1, W + 1);
+	fill_v(dp, -1);
+	dp[0][0] = 0;
+	rep(i, 0, N){
+		dp[i + 1] = dp[i];
+		rep(wei, 0, W + 1) {
+			if (wei + w[i] <= W && dp[i][wei] != -1) {
+				chmax(dp[i + 1][wei + w[i]], dp[i][wei] + v[i]);
+			}
+		}
+	}
+	cout << *max_element(all(dp[N]))<<endl;
 	return 0;
 
 }
