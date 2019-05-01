@@ -1,6 +1,4 @@
 use strict;
-#use File::Remove qw(remove);
-use Term::ANSIColor qw(:constants);
 
 my $source = 'Source2.cpp';
 my $out = 'main.cpp';
@@ -19,7 +17,6 @@ sub expand{
     }   
     print "writing file[1] $files[1]\n";
     $used{$files[1]}=1;
-    #`cat $files[1] >> $out`;
     $res .= `cat $files[1]`;
     $res .= "\n";
 }
@@ -28,21 +25,18 @@ expand($source);
 $res =~ s/#include\s+".*"//g ;
 # removing pragma once
 $res =~ s/.*#pragma once.*//g;
-#`rm $out`; # `''> $out ` is not allowed to use.
-#`echo "$res" >> $out`;
-open(OUT, "> $out") or die();
+open(OUT, "> $out") or die;
 print OUT $res; 
 
 # select problem 
-my $problemName = $ARGV[1];
-my $problemNumber = $ARGV[2];
-my $what = $ARGV[0];
+my ($what, $problemName, $problemNumber) = $ARGV; #test or submit or gen
 my $testCaseDir = "../TestCases";
 my $workspace = "$testCaseDir/$problemName/$problemNumber";
 #create testcase if not exist
 unless(-e "$testCaseDir/$problemName" ){
     print "generating testcase\n";
     system("atcoder-tools gen $problemName --workspace $testCaseDir");
+    if($what eq 'gen'){exit(0);}
 }
 `cp -f $out $workspace`;
 chdir $workspace;

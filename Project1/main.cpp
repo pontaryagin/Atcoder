@@ -596,8 +596,7 @@ int main() {
 	
 	ll n;
 	cin >> n;
-	vll a;
-	cout << a[n];
+	cout << "jij";
 	
 
 	return 0;
