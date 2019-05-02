@@ -28,7 +28,7 @@ sub expand{
 }
 expand($source);
 # removing ,  #include "file name ";
-$res =~ s/#include\s+".*"//g ;
+$res =~ s/.*#include\s+".*"//g ;
 # removing pragma once
 $res =~ s/.*#pragma once.*//g;
 open(OUT, "> $out") or die;
@@ -58,6 +58,7 @@ unless(-e "$testCaseDir/$problemName" ){
 chdir $workspace;
 gpp;
 print "starting test\n\n";
+$what=~s/^submit$/submit -u/;
 system("atcoder-tools $what");
 print "\nWork space is here: $workspace\n";
 

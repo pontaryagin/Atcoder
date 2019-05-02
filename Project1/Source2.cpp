@@ -3,7 +3,7 @@
 //#include "Algorithm.h"
 //#include "Bit.h"
 //#include "UnionFind.h"
-#include "NumberTheory.h"
+//#include "NumberTheory.h"
 //#include "Graph.h"
 //#include "SegmentTree.h"
 //#include "Dijkstra.h"
@@ -17,22 +17,38 @@ int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 	
-	ll N, W;
-	cin >> N>>W;
-	vll w(N), v(N);
-	rep(i, 0, N)cin >> w[i] >> v[i];
-	auto dp = make_v(N+1, W + 1);
-	fill_v(dp, -1);
-	dp[0][0] = 0;
-	rep(i, 0, N){
-		dp[i + 1] = dp[i];
-		rep(wei, 0, W + 1) {
-			if (wei + w[i] <= W && dp[i][wei] != -1) {
-				chmax(dp[i + 1][wei + w[i]], dp[i][wei] + v[i]);
+	string s, t;
+	cin >> s >> t;
+	auto dp = make_v(s.size() + 1, t.size() + 1);
+	//auto dps = make_v<string>(s.size() + 1, t.size() + 1);
+	rep(i, 0, s.size())rep(j, 0, t.size()) {
+		dp[i + 1][j + 1] = max(dp[i + 1][j], dp[i][j + 1]);
+		//dps[i + 1][j + 1] = (dp[i + 1][j] > dp[i][j + 1] ? dps[i + 1][j] : dps[i][j + 1]);
+		if (s[i] == t[j]) {
+			if (dp[i][j] + 1 > max(dp[i + 1][j], dp[i][j + 1])){
+				dp[i + 1][j + 1] = dp[i][j] + 1;
+				//dps[i + 1][j + 1] = dps[i][j] + s[i];
 			}
 		}
+		//dps[i][j].clear();
+		//dps[i][j].shrink_to_fit();
 	}
-	cout << *max_element(all(dp[N]))<<endl;
+	string res;
+	ll i = s.size(); ll j = t.size();
+	while (dp[i][j] > 0) {
+		if (dp[i][j] == dp[i - 1][j]) {
+			--i;
+		}
+		else if (dp[i][j - 1] == dp[i][j]) {
+			--j;
+		}
+		else {
+			res.push_back(s[i-1]);
+			--i; --j;
+		}
+	}
+	reverse(all(res));
+	cout << res << endl;
 	return 0;
 
 }
