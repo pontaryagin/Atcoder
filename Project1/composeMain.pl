@@ -34,7 +34,7 @@ $res =~ s/.*#pragma once.*//g;
 open(OUT, "> $out") or die;
 print OUT $res; 
 my ($what, $problemName, $problemNumber) = @ARGV; 
-# $what = build, test, submit, gen
+# $what = build, test, submit, submit-f, gen
 my $testCaseDir = "../TestCases";
 my $workspace = "$testCaseDir/$problemName/$problemNumber";
 # check online judge tool
