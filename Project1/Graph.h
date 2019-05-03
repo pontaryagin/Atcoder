@@ -5,10 +5,126 @@ struct Edge
 {
 	ll from;
 	ll to;
-	ll cost;
+	ll cost=1;
+	Edge reverse() const {
+		return Edge{ to, from , cost };
+	}
+	Edge(ll from , ll to, ll cost=1) : from(from),to(to),cost(cost){};
+	Edge(pll e) { from = e.first; to = e.second; cost = 1; }
+	Edge() :from(0), to(0), cost(0){ };
 };
 
-using Graph = vector<vector<Edge>>;
+struct Graph {
+	vector<Edge> edges;
+	vector<vector<ll>> out_edges;
+	vector<vector<ll>> in_edges;
+	Graph(ll nodeSize, const vector<Edge>& edges = vector<Edge>()): out_edges(nodeSize), in_edges(nodeSize), edges(move(edges)){
+		rep(i, 0, edges.size()) {
+			in_edges[edges[i].to].push_back(i);
+			out_edges[edges[i].from].push_back(i);
+		}
+	}
+	Graph(ll nodeSize, vector<pll> edges_) : out_edges(nodeSize), in_edges(nodeSize), edges(edges_.size()) {
+		rep(i, 0, edges.size()) {
+			edges[i] = edges_[i];
+			in_edges[edges[i].to].push_back(i);
+			out_edges[edges[i].from].push_back(i);
+		}
+	}
+	
+	Edge& operator[](ll ind) {
+		return this->edges[ind];
+	}
+	const Edge& operator[](ll ind) const {
+		return this->edges[ind];
+	}
+	size_t size() const { return out_edges.size(); }
+	void push(Edge edge){
+		assert(max(edge.from, edge.to) < out_edges.size());
+		edges.push_back(edge);
+		out_edges[edge.from].push_back(edges.size() - 1);
+		in_edges[edge.to].push_back(edges.size() - 1);
+	}
+	void erase(ll from, ll to) {
+		// O(nodeSize)
+		assert(max(from, to) < out_edges.size());
+		for (ll k : out_edges[from]) {
+			if (edges[k].to = to) {
+				edges.erase(edges.begin() + k);
+			}
+		}
+	}
+	void erase(ll edge_ind) {
+		// O(nodeSize)
+		assert(edge_ind < edges.size());
+		edges.erase(edges.begin() + edge_ind);
+		auto& esin = in_edges[edges[edge_ind].to];
+		esin.erase(find(all(esin), edge_ind));
+		auto& esout = out_edges[edges[edge_ind].from];
+		esout.erase(find(all(esout), edge_ind));
+	}
+	void push(vector<Edge> edges) {
+		for (const Edge& e : edges) {
+			push(e);
+		}
+	}
+
+	vll get_topologically_sorted_nodes()
+	{
+		// graph needs to be represented by adjacent list.
+		// complexity: O( node size + edge size)
+		ll nodeSize = this->size();
+
+		// find root
+		vll roots;
+		vll inDegree(nodeSize);
+		rep(i, 0, nodeSize)
+		{
+			for (ll sibling_ind : this->out_edges[i]) {
+				inDegree[this->edges[sibling_ind].to]++;
+			}
+		}
+
+
+		rep(i, 0, nodeSize) {
+			if (inDegree[i] == 0) {
+				roots.push_back(i);
+			}
+		}
+
+		stack<ll> parents;
+		for (ll i : roots)
+			parents.push(i);
+
+		vll sortedNodes;
+		while (!parents.empty()) {
+			ll parent = parents.top();
+			parents.pop();
+			sortedNodes.push_back(parent);
+			for (ll sibling_ind : this->out_edges[parent]) {
+				Edge sibling = this->edges[sibling_ind];
+				inDegree[sibling.to]--;
+				if (inDegree[sibling.to] == 0) {
+					parents.push(sibling.to);
+				}
+			}
+		}
+		return sortedNodes;
+	}
+	void topological_sort() {
+		vll sorted = get_topologically_sorted_nodes();
+		vll new_ind(sorted.size());
+		vector<Edge> new_edges;
+		rep(i, 0, sorted.size()) {
+			new_ind[sorted[i]] = i;
+		}
+		for (Edge& e : edges) {
+			new_edges.emplace_back(Edge{ new_ind[e.from], new_ind[e.to],e.cost });
+		}
+		*this = Graph(this->size(), new_edges);
+	}
+
+};
 
 pair<vll, vll> dijkstra(const Graph& graph, size_t start) {
 	// graph: weighted directed graph of adjacent representation
@@ -30,7 +146,8 @@ pair<vll, vll> dijkstra(const Graph& graph, size_t start) {
 			continue;
 		from_list[to] = from;
 
-		for (Edge edge : graph[to]) {
+		for (ll edge_ind : graph.out_edges[to]) {
+			const Edge& edge = graph[edge_ind];
 			ll adj = edge.to;
 			ll cost = dist[to] + edge.cost;
 			if (dist[adj] > cost) {
@@ -44,6 +161,7 @@ pair<vll, vll> dijkstra(const Graph& graph, size_t start) {
 }
 
 vll shortest_path(const vll& from_list, ll start, ll goal) {
+	// usage : vll path =  shortest_path(dijkstra(g,s).second, s, g);
 	vll path;
 	path.emplace_back(goal);
 	while (true) {
@@ -58,47 +176,6 @@ vll shortest_path(const vll& from_list, ll start, ll goal) {
 	return path;
 }
 
-vll get_topologically_sorted_nodes(const vvll& graph)
-{
-	// graph needs to be represented by adjacent list.
-	// complexity: O( node size + edge size)
-	ll nodeSize = graph.size();
-
-	// find root
-	vll roots;
-	vll inDegree(nodeSize);
-	rep(i, 0, nodeSize)
-	{
-		for (ll sibling : graph[i]) {
-			inDegree[sibling]++;
-		}
-	}
-
-
-	rep(i, 0, nodeSize) {
-		if (inDegree[i] == 0) {
-			roots.push_back(i);
-		}
-	}
-
-	stack<ll> parents;
-	for (ll i : roots)
-		parents.push(i);
-
-	vll sortedNodes;
-	while (!parents.empty()) {
-		ll parent = parents.top();
-		parents.pop();
-		sortedNodes.push_back(parent);
-		for (ll sibling : graph[parent]) {
-			inDegree[sibling]--;
-			if (inDegree[sibling] == 0) {
-				parents.push(sibling);
-			}
-		}
-	}
-	return sortedNodes;
-}
 
 
 class FordFulkerson {
@@ -111,7 +188,8 @@ public:
 		:usedNode(vb(n)), G(vec_t<2,RevEdge>(n))
 	{
 		rep(i, 0, graph.size()) {
-			for (Edge& e : graph[i]) {
+			for (ll eind : graph.out_edges[i]) {
+				Edge& e = graph.edges[eind];
 				add_revedge(e);
 			}
 		}

@@ -1,10 +1,9 @@
-
 #include "MyHeader.h"
 //#include "Algorithm.h"
 //#include "Bit.h"
 //#include "UnionFind.h"
-//#include "NumberTheory.h"
-//#include "Graph.h"
+#include "NumberTheory.h"
+#include "Graph.h"
 //#include "SegmentTree.h"
 //#include "Dijkstra.h"
 //#include "bits/stdc++.h"
@@ -16,38 +15,23 @@
 int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
-	
-	string s, t;
-	cin >> s >> t;
-	auto dp = make_v(s.size() + 1, t.size() + 1);
-	//auto dps = make_v<string>(s.size() + 1, t.size() + 1);
-	rep(i, 0, s.size())rep(j, 0, t.size()) {
-		dp[i + 1][j + 1] = max(dp[i + 1][j], dp[i][j + 1]);
-		//dps[i + 1][j + 1] = (dp[i + 1][j] > dp[i][j + 1] ? dps[i + 1][j] : dps[i][j + 1]);
-		if (s[i] == t[j]) {
-			if (dp[i][j] + 1 > max(dp[i + 1][j], dp[i][j + 1])){
-				dp[i + 1][j + 1] = dp[i][j] + 1;
-				//dps[i + 1][j + 1] = dps[i][j] + s[i];
-			}
-		}
-		//dps[i][j].clear();
-		//dps[i][j].shrink_to_fit();
+	cout << fixed << setprecision(12);
+
+	ll N;
+	cin >> N;
+	vector<double> p(N);
+	rep(i, 0, N)cin >> p[i];
+	auto dp = make_v<double>(N + 1, N + 1);
+	dp[0][0] = 1;
+	rep(i, 0, N)rep(j, 0, N ) {
+		dp[i + 1][j + 1] += dp[i][j]*p[j];
+		dp[i][j+1] += dp[i][j] * (1-p[j]);
 	}
-	string res;
-	ll i = s.size(); ll j = t.size();
-	while (dp[i][j] > 0) {
-		if (dp[i][j] == dp[i - 1][j]) {
-			--i;
-		}
-		else if (dp[i][j - 1] == dp[i][j]) {
-			--j;
-		}
-		else {
-			res.push_back(s[i-1]);
-			--i; --j;
-		}
+	double res = 0;
+	rep(i, 0, N + 1) {
+		if (i > N / 2)
+			res += dp[i][N];
 	}
-	reverse(all(res));
 	cout << res << endl;
 	return 0;
 

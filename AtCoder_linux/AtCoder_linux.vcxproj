@@ -91,11 +91,17 @@
       <CppLanguageStandard>c++14</CppLanguageStandard>
       <AdditionalOptions>-fsanitize=address</AdditionalOptions>
     </ClCompile>
+    <Link>
+      <AdditionalOptions>-fsanitize=address</AdditionalOptions>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <CppLanguageStandard>c++14</CppLanguageStandard>
     </ClCompile>
+    <Link>
+      <AdditionalOptions>-fsanitize=address</AdditionalOptions>
+    </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

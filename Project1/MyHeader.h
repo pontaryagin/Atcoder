@@ -30,22 +30,17 @@
 
 using namespace std;
 
-
+typedef long long ll;
+constexpr ll MOD = 1000000007;
+constexpr ll INF = 1LL << 62;
 
 #define rep(i, N, M) for(ll i=N, i##_len=(M); i<i##_len; ++i)
 #define rep_skip(i, N, M, ...) for(ll i=N, i##_len=(M); i<i##_len; i+=(skip))
 #define rrep(i, N, M)  for(ll i=(M)-1, i##_len=(N-1); i>i##_len; --i)
 #define pb push_back
 
-
-
 typedef pair<double, double> pd;
-
-typedef long long ll;
 typedef pair<ll, ll> pll;
-
-constexpr ll MOD = 1000000007;
-constexpr ll INF = 1LL << 62;
 
 template<int n>
 struct tll_impl {
@@ -60,7 +55,6 @@ using tll = typename tll_impl<n>::type;
 
 template<class T>
 constexpr ll SZ(T& v) { return static_cast<ll>(v.size()); };
-
 
 template<int n, typename T>
 struct vec_t_impl {
