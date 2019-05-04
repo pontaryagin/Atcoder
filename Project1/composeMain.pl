@@ -11,7 +11,7 @@ sub gpp{
     if(system("g++ -std=c++14 main.cpp")) {die("compile error\n");}
 }
 sub expand{
-    $_ = `g++ -MM $_[0]`;
+    $_ = `g++ -std=c++14 -MM $_[0]`;
     my @files = split(" ", $_);
     my @includes = @files[2..$#files];
     print  "analysing: $_";
@@ -56,7 +56,7 @@ elsif($problemName =~ /http.*/){
 }
 else{
     #create testcase if not exist
-    if(!(-e "$testCaseDir/$problemName") || $what eq 'gen' ){
+    unless((-e "$testCaseDir/$problemName") ){
         print "generating testcase\n";
         system("atcoder-tools gen $problemName --workspace $testCaseDir");
         if($what eq 'gen'){exit(0);}
