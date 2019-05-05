@@ -1,13 +1,17 @@
 #! /usr/bin/perl
 
 use strict;
+#use Getopt::Long;
 
 my $source = 'Source2.cpp';
 my $out = 'main.cpp';
 my %used;
 my $res="";
+my ($what, $problemName, $problemNumber) = @ARGV; 
+# $what = build, test, submit, submit-f, gen
 sub gpp{
     #system("g++ -std=c++14 main.cpp -fsanitize=address");
+    GetOptions('')
     if(system("g++ -std=c++14 main.cpp")) {die("compile error\n");}
 }
 sub expand{
@@ -33,8 +37,7 @@ $res =~ s/.*#include\s+".*"//g ;
 $res =~ s/.*#pragma once.*//g;
 open(OUT, "> $out") or die;
 print OUT $res; 
-my ($what, $problemName, $problemNumber) = @ARGV; 
-# $what = build, test, submit, submit-f, gen
+
 my $testCaseDir = "../TestCases";
 my $workspace = "$testCaseDir/$problemName/$problemNumber";
 # check online judge tool

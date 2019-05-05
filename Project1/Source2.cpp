@@ -16,6 +16,8 @@ int main() {
 	ios::sync_with_stdio(false);
 	cout << fixed << setprecision(12);
 
+	vll a(3);
+	read_v(a);
 
 	ll H, W, N, sr, sc;
 	cin >> H >> W >> N >> sr >> sc;

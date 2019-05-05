@@ -100,25 +100,21 @@ template < typename T >
 struct is_vector<vector<T>> : std::true_type {};
 static_assert(is_vector<vector<ll>>::value == true && is_vector<ll>::value == false, "");
 
-template<typename T, typename V>
-typename enable_if<!is_vector<T>::value>::type
-fill_v(T& t, const V& v) { t = v; }
+template<typename T, typename V, typename enable_if<!is_vector<T>::value, nullptr_t>::type = nullptr>
+void fill_v(T& t, const V& v) { t = v; }
 
-template<typename T, typename V>
-typename enable_if<is_vector<T>::value>::type
-fill_v(T& t, const V& v) {
+template<typename T, typename V, typename enable_if<is_vector<T>::value, nullptr_t>::type = nullptr>
+void fill_v(T& t, const V& v) {
 	for (auto &&x : t)
 		fill_v(x, v);
 }
 // ex:  fill_v(dp, INF);
 
-template<typename T>
-typename enable_if<!is_vector<T>::value>::type 
-read_v(T& x) {	cin >> x;}
+template<typename T, typename enable_if<!is_vector<T>::value, nullptr_t>::type =nullptr>
+void read_v(T& x) {	cin >> x;}
 
-template<typename T, typename S =typename enable_if<is_vector<T>::value>::type>
-typename enable_if<is_vector<T>::value>::type 
-read_v(T& x) { rep(i,0,x.size())read_v(x[i]); }
+template<typename T, typename enable_if<is_vector<T>::value, nullptr_t>::type = nullptr>
+void read_v(T& x) { rep(i,0,x.size()) read_v(x[i]); }
 
 typedef vector<ll> vll;
 typedef vector<vll> vvll;
