@@ -11,7 +11,6 @@ my ($what, $problemName, $problemNumber) = @ARGV;
 # $what = build, test, submit, submit-f, gen
 sub gpp{
     #system("g++ -std=c++14 main.cpp -fsanitize=address");
-    GetOptions('')
     if(system("g++ -std=c++14 main.cpp")) {die("compile error\n");}
 }
 sub expand{
@@ -31,8 +30,8 @@ sub expand{
     $res .= "\n";
 }
 expand($source);
-# removing ,  #include "file name ";
-$res =~ s/.*#include\s+".*"//g ;
+# removing ,  #include "file name " except for boost
+$res =~ s/.*#include\s+"(?!boost).*"//g ;
 # removing pragma once
 $res =~ s/.*#pragma once.*//g;
 open(OUT, "> $out") or die;
