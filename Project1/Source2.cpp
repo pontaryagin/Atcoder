@@ -19,9 +19,20 @@ int main() {
 	ll n;
 	cin >> n;
 	vpll ab(n - 1);
-	rep(i, 0, n - 1)cin >> ab[i].first >> ab[i].second;
-	Graph g(n, ab);
+	rep(i, 0, n - 1) {
+		cin >> ab[i].first >> ab[i].second;
+		ab[i].first--; ab[i].second--;
+		ab.push_back({ ab[i].second, ab[i].first });
+	}
 
+	Graph g(n, ab, Graph::nondir);
+	ll dia = g.diameter();
+	if (dia % 3 == 1) {
+		cout << "Second" << endl;
+	}
+	else {
+		cout << "First" << endl;
+	}
 	
 	return 0;
 

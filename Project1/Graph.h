@@ -18,13 +18,21 @@ struct Graph {
 	vector<Edge> edges;
 	vector<vector<ll>> out_edges;
 	vector<vector<ll>> in_edges;
-	Graph(ll nodeSize, const vector<Edge>& edges = vector<Edge>()): out_edges(nodeSize), in_edges(nodeSize), edges(move(edges)){
+	enum Dir{dir, nondir};
+	Graph(ll nodeSize, const vector<Edge>& edges = vector<Edge>(), Dir dirct= dir)
+		: out_edges(nodeSize), in_edges(nodeSize), edges(move(edges)){
 		rep(i, 0, edges.size()) {
 			in_edges[edges[i].to].push_back(i);
 			out_edges[edges[i].from].push_back(i);
+			if (dirct == nondir) {
+				in_edges[edges[i].from].push_back(i);
+				out_edges[edges[i].to].push_back(i);
+			}
 		}
 	}
-	Graph(ll nodeSize, vector<pll> edges_) : out_edges(nodeSize), in_edges(nodeSize), edges(edges_.size()) {
+	Graph(ll nodeSize, vector<pll> edges_, Dir dirct = dir)
+		: out_edges(nodeSize), in_edges(nodeSize), edges(edges_.size()) {
+		//if (dirct == nondir) edges.resize(edges_.size() * 2);
 		rep(i, 0, edges.size()) {
 			edges[i] = edges_[i];
 			in_edges[edges[i].to].push_back(i);
@@ -123,7 +131,32 @@ struct Graph {
 		}
 		*this = Graph(this->size(), new_edges);
 	}
-
+	ll diameter() {
+		// require : graph is tree
+		// calculate the diameter ( longest path length ) in O(N)
+		vll dp(size(),-1);
+		ll m = 0; ll ind;
+		function<void(ll)> dfs = [&](ll x) {
+			for (ll e : out_edges[x]) {
+				ll nextnode = edges[e].to;
+				if (dp[nextnode] == -1) {
+					dp[nextnode] = dp[x] + 1;
+					if (dp[nextnode] > m) {
+						m = dp[nextnode];  ind = nextnode;
+					}
+					dfs(nextnode);
+				}
+			}
+		};
+		dp[0] = 0; ind = 0;
+		dfs(0);
+		ll first = ind;
+		fill_v(dp, -1);
+		dp[first] = 0; 
+		dfs(first);
+		return m;
+		// remark two end points of diameter are 'first' and 'ind';
+	}
 };
 
 pair<vll, vll> dijkstra(const Graph& graph, size_t start) {
