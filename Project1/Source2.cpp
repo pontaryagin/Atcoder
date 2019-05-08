@@ -18,22 +18,25 @@ int main() {
 
 	ll n;
 	cin >> n;
-	vpll ab(n - 1);
-	rep(i, 0, n - 1) {
-		cin >> ab[i].first >> ab[i].second;
-		ab[i].first--; ab[i].second--;
-		ab.push_back({ ab[i].second, ab[i].first });
+	vvll A(n, vll(n));
+	vector<tll<3>> data(n*n);
+	vector<Edge> edges;
+	rep(i, 0, n) {
+		rep(j, 0, n) {
+			cin >> A[i][j];
+		}
 	}
+	Graph g(A,0);
+	auto d = warshall_floyd(g,0);
+	ll sum = 0;
+	rep(i, 0, n)rep(j, 0, n) {
+		if(A[i][j] > d[i][j]) {
+			cout << -1 << endl; return 0;
+		}
+		
+	}
+	cout << sum<< endl;
 
-	Graph g(n, ab, Graph::nondir);
-	ll dia = g.diameter();
-	if (dia % 3 == 1) {
-		cout << "Second" << endl;
-	}
-	else {
-		cout << "First" << endl;
-	}
-	
 	return 0;
 
 }

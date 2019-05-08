@@ -15,12 +15,13 @@ struct Edge
 };
 
 struct Graph {
+	ll nodeSize;
 	vector<Edge> edges;
 	vector<vector<ll>> out_edges;
 	vector<vector<ll>> in_edges;
 	enum Dir{dir, nondir};
 	Graph(ll nodeSize, const vector<Edge>& edges = vector<Edge>(), Dir dirct= dir)
-		: out_edges(nodeSize), in_edges(nodeSize), edges(move(edges)){
+		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize), edges(move(edges)){
 		rep(i, 0, edges.size()) {
 			in_edges[edges[i].to].push_back(i);
 			out_edges[edges[i].from].push_back(i);
@@ -31,12 +32,20 @@ struct Graph {
 		}
 	}
 	Graph(ll nodeSize, vector<pll> edges_, Dir dirct = dir)
-		: out_edges(nodeSize), in_edges(nodeSize), edges(edges_.size()) {
+		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize), edges(edges_.size()) {
 		//if (dirct == nondir) edges.resize(edges_.size() * 2);
 		rep(i, 0, edges.size()) {
 			edges[i] = edges_[i];
 			in_edges[edges[i].to].push_back(i);
 			out_edges[edges[i].from].push_back(i);
+		}
+	}
+	Graph(vvll ajacency_matrix, ll default_value) 
+		: nodeSize(ajacency_matrix.size()), out_edges(nodeSize), in_edges(nodeSize){
+		ll n = ajacency_matrix.size();
+		rep(i, 0, n)rep(j, 0, n) {
+			if (ajacency_matrix[i][j] != default_value)
+				push(Edge(i, j, ajacency_matrix[i][j]));
 		}
 	}
 	
@@ -49,9 +58,9 @@ struct Graph {
 	size_t size() const { return out_edges.size(); }
 	void push(Edge edge){
 		assert(max(edge.from, edge.to) < out_edges.size());
-		edges.push_back(edge);
-		out_edges[edge.from].push_back(edges.size() - 1);
-		in_edges[edge.to].push_back(edges.size() - 1);
+		edges.emplace_back(edge);
+		out_edges[edge.from].emplace_back(edges.size() - 1);
+		in_edges[edge.to].emplace_back(edges.size() - 1);
 	}
 	void erase(ll from, ll to) {
 		// O(nodeSize)
@@ -75,6 +84,13 @@ struct Graph {
 		for (const Edge& e : edges) {
 			push(e);
 		}
+	}
+	vvll adjacency_matrix(ll default_value = INF) const {
+		vvll d(size(), vll(size()));
+		for (auto& e : edges) {
+			d[e.from][e.to] = e.cost;
+		}
+		return d;
 	}
 
 	vll get_topologically_sorted_nodes()
@@ -164,6 +180,7 @@ pair<vll, vll> dijkstra(const Graph& graph, size_t start) {
 	// start: index of start point
 	// return1: minimum path length from start
 	// return2: concrete shortest path info
+	// complexity : E*log(V)
 	ll node_size = graph.size();
 	vll dist(node_size, 1LL << 60);
 	vll from_list(node_size, -1);
@@ -209,6 +226,19 @@ vll shortest_path(const vll& from_list, ll start, ll goal) {
 	return path;
 }
 
+vvll warshall_floyd(const Graph& g, ll default_value) {
+	ll n = g.size();
+	vvll d = g.adjacency_matrix(INF);
+	rep(k, 0, n)rep(i, 0, n)rep(j, 0, n) {
+		if (d[i][j] > d[i][k] + d[k][j])
+			d[i][j] = d[i][k] + d[k][j];
+	}
+	rep(i, 0, n)rep(j, 0, n) {
+		if (d[i][j] == INF)
+			d[i][j] = default_value;
+	}
+	return d;
+}
 
 
 class FordFulkerson {

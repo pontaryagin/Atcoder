@@ -32,7 +32,7 @@ using namespace std;
 
 typedef long long ll;
 constexpr ll MOD = 1000000007;
-constexpr ll INF = 1LL << 62;
+constexpr ll INF = 1LL << 60;
 
 #define rep(i, N, M) for(ll i=N, i##_len=(M); i<i##_len; ++i)
 #define rep_skip(i, N, M, ...) for(ll i=N, i##_len=(M); i<i##_len; i+=(skip))
