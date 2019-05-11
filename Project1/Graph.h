@@ -12,7 +12,14 @@ struct Edge
 	Edge(ll from , ll to, ll cost=1) : from(from),to(to),cost(cost){};
 	Edge(pll e) { from = e.first; to = e.second; cost = 1; }
 	Edge() :from(0), to(0), cost(0){ };
+	bool operator<  (const Edge& e) const {
+		return cost < e.cost;
+	}
+	bool operator>  (const Edge& e) const {
+		return cost > e.cost;
+	}
 };
+
 
 struct Graph {
 	ll nodeSize;
