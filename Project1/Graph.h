@@ -240,7 +240,6 @@ vvll warshall_floyd(const Graph& g, ll default_value) {
 	return d;
 }
 
-
 class FordFulkerson {
 private:
 	vb usedNode;

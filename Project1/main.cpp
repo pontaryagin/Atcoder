@@ -1,5 +1,4 @@
 
-
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -58,26 +57,26 @@ constexpr ll SZ(T& v) { return static_cast<ll>(v.size()); };
 
 template<int n, typename T>
 struct vec_t_impl {
-	using type = vector<typename vec_t_impl<n-1,T>::type>;
+	using type = vector<typename vec_t_impl<n - 1, T>::type>;
 };
 template<typename T>
-struct vec_t_impl<1,T> {
+struct vec_t_impl<1, T> {
 	using type = vector<T>;
 };
 template<int n, typename T>
 using vec_t = typename vec_t_impl<n, T>::type;
 // check 
-static_assert(is_same<vec_t<3,ll>, vector<vector<vector<ll>>>>::value, "");
+static_assert(is_same<vec_t<3, ll>, vector<vector<vector<ll>>>>::value, "");
 
 // decompose vector into basetype and dimension.
-template<typename T> 
+template<typename T>
 struct vec_dec {
 	static constexpr int dim = 0;
 	using type  = T;
 };
 template<typename T>
 struct vec_dec<vector<T>> {
-	static constexpr int dim = vec_dec<T>::dim+1;
+	static constexpr int dim = vec_dec<T>::dim + 1;
 	using type  = typename vec_dec<T>::type;
 };
 static_assert(is_same<typename vec_dec<vec_t<3, ll>>::type, ll>::value, "");
@@ -101,20 +100,20 @@ struct is_vector<vector<T>> : std::true_type {};
 static_assert(is_vector<vector<ll>>::value == true && is_vector<ll>::value == false, "");
 
 template<typename T, typename V, typename enable_if<!is_vector<T>::value, nullptr_t>::type = nullptr>
-void fill_v(T& t, const V& v) { t = v; }
+void fill_v(T & t, const V & v) { t = v; }
 
 template<typename T, typename V, typename enable_if<is_vector<T>::value, nullptr_t>::type = nullptr>
-void fill_v(T& t, const V& v) {
-	for (auto &&x : t)
+void fill_v(T & t, const V & v) {
+	for (auto&& x : t)
 		fill_v(x, v);
 }
 // ex:  fill_v(dp, INF);
 
-template<typename T, typename enable_if<!is_vector<T>::value, nullptr_t>::type =nullptr>
-void read_v(T& x) {	cin >> x;}
+template<typename T, typename enable_if<!is_vector<T>::value, nullptr_t>::type = nullptr>
+void read_v(T & x) { cin >> x; }
 
 template<typename T, typename enable_if<is_vector<T>::value, nullptr_t>::type = nullptr>
-void read_v(T& x) { rep(i,0,x.size()) read_v(x[i]); }
+void read_v(T & x) { rep(i, 0, x.size()) read_v(x[i]); }
 
 typedef vector<ll> vll;
 typedef vector<vll> vvll;
@@ -130,10 +129,10 @@ using pq_greater = priority_queue<T, vector<T>, greater<T>>;
 #define rall(a) (a).rbegin(), (a).rend()
 #define perm(c) sort(all(c));for(bool c##perm=1;c##perm;c##perm=next_permutation(all(c)))
 
-template<typename T> void chmin(T &a, T b) {
+template<typename T> void chmin(T & a, T b) {
 	if (a > b) a = b;
 }
-template<typename T> void chmax(T &a, T b) {
+template<typename T> void chmax(T & a, T b) {
 	if (a < b) a = b;
 }
 
@@ -160,7 +159,7 @@ constexpr ll POW(ll x, ll n) {
 	if (n == 0)return 1;
 	if (n == 1)return x % mod;
 	if (n % 2 == 0)return POW_(POW<mod>(x, n / 2), 2LL) % mod;
-	return ((POW_(POW<mod>(x, n / 2), 2LL) % mod)*(x%mod)) % mod;
+	return ((POW_(POW<mod>(x, n / 2), 2LL) % mod) * (x % mod)) % mod;
 }
 template<>
 constexpr ll POW<0>(ll x, ll n) {
@@ -171,7 +170,7 @@ constexpr ll POW<0>(ll x, ll n) {
 	if (n == 0)return 1;
 	if (n == 1)return x;
 	if (n % 2 == 0) return POW_(POW(x, n / 2), 2);
-	return (POW_(POW(x, n / 2), 2))*x;
+	return (POW_(POW(x, n / 2), 2)) * x;
 }
 
 
@@ -180,18 +179,18 @@ template<
 	typename Inputs,
 	typename Functor,
 	typename T = typename Inputs::value_type>
-	void sort_by(Inputs& inputs, Functor f) {
+	void sort_by(Inputs & inputs, Functor f) {
 	std::sort(std::begin(inputs), std::end(inputs),
-		[&f](const T& lhs, const T& rhs) { return f(lhs) < f(rhs); });
+		[&f](const T & lhs, const T & rhs) { return f(lhs) < f(rhs); });
 }
 
 template<
 	typename Inputs,
 	typename Functor,
 	typename T = typename Inputs::value_type>
-	void stable_sort_by(Inputs& inputs, Functor f) {
+	void stable_sort_by(Inputs & inputs, Functor f) {
 	std::stable_sort(std::begin(inputs), std::end(inputs),
-		[&f](const T& lhs, const T& rhs) { return f(lhs) < f(rhs); });
+		[&f](const T & lhs, const T & rhs) { return f(lhs) < f(rhs); });
 }
 
 
@@ -202,13 +201,13 @@ struct Edge
 {
 	ll from;
 	ll to;
-	ll cost=1;
+	ll cost = 1;
 	Edge reverse() const {
 		return Edge{ to, from , cost };
 	}
-	Edge(ll from , ll to, ll cost=1) : from(from),to(to),cost(cost){};
+	Edge(ll from, ll to, ll cost = 1) : from(from), to(to), cost(cost) {};
 	Edge(pll e) { from = e.first; to = e.second; cost = 1; }
-	Edge() :from(0), to(0), cost(0){ };
+	Edge() :from(0), to(0), cost(0) { };
 };
 
 struct Graph {
@@ -216,9 +215,9 @@ struct Graph {
 	vector<Edge> edges;
 	vector<vector<ll>> out_edges;
 	vector<vector<ll>> in_edges;
-	enum Dir{dir, nondir};
-	Graph(ll nodeSize, const vector<Edge>& edges = vector<Edge>(), Dir dirct= dir)
-		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize), edges(move(edges)){
+	enum Dir { dir, nondir };
+	Graph(ll nodeSize, const vector<Edge>& edges = vector<Edge>(), Dir dirct = dir)
+		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize), edges(move(edges)) {
 		rep(i, 0, edges.size()) {
 			in_edges[edges[i].to].push_back(i);
 			out_edges[edges[i].from].push_back(i);
@@ -237,15 +236,15 @@ struct Graph {
 			out_edges[edges[i].from].push_back(i);
 		}
 	}
-	Graph(vvll ajacency_matrix, ll default_value) 
-		: nodeSize(ajacency_matrix.size()), out_edges(nodeSize), in_edges(nodeSize){
+	Graph(vvll ajacency_matrix, ll default_value)
+		: nodeSize(ajacency_matrix.size()), out_edges(nodeSize), in_edges(nodeSize) {
 		ll n = ajacency_matrix.size();
 		rep(i, 0, n)rep(j, 0, n) {
 			if (ajacency_matrix[i][j] != default_value)
 				push(Edge(i, j, ajacency_matrix[i][j]));
 		}
 	}
-	
+
 	Edge& operator[](ll ind) {
 		return this->edges[ind];
 	}
@@ -253,7 +252,7 @@ struct Graph {
 		return this->edges[ind];
 	}
 	size_t size() const { return out_edges.size(); }
-	void push(Edge edge){
+	void push(Edge edge) {
 		assert(max(edge.from, edge.to) < out_edges.size());
 		edges.emplace_back(edge);
 		out_edges[edge.from].emplace_back(edges.size() - 1);
@@ -272,9 +271,9 @@ struct Graph {
 		// O(nodeSize)
 		assert(edge_ind < edges.size());
 		edges.erase(edges.begin() + edge_ind);
-		auto& esin = in_edges[edges[edge_ind].to];
+		auto & esin = in_edges[edges[edge_ind].to];
 		esin.erase(find(all(esin), edge_ind));
-		auto& esout = out_edges[edges[edge_ind].from];
+		auto & esout = out_edges[edges[edge_ind].from];
 		esout.erase(find(all(esout), edge_ind));
 	}
 	void push(vector<Edge> edges) {
@@ -347,7 +346,7 @@ struct Graph {
 	ll diameter() {
 		// require : graph is tree
 		// calculate the diameter ( longest path length ) in O(N)
-		vll dp(size(),-1);
+		vll dp(size(), -1);
 		ll m = 0; ll ind;
 		function<void(ll)> dfs = [&](ll x) {
 			for (ll e : out_edges[x]) {
@@ -365,14 +364,14 @@ struct Graph {
 		dfs(0);
 		ll first = ind;
 		fill_v(dp, -1);
-		dp[first] = 0; 
+		dp[first] = 0;
 		dfs(first);
 		return m;
 		// remark two end points of diameter are 'first' and 'ind';
 	}
 };
 
-pair<vll, vll> dijkstra(const Graph& graph, size_t start) {
+pair<vll, vll> dijkstra(const Graph & graph, size_t start) {
 	// graph: weighted directed graph of adjacent representation
 	// start: index of start point
 	// return1: minimum path length from start
@@ -407,7 +406,7 @@ pair<vll, vll> dijkstra(const Graph& graph, size_t start) {
 
 }
 
-vll shortest_path(const vll& from_list, ll start, ll goal) {
+vll shortest_path(const vll & from_list, ll start, ll goal) {
 	// usage : vll path =  shortest_path(dijkstra(g,s).second, s, g);
 	vll path;
 	path.emplace_back(goal);
@@ -423,7 +422,7 @@ vll shortest_path(const vll& from_list, ll start, ll goal) {
 	return path;
 }
 
-vvll warshall_floyd(const Graph& g, ll default_value) {
+vvll warshall_floyd(const Graph & g, ll default_value) {
 	ll n = g.size();
 	vvll d = g.adjacency_matrix(INF);
 	rep(k, 0, n)rep(i, 0, n)rep(j, 0, n) {
@@ -437,6 +436,24 @@ vvll warshall_floyd(const Graph& g, ll default_value) {
 	return d;
 }
 
+vvll warshall_floyd2(const Graph & g, ll default_value, ll & sum) {
+	ll n = g.size();
+	vvll d = g.adjacency_matrix(INF);
+	vvll used(n, vll(n));
+	rep(k, 0, n)rep(i, 0, n)rep(j, 0, n) {
+		if (d[i][j] > d[i][k] + d[k][j])
+			d[i][j] = d[i][k] + d[k][j];
+		else if (d[i][j] < d[i][k] + d[k][j]) {
+			sum += d[i][j];
+			used[i][j] = 1;
+		}
+	}
+	rep(i, 0, n)rep(j, 0, n) {
+		if (d[i][j] == INF)
+			d[i][j] = default_value;
+	}
+	return d;
+}
 
 class FordFulkerson {
 private:
@@ -444,8 +461,8 @@ private:
 public:
 	struct RevEdge { ll from, to, cap, rev; };
 
-	FordFulkerson(ll n, Graph graph) 
-		:usedNode(vb(n)), G(vec_t<2,RevEdge>(n))
+	FordFulkerson(ll n, Graph graph)
+		:usedNode(vb(n)), G(vec_t<2, RevEdge>(n))
 	{
 		rep(i, 0, graph.size()) {
 			for (ll eind : graph.out_edges[i]) {
@@ -536,25 +553,40 @@ int main() {
 	ll n;
 	cin >> n;
 	vvll A(n, vll(n));
-	vector<tll<3>> data(n*n);
+	vector<tll<3>> data(n * n);
 	vector<Edge> edges;
 	rep(i, 0, n) {
 		rep(j, 0, n) {
 			cin >> A[i][j];
 		}
 	}
-	Graph g(A,0);
-	auto d = warshall_floyd(g,0);
+	Graph g(A, 0);
 	ll sum = 0;
+	map<ll, pll> mp;
 	rep(i, 0, n)rep(j, 0, n) {
-		if(A[i][j] > d[i][j]) {
+		mp[A[i][j]] = pll{ i,j };
+		sum += A[i][j];
+	}
+	sum /= 2;
+	vvll d = g.adjacency_matrix(INF);
+	vvll used(n, vll(n));
+	rep(k, 0, n)rep(i, 0, n)rep(j, 0, n) {
+		if (d[i][j] > d[i][k] + d[k][j])
+			d[i][j] = d[i][k] + d[k][j];
+		else if (d[i][j] == d[i][k] + d[k][j] && k != j && i != k && used[i][j] == 0 && used[j][i] == 0) {
+			sum -= d[i][j];
+			used[i][j] = 1;
+		}
+	}
+	rep(i, 0, n)rep(j, 0, n) {
+		if (A[i][j] > d[i][j]) {
 			cout << -1 << endl; return 0;
 		}
-		chmax(sum,  d[i][j]);
 	}
-	cout << sum<< endl;
+	cout << sum << endl;
 
 	return 0;
 
 }
+
 
