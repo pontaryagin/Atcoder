@@ -42,6 +42,7 @@ my $workspace = "$testCaseDir/$problemName/$problemNumber";
 # check online judge tool
 if(@ARGV == 0){exit(0);}
 elsif($what eq 'build'){gpp; print "\nbuild success!\n"; exit(0);}
+elsif($what eq 'code'){`code $out`; exit(0);}
 elsif($problemName =~ /http.*/){
     system("rm -f ./test/*");
     print "oj dl $problemName";
