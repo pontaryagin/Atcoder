@@ -30,21 +30,38 @@ int main() {
 	rep(i, 0, n+1)if(S[i]) all.insert(S[i]);
 	ll res = 0;
 	if (S[n] == 0) {
-		for (auto x : all) {
+		vll dp(1LL<<21); // 空間計算量が1<<20程度であることを使っている
+		ll sum = 0;
+		dp[0]=1;
+		rep(i,0,n+1){
+			ll x = S[i];
 			// search 0x0x0x0;
-
+			if(x==0){
+				dp[0]=dp[0]+ sum;
+			}else{
+				dp[x] = dp[x]+dp[0];
+			}
+			string s;
 		}
+		ll u = accumulate(all(dp),0LL);
+		cout<< u<< endl;
 	}
 	else {
 		ll x = S[n];
 		// 0x0x0x0x;
+		ll dp0=1;
+		ll dp1=0;
+
 		rep(i, 0, n + 1) {
 			if (S[i] != 0) {
-
+				dp1=dp1+dp0;
+			}
+			else{
+				dp0=dp0+dp1;
 			}
 		}
+		cout<< dp1+dp0<<endl;
 	}
-
 	return 0;
 
 }
