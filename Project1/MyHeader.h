@@ -116,6 +116,12 @@ void read_v(T& x) {	cin >> x;}
 template<typename T, typename enable_if<is_vector<T>::value, nullptr_t>::type = nullptr>
 void read_v(T& x) { rep(i,0,x.size()) read_v(x[i]); }
 
+template<typename T, typename enable_if<!is_vector<T>::value, nullptr_t>::type = nullptr>
+void write_v(T & x) { cout << x << " "; }
+
+template<typename T, typename enable_if<is_vector<T>::value, nullptr_t>::type = nullptr>
+void write_v(T& x) { rep(i, 0, x.size()) write_v(x[i]); cout << endl; }
+
 typedef vector<ll> vll;
 typedef vector<vll> vvll;
 typedef vector<pll> vpll;
@@ -143,38 +149,22 @@ vll seq(ll i, ll j) {
 	return res;
 }
 
-constexpr ll POW_(ll n, ll m) {
-	ll res = 1;
-	rep(i, 0, m) {
-		res *= n;
-	}
-	return res;
+constexpr ll POW_0(ll x, ll y) {
+	if (y == 0)return 1;
+	if (y == 1)return x ;
+	if (y == 2)return x * x ;
+	if (y % 2 == 0)return POW_0(POW_0(x, y / 2), 2LL);
+	return ((POW_0(POW_0(x, y / 2), 2LL)) * (x)) ;
 }
 
-template<ll mod = 0>
-constexpr ll POW(ll x, ll n) {
-	if (x == 2)
-	{
-		return (1LL << n) % mod;
-	}
-	if (n == 0)return 1;
-	if (n == 1)return x % mod;
-	if (n % 2 == 0)return POW_(POW<mod>(x, n / 2), 2LL) % mod;
-	return ((POW_(POW<mod>(x, n / 2), 2LL) % mod)*(x%mod)) % mod;
+constexpr ll POW(ll x, ll y, ll mod = MOD) {
+	if (mod == 0)return POW_0(x, y);
+	if (y == 0)return 1;
+	if (y == 1)return x % mod;
+	if (y == 2)return x * x % mod;
+	if (y % 2 == 0)return POW(POW(x, y / 2, mod), 2LL, mod) % mod;
+	return ((POW(POW(x, y / 2, mod), 2LL, mod)) * (x % mod)) % mod;
 }
-template<>
-constexpr ll POW<0>(ll x, ll n) {
-	if (x == 2)
-	{
-		return 1LL << n;
-	}
-	if (n == 0)return 1;
-	if (n == 1)return x;
-	if (n % 2 == 0) return POW_(POW(x, n / 2), 2);
-	return (POW_(POW(x, n / 2), 2))*x;
-}
-
-
 
 template<
 	typename Inputs,

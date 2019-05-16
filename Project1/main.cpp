@@ -116,6 +116,12 @@ void read_v(T& x) {	cin >> x;}
 template<typename T, typename enable_if<is_vector<T>::value, nullptr_t>::type = nullptr>
 void read_v(T& x) { rep(i,0,x.size()) read_v(x[i]); }
 
+template<typename T, typename enable_if<!is_vector<T>::value, nullptr_t>::type = nullptr>
+void write_v(T & x) { cout << x << " "; }
+
+template<typename T, typename enable_if<is_vector<T>::value, nullptr_t>::type = nullptr>
+void write_v(T& x) { rep(i, 0, x.size()) write_v(x[i]); cout << endl; }
+
 typedef vector<ll> vll;
 typedef vector<vll> vvll;
 typedef vector<pll> vpll;
@@ -143,35 +149,22 @@ vll seq(ll i, ll j) {
 	return res;
 }
 
-constexpr ll POW_(ll n, ll m) {
-	ll res = 1;
-	rep(i, 0, m) {
-		res *= n;
-	}
-	return res;
+constexpr ll POW_0(ll x, ll y) {
+	if (y == 0)return 1;
+	if (y == 1)return x ;
+	if (y == 2)return x * x ;
+	if (y % 2 == 0)return POW_0(POW_0(x, y / 2), 2LL);
+	return ((POW_0(POW_0(x, y / 2), 2LL)) * (x)) ;
 }
 
-template<ll mod = 0>
-constexpr ll POW(ll x, ll n) {
-	if (x == 2)
-	{
-		return (1LL << n) % mod;
-	}
-	if (n == 0)return 1;
-	if (n == 1)return x % mod;
-	if (n % 2 == 0)return POW_(POW<mod>(x, n / 2), 2LL) % mod;
-	return ((POW_(POW<mod>(x, n / 2), 2LL) % mod)*(x%mod)) % mod;
-}
-template<>
-constexpr ll POW<0>(ll x, ll n) {
-	if (x == 2)
-	{
-		return 1LL << n;
-	}
-	if (n == 0)return 1;
-	if (n == 1)return x;
-	if (n % 2 == 0) return POW_(POW(x, n / 2), 2);
-	return (POW_(POW(x, n / 2), 2))*x;
+
+constexpr ll POW(ll x, ll y, ll mod = MOD) {
+	if (mod == 0)return POW_0(x, y);
+	if (y == 0)return 1;
+	if (y == 1)return x % mod;
+	if (y == 2)return x * x % mod;
+	if (y % 2 == 0)return POW(POW(x, y / 2, mod), 2LL, mod) % mod;
+	return ((POW(POW(x, y / 2, mod), 2LL, mod)) * (x % mod)) % mod;
 }
 
 
@@ -198,22 +191,11 @@ template<
 
 
 
-ll POW(ll n, ll m) {
-	ll res = 1;
-	rep(i, 0, m) {
-		res *= n;
-	}
-	return res;
-}
 
-ll bin_power(ll x, ll y, ll mod) {
-	if (y == 0)return 1;
-	if (y == 1)return x % mod;
-	if (y % 2 == 0)return POW(bin_power(x, y / 2, mod), 2LL) % mod;
-	return ((POW(bin_power(x, y / 2, mod), 2LL) % mod)*(x%mod)) % mod;
-}
+
+
 ll div_ferm(ll a, ll  b, ll mod) {
-	return (a* bin_power(b, mod - 2, mod)) % mod;
+	return (a* POW(b, mod - 2, mod)) % mod;
 }
 
 
@@ -309,7 +291,7 @@ istream& operator >>(istream &in, modint<Modulus> &t) {
 }
 template<uint_fast64_t Modulus>
 modint<Modulus> POW(modint<Modulus> x, ll n) {
-	return modint<Modulus>(POW<Modulus>(x.value(), n));
+	return modint<Modulus>(POW(x.value(), n, Modulus));
 }
 
 // === Mll ===
@@ -593,52 +575,66 @@ int main() {
 	ios::sync_with_stdio(false);
 	cout << fixed << setprecision(12);
 
-
 	//auto x = prime_factorize(292);
 	ll n;
 	cin >> n;
 	vll a(n);
 	rep(i, 0, n)cin >> a[i];
-	vll S(n+1);
-	rep(i, 0, n) S[i+1] = S[i] ^a[i];
-	//rep(i, 0, n) cerr << S[i+1]<<" ";
-	set<ll> all;
-	rep(i, 0, n+1)if(S[i]) all.insert(S[i]);
+	vll S(n+1),zero(n+1);
+	rep(i, 0, n) { S[i + 1] = S[i] ^ a[i]; zero[i + 1] = zero[i] + (S[i] == 0?1:0); }
+	//rep(i, 0, n) cout << S[i+1]<<" ";
+	//set<ll> all;
+	//rep(i, 0, n+1)if(S[i]) all.insert(S[i]);
 	ll res = 0;
 	if (S[n] == 0) {
-		vll dp(1LL<<21); // 空間計算量が1<<20程度であることを使っている
+		vll dp0(1LL<<21), dp1(1LL << 21), cnt(1LL<<21), ind(1LL<<21); // 空間計算量が1<<20程度であることを使っている
 		ll sum = 0;
-		dp[0]=1;
-		rep(i,0,n+1){
+		rep(i,1,n+1){
 			ll x = S[i];
 			// search 0x0x0x0;
 			if(x==0){
-				dp[0]=dp[0]+ sum;
+				//rep(i, 0, dp0.size()) {
+					//dp0[i] = dp0[i] + dp1[i]; dp0[i] %= MOD;
+				//}
+				sum++;
 			}else{
-				dp[x] = dp[x]+dp[0];
-				sum += dp[0];
+				dp0[x] = dp0[x] + ( dp1[x] * (sum-cnt[x]) );
+				dp0[x] %= MOD;
+				ind[x] = i;
+				cnt[x] = sum;
+				dp1[x] = dp1[x]+ dp0[x]+1;
+				dp1[x] %= MOD;
 			}
-			string s;
 		}
-		ll u = accumulate(all(dp),0LL);
-		cout<< dp[0]<< endl;
+
+		ll u=0;
+		rep(i, 0, dp1.size()) { u += dp1[i];u %= MOD; }
+		ll cn = (count(all(S), 0) - 2);
+		u += POW(2, cn, MOD); //POW<MOD>(2LL, cn) ;
+		u %= MOD;
+		//write_v(S);
+		//rep(i, 0, S.size())cout << dp[S[i]];
+		cout<< u << endl;
 	}
 	else {
 		ll x = S[n];
 		// 0x0x0x0x;
 		ll dp0=1;
 		ll dp1=0;
-
-		rep(i, 0, n + 1) {
+		//if(n>100)abort();
+		rep(i, 0, n) {
 			if (S[i] != 0) {
-				if(S[i]==x)
-					dp1=dp1+dp0;
+				if (S[i] == x)
+				{
+					dp1 = dp1 + dp0; dp1 %= MOD;
+				}
+					
 			}
 			else{
-				dp0=dp0+dp1;
+				{dp0 = dp0 + dp1; dp0 %= MOD; }
 			}
 		}
-		cout<< dp1+dp0<<endl;
+		cout<< dp0<<endl;
 	}
 	return 0;
 

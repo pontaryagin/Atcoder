@@ -1,22 +1,11 @@
 #pragma once
 #include "MyHeader.h"
 
-ll POW(ll n, ll m) {
-	ll res = 1;
-	rep(i, 0, m) {
-		res *= n;
-	}
-	return res;
-}
 
-ll bin_power(ll x, ll y, ll mod) {
-	if (y == 0)return 1;
-	if (y == 1)return x % mod;
-	if (y % 2 == 0)return POW(bin_power(x, y / 2, mod), 2LL) % mod;
-	return ((POW(bin_power(x, y / 2, mod), 2LL) % mod)*(x%mod)) % mod;
-}
+
+
 ll div_ferm(ll a, ll  b, ll mod) {
-	return (a* bin_power(b, mod - 2, mod)) % mod;
+	return (a* POW(b, mod - 2, mod)) % mod;
 }
 
 
@@ -112,7 +101,7 @@ istream& operator >>(istream &in, modint<Modulus> &t) {
 }
 template<uint_fast64_t Modulus>
 modint<Modulus> POW(modint<Modulus> x, ll n) {
-	return modint<Modulus>(POW<Modulus>(x.value(), n));
+	return modint<Modulus>(POW(x.value(), n, Modulus));
 }
 
 // === Mll ===
