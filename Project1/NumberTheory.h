@@ -20,13 +20,13 @@ public:
 	u64 a;
 
 	constexpr modint(const u64 x = 0) noexcept : a(x % Modulus) {}
-	//constexpr modint(const modint& rhs) noexcept {
-	//	this->a = rhs.value();
-	//}
-	//constexpr modint &operator=(const modint &rhs) noexcept {
-	//	this->a = rhs.value();
-	//	return *this;
-	//}
+	constexpr modint(const modint& rhs) noexcept {
+		this->a = rhs.value();
+	}
+	constexpr modint &operator=(const modint &rhs) noexcept {
+		this->a = rhs.value();
+		return *this;
+	}
 	constexpr u64 value() const noexcept { return a; }
 	constexpr modint operator+(const modint rhs) const noexcept {
 		return modint(*this) += rhs;
@@ -85,8 +85,23 @@ public:
 		*this -= modint(1);
 		return t;
 	}
-
+	constexpr bool operator==(const modint rhs) const noexcept { return a == rhs.value(); }
+	constexpr bool operator!=(const modint rhs)const  noexcept { return a != rhs.value(); }
+	constexpr bool operator <(const modint rhs)const  noexcept { return a < rhs.value(); }
+	// should be moved to Google Test
+	//constexpr void test(){
+	//	constexpr auto x = modint<5>(3);
+	//	constexpr auto y = modint<5>(4);
+	//	constexpr auto z = modint<5>(2);
+	//	static_assert(x + y == z, "");
+	//	static_assert(x != y, "");
+	//	static_assert(++x == y && x++ != y && x == --y && x != y--, "");
+	//	static_assert(x + 6 == y, "");
+	//	static_assert(x / 2 == y, "");
+	//	
+	//}
 };
+
 template<uint_fast64_t Modulus>
 ostream& operator <<(ostream &o, const modint<Modulus> &t) {
 	o << t.value();
@@ -112,9 +127,6 @@ struct Mint {
 	Mint() :v(0) {}
 	Mint(signed v) :v(v) {}
 	Mint(long long t) { v = t % MOD; if (v < 0) v += MOD; }
-
-
-
 
 	Mint inv() { return pow(MOD - 2); }
 
