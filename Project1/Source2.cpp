@@ -44,7 +44,6 @@ int main() {
 		
 		}
 	}
-	modint<>().test();
 	cout << dp[n - 1][k]<<endl ;
 
 	return 0;

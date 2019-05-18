@@ -20,13 +20,13 @@ public:
 	u64 a;
 
 	constexpr modint(const u64 x = 0) noexcept : a(x % Modulus) {}
-	constexpr modint(const modint& rhs) noexcept {
-		this->a = rhs.value();
-	}
-	constexpr modint &operator=(const modint &rhs) noexcept {
-		this->a = rhs.value();
-		return *this;
-	}
+	//constexpr modint(const modint& rhs) noexcept {
+	//	this->a = rhs.value();
+	//}
+	//constexpr modint &operator=(const modint &rhs) noexcept {
+	//	this->a = rhs.value();
+	//	return *this;
+	//}
 	constexpr u64 value() const noexcept { return a; }
 	constexpr modint operator+(const modint rhs) const noexcept {
 		return modint(*this) += rhs;
@@ -121,7 +121,7 @@ modint<Modulus> POW(modint<Modulus> x, ll n) {
 
 // === Mll ===
 
-template<typename T, T MOD = 1000000007>
+template<typename T = ll , T MOD = 1000000007>
 struct Mint {
 	T v;
 	Mint() :v(0) {}
