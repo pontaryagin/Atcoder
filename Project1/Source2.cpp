@@ -11,37 +11,47 @@
 
 // ============================ Header  =================================
 
+
 int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
-	cout << setprecision(12);
-	auto x = modint<MOD>(1);
-	auto y = modint<>();
-	auto z = y + x;
+	cout << fixed << setprecision(12);
 
-	ll n;
-	cin >> n;
-	vvll a(n, vll(n));
-	read_v(a);
+	ll m, k;
+	cin >> m >> k;
+	if (k>(1<<m)-1 ) {
+		cout << -1 << endl;
+	}
+	else if (k != 0) {
+		if (m == 1) {
+			if (k == 0) cout<< "0 0 1 1" <<endl;
+			else cout<<-1 <<endl;
+			return 0;
+		}
+		vll res;
+		res.push_back(0); res.push_back(k); res.push_back(0);
+		rep(i, 1, 1 << m) {
+			if(i!= k)
+				res.push_back(i);
+		}
+		res.push_back(k);
+		rrep(i, 1, 1 << m) {
+			if (i != k)
+				res.push_back(i);
+		}
+		write_v(res);
+	}
+	else {
+		vll res = seq(0, 1 << m);
+		rep(i, 0, res.size()) {
+			if (i != res.size() - 1)
+				cout << res[i] << " " << res[i] << " ";
+			else
+				cout << res[i] << " " << res[i] << endl;
 
-	vector<ll> as(n);
-	rep(i, 0, n)rep(j, 0, n) {
-		as[i] |= 1<< a[i][j];
-	}
-	vector<vector<Mint<>>> dp(n, vector<Mint<>>(1LL << 22));
-	rep(j, 0, 1 << n) {
-		ll i = popcnt(j)-1;
-		auto poss = as[i] & (j);
-		if (i == 0) {
-			dp[0][j] = popcnt(poss);
-			continue;
-		}
-		if (poss == 0)continue;
-		rep(k, 0, n) {
-			if (poss & (1<<k)) dp[i][j] += dp[i - 1][j ^ (1LL << k)];
 		}
 	}
-	cout << dp[n - 1][(1LL << n) - 1].v << endl;
+
 	return 0;
 
 }

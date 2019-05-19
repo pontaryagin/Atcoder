@@ -123,11 +123,11 @@ void read_v(T& x) {	cin >> x;}
 template<typename T, typename enable_if<is_vector<T>::value, nullptr_t>::type = nullptr>
 void read_v(T& x) { rep(i,0,x.size()) read_v(x[i]); }
 
-template<typename T, typename enable_if<!is_vector<T>::value, nullptr_t>::type = nullptr>
-void write_v(T & x) { cout << x << " "; }
+template<typename T, typename Delim_t = string, typename enable_if<!is_vector<T>::value, nullptr_t>::type = nullptr>
+void write_v(T & x, Delim_t delim = " ") { cout << x << delim; }
 
-template<typename T, typename enable_if<is_vector<T>::value, nullptr_t>::type = nullptr>
-void write_v(T& x) { rep(i, 0, x.size()) write_v(x[i]); cout << endl; }
+template<typename T, typename Delim_t = string, typename enable_if<is_vector<T>::value, nullptr_t>::type = nullptr>
+void write_v(T& x, Delim_t delim = " ") { rep(i, 0, x.size()) write_v(x[i]); cout << endl; }
 
 typedef vector<ll> vll;
 typedef vector<vll> vvll;
