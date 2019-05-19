@@ -9,44 +9,40 @@
 
 
 
-
 // ============================ Header  =================================
 
 int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
-	cout  << setprecision(12);
+	cout << setprecision(12);
 	auto x = modint<MOD>(1);
 	auto y = modint<>();
-	auto z  = y + x;
+	auto z = y + x;
 
-	ll n, k;
-	cin >> n >> k;
-	vll a(n);
+	ll n;
+	cin >> n;
+	vvll a(n, vll(n));
 	read_v(a);
-	auto dp = make_v<modint<>>(n, k + 1);
-	rep(i, 0, n) {
-		if (i == 0)
-		{
-			rep(j, 0, a[i] + 1)dp[i][j] = 1;
+
+	vector<bitset<21>> as(n);
+	rep(i, 0, n)rep(j, 0, n) {
+		as[i][j] = a[i][j];
+	}
+	vector<vector<int>> dp(n, vector<int>(1LL << 22));
+	rep(j, 0, 1 << n) {
+		ll i = popcnt(j)-1;
+		auto poss = as[i] & bitset<21>(j);
+		if (i == 0) {
+			dp[0][j] = poss.count();
 			continue;
 		}
-		vector<modint<>> S(k + 2);
-		rep(j, 0, k + 1)
-		{
-			S[j + 1] = S[j]; S[j+1] +=dp[i - 1][j];
-		}
-		rep(j, 0, k+1) {
-			if(j ==0) dp[i][0] = 1;
-			//dp[i][1] = dp[i - 1][0] + dp[i - 1][1];
-			else 
-				dp[i][j] = ( S[j + 1] - S[max(0LL, j - a[i])]); //dp[i - 1][max(0LL, j - a[i])] + .. + dp[i - 1][j];
-		
+		if (poss == 0)continue;
+		rep(k, 0, n) {
+			if (poss[k]) dp[i][j] += dp[i - 1][j ^ (1LL << k)];
+			if (dp[i][j] >= MOD) dp[i][j] -= MOD;
 		}
 	}
-	cout << dp[n - 1][k]<<endl ;
-
+	cout << dp[n - 1][(1LL << n) - 1] << endl;
 	return 0;
 
 }
-

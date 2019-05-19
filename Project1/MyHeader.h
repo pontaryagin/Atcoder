@@ -1,5 +1,5 @@
 #pragma once
-
+//#pragma GCC optimize ("-O3")
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -24,6 +24,13 @@
 #include <time.h>
 #include <iomanip>
 #include <random>
+#ifdef _MSC_VER
+#include <intrin.h>
+#define popcnt __popcnt64
+//#  define __builtin_popcount __popcnt
+#else
+#define popcnt __builtin_popcountll
+#endif
 //#include "boost/variant.hpp"
 
 // #include "bits/stdc++.h"
