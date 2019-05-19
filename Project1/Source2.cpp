@@ -24,25 +24,24 @@ int main() {
 	vvll a(n, vll(n));
 	read_v(a);
 
-	vector<bitset<21>> as(n);
+	vector<ll> as(n);
 	rep(i, 0, n)rep(j, 0, n) {
-		as[i][j] = a[i][j];
+		as[i] |= 1<< a[i][j];
 	}
-	vector<vector<int>> dp(n, vector<int>(1LL << 22));
+	vector<vector<Mint<>>> dp(n, vector<Mint<>>(1LL << 22));
 	rep(j, 0, 1 << n) {
 		ll i = popcnt(j)-1;
-		auto poss = as[i] & bitset<21>(j);
+		auto poss = as[i] & (j);
 		if (i == 0) {
-			dp[0][j] = poss.count();
+			dp[0][j] = popcnt(poss);
 			continue;
 		}
 		if (poss == 0)continue;
 		rep(k, 0, n) {
-			if (poss[k]) dp[i][j] += dp[i - 1][j ^ (1LL << k)];
-			if (dp[i][j] >= MOD) dp[i][j] -= MOD;
+			if (poss & (1<<k)) dp[i][j] += dp[i - 1][j ^ (1LL << k)];
 		}
 	}
-	cout << dp[n - 1][(1LL << n) - 1] << endl;
+	cout << dp[n - 1][(1LL << n) - 1].v << endl;
 	return 0;
 
 }

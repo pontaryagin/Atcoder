@@ -13,4 +13,7 @@
     <ClInclude Include="UnionFind.h" />
     <ClInclude Include="Training.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include=".editorconfig" />
+  </ItemGroup>
 </Project>

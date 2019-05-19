@@ -1,5 +1,5 @@
 
-#pragma GCC optimize ("-O3")
+//#pragma GCC optimize ("-O3")
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -319,7 +319,7 @@ template<typename T = ll , T MOD = 1000000007>
 struct Mint {
 	T v;
 	Mint() :v(0) {}
-	Mint(signed v) :v(v) {}
+	//Mint(signed v) :v(v) {}
 	Mint(long long t) { v = t % MOD; if (v < 0) v += MOD; }
 
 	Mint inv() { return pow(MOD - 2); }
@@ -581,7 +581,13 @@ vector<pll >prime_factorize(ll n) {
 
 
 
-
+//ビット bit に i 番目のフラグが立っているかどうか	if (bit & (1 << i))
+//ビット bit に i 番目のフラグが消えているかどうか	if (!(bit & (1 << i)))
+//ビット bit に i 番目のフラグを立てる	bit｜ = (1 << i)
+//ビット bit に i 番目のフラグを消す	bit &= ~(1 << i)
+//ビット bit に何個のフラグが立っているか	__builtin_popcount(bit)
+//ビット bit に i 番目のフラグを立てたもの	bit｜(1 << i)
+//ビット bit に i 番目のフラグを消したもの	bit & ~(1 << i)
 
 // ============================ Header  =================================
 
@@ -598,25 +604,24 @@ int main() {
 	vvll a(n, vll(n));
 	read_v(a);
 
-	vector<bitset<21>> as(n);
+	vector<ll> as(n);
 	rep(i, 0, n)rep(j, 0, n) {
-		as[i][j] = a[i][j];
+		as[i] |= 1<< a[i][j];
 	}
-	vector<vector<int>> dp(n, vector<int>(1LL << 22));
+	vector<vector<Mint<>>> dp(n, vector<Mint<>>(1LL << 22));
 	rep(j, 0, 1 << n) {
 		ll i = popcnt(j)-1;
-		auto poss = as[i] & bitset<21>(j);
+		auto poss = as[i] & (j);
 		if (i == 0) {
-			dp[0][j] = poss.count();
+			dp[0][j] = popcnt(poss);
 			continue;
 		}
 		if (poss == 0)continue;
 		rep(k, 0, n) {
-			if (poss[k]) dp[i][j] += dp[i - 1][j ^ (1LL << k)];
-			if (dp[i][j] >= MOD) dp[i][j] -= MOD;
+			if (poss & (1<<k)) dp[i][j] += dp[i - 1][j ^ (1LL << k)];
 		}
 	}
-	cout << dp[n - 1][(1LL << n) - 1] << endl;
+	cout << dp[n - 1][(1LL << n) - 1].v << endl;
 	return 0;
 
 }

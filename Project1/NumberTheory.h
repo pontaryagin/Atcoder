@@ -125,7 +125,7 @@ template<typename T = ll , T MOD = 1000000007>
 struct Mint {
 	T v;
 	Mint() :v(0) {}
-	Mint(signed v) :v(v) {}
+	//Mint(signed v) :v(v) {}
 	Mint(long long t) { v = t % MOD; if (v < 0) v += MOD; }
 
 	Mint inv() { return pow(MOD - 2); }
