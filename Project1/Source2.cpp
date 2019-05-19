@@ -17,6 +17,10 @@ int main() {
 	ios::sync_with_stdio(false);
 	cout << fixed << setprecision(12);
 
+	vec_t<1,pair<ll, pll>> x(2);
+	read_v(x);
+
+
 	ll m, k;
 	cin >> m >> k;
 	if (k>(1<<m)-1 ) {

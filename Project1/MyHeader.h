@@ -107,6 +107,14 @@ template < typename T >
 struct is_vector<vector<T>> : std::true_type {};
 static_assert(is_vector<vector<ll>>::value == true && is_vector<ll>::value == false, "");
 
+// check if T is vector
+template < typename T>
+struct is_pair : std::false_type {};
+
+template < typename T, typename S >
+struct is_pair<pair<T, S>> : std::true_type {};
+static_assert(is_pair<pll>::value == true && is_pair<ll>::value == false, "");
+
 template<typename T, typename V, typename enable_if<!is_vector<T>::value, nullptr_t>::type = nullptr>
 void fill_v(T& t, const V& v) { t = v; }
 
@@ -117,8 +125,11 @@ void fill_v(T& t, const V& v) {
 }
 // ex:  fill_v(dp, INF);
 
-template<typename T, typename enable_if<!is_vector<T>::value, nullptr_t>::type =nullptr>
+template<typename T, typename enable_if < !is_vector<T>::value && !is_pair<T>::value, nullptr_t > ::type = nullptr >
 void read_v(T& x) {	cin >> x;}
+
+template<typename T, typename enable_if<is_pair<T>::value, nullptr_t>::type = nullptr>
+void read_v(T& x) { read_v(x.first); read_v(x.second); }
 
 template<typename T, typename enable_if<is_vector<T>::value, nullptr_t>::type = nullptr>
 void read_v(T& x) { rep(i,0,x.size()) read_v(x[i]); }
