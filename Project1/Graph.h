@@ -26,25 +26,24 @@ struct Graph {
 	vector<Edge> edges;
 	vector<vector<ll>> out_edges;
 	vector<vector<ll>> in_edges;
-	enum Dir{dir, nondir};
-	Graph(ll nodeSize, const vector<Edge>& edges = vector<Edge>(), Dir dirct= dir)
-		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize), edges(move(edges)){
-		rep(i, 0, edges.size()) {
-			in_edges[edges[i].to].push_back(i);
-			out_edges[edges[i].from].push_back(i);
-			if (dirct == nondir) {
-				in_edges[edges[i].from].push_back(i);
-				out_edges[edges[i].to].push_back(i);
-			}
+	enum Dir{dir, undir};
+	Graph(ll nodeSize, const vector<Edge>& edges_ = vector<Edge>(), Dir dirct= dir)
+		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize), edges(){
+		if (dirct == undir) {
+			for (const Edge& e : edges_) push_undir(e);
 		}
+		else {
+			for (const Edge& e : edges_) push(e);
+		}
+
 	}
 	Graph(ll nodeSize, vector<pll> edges_, Dir dirct = dir)
-		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize), edges(edges_.size()) {
-		//if (dirct == nondir) edges.resize(edges_.size() * 2);
-		rep(i, 0, edges.size()) {
-			edges[i] = edges_[i];
-			in_edges[edges[i].to].push_back(i);
-			out_edges[edges[i].from].push_back(i);
+		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize), edges() {
+		if (dirct == undir) {
+			for (const pll& e : edges_) push_undir(Edge(e));
+		}
+		else {
+			for (const pll& e : edges_) push(Edge(e));
 		}
 	}
 	Graph(vvll ajacency_matrix, ll default_value) 
@@ -56,37 +55,44 @@ struct Graph {
 		}
 	}
 	
-	Edge& operator[](ll ind) {
-		return this->edges[ind];
-	}
-	const Edge& operator[](ll ind) const {
-		return this->edges[ind];
-	}
-	size_t size() const { return out_edges.size(); }
-	void push(Edge edge){
-		assert(max(edge.from, edge.to) < out_edges.size());
+	Edge& operator[](ll ind) { return this->edges[ind]; } 
+	const Edge& operator[](ll ind) const{ return this->edges[ind]; }
+	vector<ll>& out(ll ind){ return this->out_edges[ind]; }
+	const vector<ll>& out(ll ind) const { return this->out_edges[ind]; }
+	vector<ll>& in(ll ind){ return this->in_edges[ind]; }
+	const vector<ll>& in(ll ind) const{ return this->in_edges[ind]; }
+
+	size_t size() const { return nodeSize; }
+
+	void push(const Edge& edge){
+		assert(max(edge.from, edge.to) < nodeSize);
 		edges.emplace_back(edge);
-		out_edges[edge.from].emplace_back(edges.size() - 1);
+		out_edges[edge.from].emplace_back(edges.size()-1);
 		in_edges[edge.to].emplace_back(edges.size() - 1);
 	}
-	void erase(ll from, ll to) {
-		// O(nodeSize)
-		assert(max(from, to) < out_edges.size());
-		for (ll k : out_edges[from]) {
-			if (edges[k].to = to) {
-				edges.erase(edges.begin() + k);
-			}
-		}
+	void push_undir(const Edge& edge) {
+		push(edge); push(edge.reverse());
 	}
-	void erase(ll edge_ind) {
-		// O(nodeSize)
-		assert(edge_ind < edges.size());
-		edges.erase(edges.begin() + edge_ind);
-		auto& esin = in_edges[edges[edge_ind].to];
-		esin.erase(find(all(esin), edge_ind));
-		auto& esout = out_edges[edges[edge_ind].from];
-		esout.erase(find(all(esout), edge_ind));
-	}
+
+	//void erase(ll from, ll to) {
+	//	// O(nodeSize)
+	//	assert(max(from, to) < out_edges.size());
+	//	for (Edge& e : out_edges[from]) {
+	//		if (e.to = to) {
+	//			edges.erase(edges.begin() + k);
+	//			out_edges
+	//		}
+	//	}
+	//}
+	//void erase(ll edge_ind) {
+	//	// O(nodeSize)
+	//	assert(edge_ind < edges.size());
+	//	edges.erase(edges.begin() + edge_ind);
+	//	auto& esin = in_edges[edges[edge_ind].to];
+	//	esin.erase(find(all(esin), edge_ind));
+	//	auto& esout = out_edges[edges[edge_ind].from];
+	//	esout.erase(find(all(esout), edge_ind));
+	//}
 	void push(vector<Edge> edges) {
 		for (const Edge& e : edges) {
 			push(e);
@@ -111,8 +117,8 @@ struct Graph {
 		vll inDegree(nodeSize);
 		rep(i, 0, nodeSize)
 		{
-			for (ll sibling_ind : this->out_edges[i]) {
-				inDegree[this->edges[sibling_ind].to]++;
+			for (ll sibling_ind : this->out(i)) {
+				inDegree[(*this)[sibling_ind].to]++;
 			}
 		}
 
@@ -132,8 +138,8 @@ struct Graph {
 			ll parent = parents.top();
 			parents.pop();
 			sortedNodes.push_back(parent);
-			for (ll sibling_ind : this->out_edges[parent]) {
-				Edge sibling = this->edges[sibling_ind];
+			for (ll sibling_ind : this->out(parent)) {
+				auto& sibling = (*this)[sibling_ind];
 				inDegree[sibling.to]--;
 				if (inDegree[sibling.to] == 0) {
 					parents.push(sibling.to);
@@ -160,8 +166,8 @@ struct Graph {
 		vll dp(size(),-1);
 		ll m = 0; ll ind;
 		function<void(ll)> dfs = [&](ll x) {
-			for (ll e : out_edges[x]) {
-				ll nextnode = edges[e].to;
+			for (ll e_ind : out(x)) {
+				ll nextnode = (*this)[e_ind].to;
 				if (dp[nextnode] == -1) {
 					dp[nextnode] = dp[x] + 1;
 					if (dp[nextnode] > m) {
@@ -179,6 +185,29 @@ struct Graph {
 		dfs(first);
 		return m;
 		// remark two end points of diameter are 'first' and 'ind';
+	}
+
+
+};
+
+class GraphDFS
+{
+	vb visited;
+	Graph* graph;
+public:
+	GraphDFS(Graph& graph) :visited(graph.size()), graph(&(graph)){}
+
+	// Impliment func: void(Edge&) representing what this should do, when target node moves from visited node (e.from) to unvisited node (e.to).
+	template<class T>
+	void operator()(T&& func, ll startNode=0) {
+
+		if (visited[startNode] != 0) return;
+		visited[startNode] = 1;
+		for (ll e_ind: graph->out(startNode)) {
+			auto& e = (*graph)[e_ind];
+			func(e);
+			operator()(func, e.to);
+		}
 	}
 };
 
@@ -203,8 +232,8 @@ pair<vll, vll> dijkstra(const Graph& graph, size_t start) {
 			continue;
 		from_list[to] = from;
 
-		for (ll edge_ind : graph.out_edges[to]) {
-			const Edge& edge = graph[edge_ind];
+		for (ll edge_ind : graph.out(to)) {
+			auto& edge = graph[edge_ind];
 			ll adj = edge.to;
 			ll cost = dist[to] + edge.cost;
 			if (dist[adj] > cost) {
@@ -257,9 +286,8 @@ public:
 		:usedNode(vb(n)), G(vec_t<2,RevEdge>(n))
 	{
 		rep(i, 0, graph.size()) {
-			for (ll eind : graph.out_edges[i]) {
-				Edge& e = graph.edges[eind];
-				add_revedge(e);
+			for (ll e_ind : graph.out(i)) {
+				add_revedge(graph[e_ind]);
 			}
 		}
 

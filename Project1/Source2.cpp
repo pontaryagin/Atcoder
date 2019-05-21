@@ -1,6 +1,7 @@
 #include "MyHeader.h"
-//#include "Graph.h"
-#include "NumberTheory.h"
+#include "Graph.h"
+//#include "NumberTheory.h"
+//#include "UnionFind.h"
 //#include "SegmentTree.h"
 //#include "Algorithm.h"
 //#include "Bit.h"
@@ -12,48 +13,44 @@
 // ============================ Header  =================================
 
 
+
 int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 	cout << fixed << setprecision(12);
 
-	vec_t<1,pair<ll, pll>> x(2);
-	read_v(x);
 
+	ll n;
+	cin >> n;
+	Graph g(n);
 
-	ll m, k;
-	cin >> m >> k;
-	if (k>(1<<m)-1 ) {
-		cout << -1 << endl;
+	rep(i, 0, n - 1) {
+		Edge e;
+		cin >> e.from >> e.to >> e.cost;
+		e.from--; e.to--;
+		g.push_undir(e);
 	}
-	else if (k != 0) {
-		if (m == 1) {
-			if (k == 0) cout<< "0 0 1 1" <<endl;
-			else cout<<-1 <<endl;
-			return 0;
+
+	vll color(n, -1);
+	color[0] = 0;
+	auto func = [&](Edge& e) {
+		ll x = e.to;
+		ll dist = e.cost;
+		ll col = color[e.from];
+		if (dist % 2 == 0) {
+			color[x] = col;
 		}
-		vll res;
-		res.push_back(0); res.push_back(k); res.push_back(0);
-		rep(i, 1, 1 << m) {
-			if(i!= k)
-				res.push_back(i);
-		}
-		res.push_back(k);
-		rrep(i, 1, 1 << m) {
-			if (i != k)
-				res.push_back(i);
-		}
-		write_v(res);
-	}
-	else {
-		vll res = seq(0, 1 << m);
-		rep(i, 0, res.size()) {
-			if (i != res.size() - 1)
-				cout << res[i] << " " << res[i] << " ";
-			else
-				cout << res[i] << " " << res[i] << endl;
+		else {
+			col ^= 1;
+			color[x] = col;
 
 		}
+	};
+	
+	GraphDFS dfs(g);
+	dfs(func);
+	rep(i, 0, n) {
+		cout << color[i] << endl;
 	}
 
 	return 0;
