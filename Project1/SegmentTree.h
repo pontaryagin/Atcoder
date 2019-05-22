@@ -85,7 +85,7 @@ private:
 
 namespace Monoid{
 
-	template <typename T>
+	template <typename T = ll>
 	struct min_indexed_t {
 		typedef pair<T, ll> underlying_type;
 		static underlying_type make_indexed(vector<T> v)
@@ -100,14 +100,14 @@ namespace Monoid{
 		static underlying_type append(underlying_type a, underlying_type b) { return min(a, b); }
 	};
 
-	template <typename T>
+	template <typename T = ll>
 	struct min_t {
 		typedef T underlying_type;
 		static underlying_type unit() { return numeric_limits<T>::max(); }
 		static underlying_type append(underlying_type a, underlying_type b) { return min(a, b); }
 	};
 
-	template <typename T>
+	template <typename T = ll>
 	struct max_t {
 		typedef T underlying_type;
 		static underlying_type unit() { return numeric_limits<T>::min(); }

@@ -1,8 +1,8 @@
 #include "MyHeader.h"
-#include "Graph.h"
+//#include "Graph.h"
 //#include "NumberTheory.h"
 //#include "UnionFind.h"
-//#include "SegmentTree.h"
+#include "SegmentTree.h"
 //#include "Algorithm.h"
 //#include "Bit.h"
 
@@ -27,18 +27,21 @@ int main() {
 	rep(i, 0, n)cin >> a[i];
 
 	vll dp(n);
-	set<pll> me;
-	dp[0] = a[0];
-	me.insert(pll{ h[0], 0 });
-	rep(i, 1, n) {
-		auto lb = me.lower_bound(pll{ h[i],i });
-		if (lb == me.begin()) {
-			dp[i] = a[i];
-		}
-		else {
-			dp[i] = a[i] + dp[(--lb)->second];
-		}
+	segment_tree<Monoid::max_t<ll>> seg(n);
+	vpll hi(n);
+	rep(i, 0, n)hi[i] = pll{ h[i],i };
+	sort(all(hi));
+	rep(i, 0, n) {
+		ll _, j;
+		tie(_, j) = hi[i];
+		ll m = seg.query(0, j);
+		if (m >= 0)
+			dp[j] = m + a[j];
+		else
+			dp[j] = a[j];
+		seg.update(j, dp[j]);
 	}
+
 
 
 	ll res = 0;
