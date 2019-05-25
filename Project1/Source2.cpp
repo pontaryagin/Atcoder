@@ -40,6 +40,7 @@ int main() {
 			if (i == 0) {
 				pql.push(a);
 				cent = a;
+				sumal += a;
 
 			}
 			else if (pqr.size() == pql.size()) {
@@ -47,16 +48,15 @@ int main() {
 				ll r = pqr.top();
 				if (a <=l) {
 					cent = max(a, l);
-					
-					suma -= pqr.size() * abs(cent - l);
 					pql.push(a);
+					sumal += a;
 				}
 				else{
-					cent = min(r,a);	
-					suma += abs(a - cent);
-					suma += (pql.size() - 1) * abs(cent - l);
-					suma -= (pqr.size() + 1) * abs(cent - l);
-					pqr.pop(); pql.push(cent); pqr.push(a);
+					pqr.push(a);
+					sumar += a;
+					cent = pqr.top();
+					pqr.pop(); pql.push(cent);
+					sumar -= cent; sumal += cent;
 
 				}
 			}
@@ -65,17 +65,14 @@ int main() {
 				ll r = (pqr.size()==0 ?0:pqr.top());
 				if (a < cent) {
 					pql.push(a);
-					ll l = pql.top(); pql.pop();
+					sumal += a; sumal -= pql.top(); sumar += pql.top();
+					pqr.push(pql.top()); pql.pop();
 					cent = pql.top();
-					pqr.push(l);
-					suma += abs(a - l);
-					suma -= pql.size() * abs(cent - l);
-					suma += pqr.size() * abs(cent - l);
 
 				}
 				else {
 					pqr.push(a);
-					suma += abs(a - cent);
+					sumar += a;
 
 				}
 			}
@@ -83,7 +80,7 @@ int main() {
 
 		}
 		else {
-			cout << cent << " " << sumb + suma <<endl;
+			cout << cent << " " << sumb + SZ(pql) * cent - sumal + sumar - SZ(pqr)*cent <<endl;
 		}
 	}
 	
