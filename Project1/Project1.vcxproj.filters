@@ -12,6 +12,7 @@
     <ClInclude Include="SegmentTree.h" />
     <ClInclude Include="UnionFind.h" />
     <ClInclude Include="Training.h" />
+    <ClInclude Include="Source2.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

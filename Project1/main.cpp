@@ -207,138 +207,6 @@ template<
 
 
 
-template<typename T, typename S = nullptr_t>
-struct has_unit
-	:public false_type
-{
-};
-
-template<typename T>
-struct has_unit<T, typename conditional<false, decltype(T::unit()), nullptr_t>::type >
-	:public true_type
-{
-};
-template<typename T, typename S = nullptr_t>
-struct has_append
-	:public false_type
-{
-};
-
-template<typename T>
-struct has_append<T, typename conditional<false, decltype(T::append(T::underlying_type(), T::underlying_type())), nullptr_t>::type >
-	:public true_type
-{
-};
-
-
-template <typename Monoid>
-struct segment_tree
-{
-
-	using underlying_type = typename  Monoid::underlying_type;
-
-	segment_tree(ll a_n) : size_original(a_n)
-	{
-		vector<underlying_type> initial_value = vector<underlying_type>(a_n, Monoid::unit());
-		segment_tree_impl(a_n, initial_value);
-	}
-
-	segment_tree(ll a_n, vector<underlying_type>& initial_value) : size_original(a_n)
-	{
-		segment_tree_impl(a_n, initial_value);
-	}
-
-	void update(int i, underlying_type z) { // 0-based
-		assert(0 <= i && i < 2 * n - 1);
-		a[i + n - 1] = z;
-		for (i = (i + n) / 2; i > 0; i /= 2) { // 1-based
-			a[i - 1] = Monoid::append(a[2 * i - 1], a[2 * i]);
-		}
-	}
-
-	underlying_type query(ll l, ll r) { // 0-based, [l, r)
-		underlying_type lacc = Monoid::unit(), racc = Monoid::unit();
-		assert(l <= r && r <= n);
-		l += n; r += n;
-		for (; l < r; l /= 2, r /= 2) { // 1-based loop, 2x faster than recursion
-			if (l % 2 == 1) lacc = Monoid::append(lacc, a[(l++) - 1]);
-			if (r % 2 == 1) racc = Monoid::append(a[(--r) - 1], racc);
-		}
-		return Monoid::append(lacc, racc);
-	}
-
-	ll size() { return size_original; }
-
-private:
-	ll size_original;
-	ll n;
-	vector<underlying_type> a;
-	void segment_tree_impl(ll a_n, vector<underlying_type>& initial_value)
-	{
-		assert(a_n == initial_value.size());
-		n = 1; while (n < a_n) n *= 2;
-		a.resize(2 * n - 1, Monoid::unit());
-		rep(i, 0, initial_value.size()) {
-			a[i + (n - 1)] = initial_value[i];
-		}
-		rrep(i, 0, n - 1) a[i] = Monoid::append(a[2 * i + 1], a[2 * i + 2]); // propagate initial values
-	}
-
-
-};
-
-
-namespace Monoid{
-
-	template <typename T>
-	struct min_indexed_t {
-		typedef pair<T, ll> underlying_type;
-		static underlying_type make_indexed(vector<T> v)
-		{
-			underlying_type w(v.size());
-			rep(i, 0, v.size()) {
-				w[i] = { v[i],i };
-			}
-			return w;
-		}
-		static underlying_type unit() { return make_pair(numeric_limits<T>::max(), -1); }
-		static underlying_type append(underlying_type a, underlying_type b) { return min(a, b); }
-	};
-
-	template <typename T>
-	struct min_t {
-		typedef T underlying_type;
-		static underlying_type unit() { return numeric_limits<T>::max(); }
-		static underlying_type append(underlying_type a, underlying_type b) { return min(a, b); }
-	};
-
-	template <typename T>
-	struct max_t {
-		typedef T underlying_type;
-		static underlying_type unit() { return numeric_limits<T>::min(); }
-		static underlying_type append(underlying_type a, underlying_type b) { return max(a, b); }
-	};
-
-	struct linear_t {
-		typedef pd underlying_type;
-		static underlying_type unit() { return underlying_type{ 1.,0. }; }
-		static underlying_type append(underlying_type a, underlying_type b) {
-			return underlying_type{ a.first * b.first, b.first * a.second + b.second };
-		}
-	};
-
-
-}
-
-
-	
-
-
-
-
-
-
-
 
 
 
@@ -356,34 +224,73 @@ int main() {
 	ios::sync_with_stdio(false);
 	cout << fixed << setprecision(12);
 
+	ll q;
+	cin >> q;
+	ll sumb = 0;
+	ll suma = 0;
+	set<ll> seta;
+	priority_queue<ll> pql;
+	pq_greater<ll> pqr;
 
-	ll n;
-	cin >> n;
-	vll h(n), a(n);
-	rep(i, 0, n)cin >> h[i];
-	rep(i, 0, n)cin >> a[i];
+	ll cent = 0;
+	rep(i, 0, q) {
+		ll flag;
+		cin >> flag;
+		if (flag == 1) {
+			ll a, b;
+			cin >> a >> b;
+			sumb += b;
+			if (i == 0) {
+				pql.push(a);
+				cent = a;
 
-	vll dp(n);
-	segment_tree<Monoid::max_t<ll>> seg(n);
-	vpll hi(n);
-	rep(i, 0, n)hi[i] = pll{ h[i],i };
-	sort(all(hi));
-	rep(i, 0, n) {
-		ll _, j;
-		tie(_, j) = hi[i];
-		ll m = seg.query(0, j);
-		if (m >= 0)
-			dp[j] = m + a[j];
-		else
-			dp[j] = a[j];
-		seg.update(j, dp[j]);
+			}
+			else if (pqr.size() == pql.size()) {
+				ll l = pql.top();
+				ll r = pqr.top();
+				if (a <=l) {
+					cent = max(a, l);
+					suma += abs(a - l);
+					suma += pql.size() * abs(cent - l);
+					suma -= pqr.size() * abs(cent - l);
+					pql.push(a);
+				}
+				else{
+					cent = min(r,a);	
+					suma += abs(a - cent);
+					suma += (pql.size() - 1) * abs(cent - l);
+					suma -= (pqr.size() + 1) * abs(cent - l);
+					pqr.pop(); pql.push(cent); pqr.push(a);
+
+				}
+			}
+			else {
+				ll l = pql.top();
+				ll r = (pqr.size()==0 ?0:pqr.top());
+				if (a < cent) {
+					pql.push(a);
+					ll l = pql.top(); pql.pop();
+					cent = pql.top();
+					pqr.push(l);
+					suma += abs(a - l);
+					suma -= pql.size() * abs(cent - l);
+					suma += pqr.size() * abs(cent - l);
+
+				}
+				else {
+					pqr.push(a);
+					suma += abs(a - cent);
+
+				}
+			}
+
+
+		}
+		else {
+			cout << cent << " " << sumb + suma <<endl;
+		}
 	}
-
-
-
-	ll res = 0;
-	rep(i, 0, n)chmax(res, dp[i]);
-	cout << res<<endl;
+	
 	return 0;
 
 }
