@@ -114,6 +114,14 @@ namespace Monoid{
 		static underlying_type append(underlying_type a, underlying_type b) { return max(a, b); }
 	};
 
+	template <typename T = ll>
+	struct sum_t {
+		typedef T underlying_type;
+		static underlying_type unit() { return 0; }
+		static underlying_type append(underlying_type a, underlying_type b) { return a+b; }
+		static underlying_type iterate(underlying_type a, int n) { return a * n; }
+	};
+
 	struct linear_t {
 		typedef pd underlying_type;
 		static underlying_type unit() { return underlying_type{ 1.,0. }; }
@@ -125,7 +133,85 @@ namespace Monoid{
 
 }
 
+// 1) E is acting on T and 2) both should be monoid and 3) the action preserving monoid structure.
+template <typename Monoid = void
+	, typename T = typename Monoid::underlying_type
+	, typename E = typename Monoid::underlying_type
+	>
+struct LazySegmentTree {
+	int n;
+	function<T(T, T)> f;
+	function<T(T, E)> g;
+	function<E(E, E)> h;
+	function<E(E, int)> p;
+	T t0;
+	E e0;
+	vector<T> dat;
+	vector<E> laz;
 
+	// Monoid has append, unit, iterate functions.
+	//template<typename Monoid>  
+	LazySegmentTree(int n_, vector<T> v = vector<T>())
+		:f(Monoid::append), g(Monoid::append), h(Monoid::append), 
+		t0(Monoid::unit()), e0(Monoid::unit()),p(Monoid::iterate)
+	{
+		init(n_);
+		if (n_ == (int)v.size()) build(n_, v);
+	}
+	LazySegmentTree(int n_, function<T(T, T)> f, function<T(T, E)> g, function<E(E, E)> h, 
+		T t0, E e0,	vector<T> v = vector<T>(), function<E(E, int)> p = [](E a, int) {return a;})
+		:f(f), g(g), h(h), t0(t0), e0(e0), p(p) 
+	{
+		init(n_);
+		if (n_ == (int)v.size()) build(n_, v);
+	}
+	void init(int n_) {
+		n = 1;
+		while (n < n_) n *= 2;
+		dat.clear();
+		dat.resize(2 * n - 1, t0);
+		laz.clear();
+		laz.resize(2 * n - 1, e0);
+	}
+	void build(int n_, vector<T> v) {
+		for (int i = 0; i < n_; i++) dat[i + n - 1] = v[i];
+		for (int i = n - 2; i >= 0; i--)
+			dat[i] = f(dat[i * 2 + 1], dat[i * 2 + 2]);
+	}
+	inline void eval(int len, int k) {
+		if (laz[k] == e0) return;
+		if (k * 2 + 1 < n * 2 - 1) {
+			laz[k * 2 + 1] = h(laz[k * 2 + 1], laz[k]);
+			laz[k * 2 + 2] = h(laz[k * 2 + 2], laz[k]);
+		}
+		dat[k] = g(dat[k], p(laz[k], len));
+		laz[k] = e0;
+	}
+	T update(int a, int b, E x, int k, int l, int r) {
+		eval(r - l, k);
+		if (r <= a || b <= l) return dat[k];
+		if (a <= l && r <= b) {
+			laz[k] = h(laz[k], x);
+			return g(dat[k], p(laz[k], r - l));
+		}
+		return dat[k] = f(update(a, b, x, k * 2 + 1, l, (l + r) / 2),
+			update(a, b, x, k * 2 + 2, (l + r) / 2, r));
+	}
+	T update(int a, int b, E x) {
+		return update(a, b, x, 0, 0, n);
+	}
+	T query(int a, int b, int k, int l, int r) {
+		eval(r - l, k);
+		if (r <= a || b <= l) return t0;
+		if (a <= l && r <= b) return dat[k];
+		T vl = query(a, b, k * 2 + 1, l, (l + r) / 2);
+		T vr = query(a, b, k * 2 + 2, (l + r) / 2, r);
+		return f(vl, vr);
+	}
+	T query(int a, int b) {
+		return query(a, b, 0, 0, n);
+	}
+};
 	
 
 
