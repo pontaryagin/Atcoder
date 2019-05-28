@@ -26,7 +26,7 @@ int main() {
 	
 	int n, q;
 	cin >> n >> q;
-	LazySegmentTree<Monoid::sum_t<>> ch(n);
+	LazySegmentTree<M::sum_t<>> ch(n);
 	for (int i = 0; i < q; i++) {
 		int c, s, t, x;
 		cin >> c;

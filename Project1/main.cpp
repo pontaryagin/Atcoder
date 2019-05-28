@@ -288,8 +288,20 @@ private:
 };
 
 
-namespace Monoid{
-
+namespace M{
+	template <typename T>
+	struct AddAct {
+		static typename T::underlying_type act(typename T::underlying_type a, typename T::underlying_type b) {
+			return T::append(a, b);
+		}
+	};
+	template <typename T = ll>
+	struct sum_t :AddAct<typename sum_t<T> > {
+		typedef T underlying_type;
+		static underlying_type unit() { return 0; }
+		static underlying_type append(underlying_type a, underlying_type b) { return a + b; }
+		static underlying_type iterate(underlying_type a, int n) { return a * n; }
+	};
 	template <typename T = ll>
 	struct min_indexed_t {
 		typedef pair<T, ll> underlying_type;
@@ -319,13 +331,6 @@ namespace Monoid{
 		static underlying_type append(underlying_type a, underlying_type b) { return max(a, b); }
 	};
 
-	template <typename T = ll>
-	struct sum_t {
-		typedef T underlying_type;
-		static underlying_type unit() { return 0; }
-		static underlying_type append(underlying_type a, underlying_type b) { return a+b; }
-		static underlying_type iterate(underlying_type a, int n) { return a * n; }
-	};
 
 	struct linear_t {
 		typedef pd underlying_type;
@@ -335,40 +340,50 @@ namespace Monoid{
 		}
 	};
 
+	template <typename under = ll, under uni = 0 , typename F = typename plus<ll>>
+	struct monoid_t {
+		using underlying_type = under;
+		static underlying_type unit() { return uni; }
+		static underlying_type append(underlying_type a, underlying_type b) {
+			return F(a, b);
+		}
+		static underlying_type act(underlying_type a, underlying_type b) {
+			return F(a, b);
+		}
+	};
 
 }
 
 // 1) E is acting on T and 2) both should be monoid and 3) the action preserving monoid structure.
-template <typename Monoid = void
-	, typename T = typename Monoid::underlying_type
-	, typename E = typename Monoid::underlying_type>
+// requires 
+template <typename Monoid, typename ActionMonoid = Monoid>
 struct LazySegmentTree {
-	typedef function<T(T, T)> F;
-	typedef function<T(T, E)> G;
-	typedef function<E(E, E)> H;
-	typedef function<E(E, int)> P;
 	int n;
-	F f;
-	G g;
-	H h;
-	P p;
-	T d1;
-	E d0;
-	vector<T> dat;
+	using M = typename Monoid::underlying_type;
+	using E = typename ActionMonoid::underlying_type;
+	function<M(M, M)> f;
+	function<M(M, E)> act = Monoid::append;
+
+	function<E(E, E)> h;
+	function<E(E, int)> iterate;
+	M m0 = Monoid::unit();
+	E e0 = ActionMonoid::unit();
+	vector<M> dat;
 	vector<E> laz;
 
 	// Monoid has append, unit, iterate functions.
 	//template<typename Monoid>  
-	LazySegmentTree(int n_, vector<T> v = vector<T>())
-		:f(Monoid::append), g(Monoid::append), h(Monoid::append), 
-		d1(Monoid::unit()), d0(Monoid::unit()),p(Monoid::iterate)
+	LazySegmentTree(int n_, vector<M> v = vector<M>())
+		:f(Monoid::append), act(ActionMonoid::act;)
+		, h(ActionMonoid::append), iterate(ActionMonoid::iterate)
 	{
 		init(n_);
 		if (n_ == (int)v.size()) build(n_, v);
 	}
-	LazySegmentTree(int n_, F f, G g, H h, T d1, E d0,
-		vector<T> v = vector<T>(), P p = [](E a, int b) {return a; }) 
-		:f(f), g(g), h(h), d1(d1), d0(d0), p(p) 
+
+	LazySegmentTree(int n_, function<M(M, M)> f, function<M(M, E)> act, function<E(E, E)> h,
+		M m0, E e0,	vector<M> v = vector<M>(), function<E(E, int)> iterate = [](E a, int) {return a;})
+		:f(f), act(act), h(h), m0(m0), e0(e0), iterate(iterate)
 	{
 		init(n_);
 		if (n_ == (int)v.size()) build(n_, v);
@@ -377,46 +392,46 @@ struct LazySegmentTree {
 		n = 1;
 		while (n < n_) n *= 2;
 		dat.clear();
-		dat.resize(2 * n - 1, d1);
+		dat.resize(2 * n - 1, m0);
 		laz.clear();
-		laz.resize(2 * n - 1, d0);
+		laz.resize(2 * n - 1, e0);
 	}
-	void build(int n_, vector<T> v) {
+	void build(int n_, vector<M> v) {
 		for (int i = 0; i < n_; i++) dat[i + n - 1] = v[i];
 		for (int i = n - 2; i >= 0; i--)
 			dat[i] = f(dat[i * 2 + 1], dat[i * 2 + 2]);
 	}
 	inline void eval(int len, int k) {
-		if (laz[k] == d0) return;
+		if (laz[k] == e0) return;
 		if (k * 2 + 1 < n * 2 - 1) {
 			laz[k * 2 + 1] = h(laz[k * 2 + 1], laz[k]);
 			laz[k * 2 + 2] = h(laz[k * 2 + 2], laz[k]);
 		}
-		dat[k] = g(dat[k], p(laz[k], len));
-		laz[k] = d0;
+		dat[k] = act(dat[k], iterate(laz[k], len));
+		laz[k] = e0;
 	}
-	T update(int a, int b, E x, int k, int l, int r) {
+	M update(int a, int b, E x, int k, int l, int r) {
 		eval(r - l, k);
 		if (r <= a || b <= l) return dat[k];
 		if (a <= l && r <= b) {
 			laz[k] = h(laz[k], x);
-			return g(dat[k], p(laz[k], r - l));
+			return act(dat[k], iterate(laz[k], r - l));
 		}
 		return dat[k] = f(update(a, b, x, k * 2 + 1, l, (l + r) / 2),
 			update(a, b, x, k * 2 + 2, (l + r) / 2, r));
 	}
-	T update(int a, int b, E x) {
+	M update(int a, int b, E x) {
 		return update(a, b, x, 0, 0, n);
 	}
-	T query(int a, int b, int k, int l, int r) {
+	M query(int a, int b, int k, int l, int r) {
 		eval(r - l, k);
-		if (r <= a || b <= l) return d1;
+		if (r <= a || b <= l) return m0;
 		if (a <= l && r <= b) return dat[k];
-		T vl = query(a, b, k * 2 + 1, l, (l + r) / 2);
-		T vr = query(a, b, k * 2 + 2, (l + r) / 2, r);
+		M vl = query(a, b, k * 2 + 1, l, (l + r) / 2);
+		M vr = query(a, b, k * 2 + 2, (l + r) / 2, r);
 		return f(vl, vr);
 	}
-	T query(int a, int b) {
+	M query(int a, int b) {
 		return query(a, b, 0, 0, n);
 	}
 };
@@ -452,7 +467,7 @@ int main() {
 	
 	int n, q;
 	cin >> n >> q;
-	LazySegmentTree<Monoid::sum_t<>> ch(n);
+	LazySegmentTree<M::sum_t<>> ch(n);
 	for (int i = 0; i < q; i++) {
 		int c, s, t, x;
 		cin >> c;
