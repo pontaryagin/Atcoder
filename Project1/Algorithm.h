@@ -103,7 +103,7 @@ vll commulativeSum(const vll& vec) {
 	return sum;
 }
 vec_t<2, ll> commulativeSum(const vec_t<2, ll>& vec) {
-	auto sum = make_v<ll>(vec.size() + 1, vec[0].size() + 1);
+	auto sum = makev<ll>(vec.size() + 1, vec[0].size() + 1);
 	rep(i, 0, vec.size()) {
 		auto sum_1 = commulativeSum(vec[i]);
 		rep(j, 0, vec[i].size()) {

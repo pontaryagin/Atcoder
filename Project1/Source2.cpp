@@ -1,8 +1,8 @@
 #include "MyHeader.h"
-//#include "Graph.h"
+#include "Graph.h"
 //#include "NumberTheory.h"
 //#include "UnionFind.h"
-#include "SegmentTree.h"
+//#include "SegmentTree.h"
 //#include "Algorithm.h"
 //#include "Bit.h"
 
@@ -24,23 +24,17 @@ int main() {
 	cout << fixed << setprecision(12);
 
 	
-	int n, q;
-	cin >> n >> q;
-	LazySegmentTree<M::sum_t<>> ch(n);
-	for (int i = 0; i < q; i++) {
-		int c, s, t, x;
-		cin >> c;
-		if (c) {
-			cin >> s >> t;
-			cout << ch.query(s - 1, t) << endl;
-		}
-		else {
-			cin >> s >> t >> x;
-			ch.update(s - 1, t, x);
-		}
-	}
+	ll q;
+	cin >> q;
+	vll x(q), d(q), n(q);
+	read(x, d, n);
 
 	
+
+
+
+
+
 	return 0;
 
 }

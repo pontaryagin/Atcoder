@@ -91,13 +91,13 @@ static_assert(is_same<typename vec_dec<vec_t<3, ll>>::type, ll>::value, "");
 static_assert(vec_dec<vec_t<3, ll>>::dim == 3, "");
 
 template<typename T = ll>
-vector<T> make_v(size_t a) { return vector<T>(a); }
+vector<T> makev(size_t a) { return vector<T>(a); }
 
 template<typename T = ll, typename... Ts>
-auto make_v(size_t a, Ts... ts) {
-	return vector<decltype(make_v<T>(ts...))>(a, make_v<T>(ts...));
+auto makev(size_t a, Ts... ts) {
+	return vector<decltype(makev<T>(ts...))>(a, makev<T>(ts...));
 }
-// ex:  auto dp =  make_v<ll>(4,5) => vector<vector<ll>> dp(4,vector<ll>(5));
+// ex:  auto dp =  makev<ll>(4,5) => vector<vector<ll>> dp(4,vector<ll>(5));
 
 // check if T is vector
 template < typename T >
@@ -125,14 +125,22 @@ void fill_v(T& t, const V& v) {
 }
 // ex:  fill_v(dp, INF);
 
+void read() { return; }
+
+template<typename T, typename... Ts>
+void read(ll n, T& x, Ts& ...y) {
+	read_impl(x);
+	read(y...);
+}
+
 template<typename T, typename enable_if < !is_vector<T>::value && !is_pair<T>::value, nullptr_t > ::type = nullptr >
-void read_v(T& x) {	cin >> x;}
+void read_impl(T& x) {	cin >> x;}
 
 template<typename T, typename enable_if<is_pair<T>::value, nullptr_t>::type = nullptr>
-void read_v(T& x) { read_v(x.first); read_v(x.second); }
+void read_impl(T& x) { read_impl(x.first); read_impl(x.second); }
 
 template<typename T, typename enable_if<is_vector<T>::value, nullptr_t>::type = nullptr>
-void read_v(T& x) { rep(i,0,x.size()) read_v(x[i]); }
+void read_impl(T& x) { rep(i,0,x.size()) read_impl(x[i]); }
 
 template<typename T, typename Delim_t = string, typename enable_if<!is_vector<T>::value, nullptr_t>::type = nullptr>
 void write_v(T & x, Delim_t delim = " ") { cout << x << delim; }
