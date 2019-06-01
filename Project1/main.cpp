@@ -289,14 +289,9 @@ private:
 
 
 namespace M{
-	template <typename T>
-	struct AddAct {
-		static typename T::underlying_type act(typename T::underlying_type a, typename T::underlying_type b) {
-			return T::append(a, b);
-		}
-	};
+
 	template <typename T = ll>
-	struct sum_t :AddAct<typename sum_t<T> > {
+	struct sum_t  {
 		typedef T underlying_type;
 		static underlying_type unit() { return 0; }
 		static underlying_type append(underlying_type a, underlying_type b) { return a + b; }
@@ -340,7 +335,7 @@ namespace M{
 		}
 	};
 
-	template <typename under = ll, under uni = 0 , typename F = typename plus<ll>>
+	template <typename under = ll, under uni = 0 , typename F  = decltype(plus<ll>())>
 	struct monoid_t {
 		using underlying_type = under;
 		static underlying_type unit() { return uni; }
@@ -352,20 +347,28 @@ namespace M{
 		}
 	};
 
+
 }
+
+template<typename T>
+struct AddAct:T {
+	static typename T::underlying_type act(typename T::underlying_type a, typename T::underlying_type b) {
+		return T::append(a, b);
+	}
+};
 
 // 1) E is acting on T and 2) both should be monoid and 3) the action preserving monoid structure.
 // requires 
-template <typename Monoid, typename ActionMonoid = Monoid>
+template <typename Monoid, typename ActionMonoid = AddAct<Monoid>>
 struct LazySegmentTree {
 	int n;
 	using M = typename Monoid::underlying_type;
 	using E = typename ActionMonoid::underlying_type;
-	function<M(M, M)> f;
-	function<M(M, E)> act = Monoid::append;
+	function<M(M, M)> f = Monoid::append;
+	function<M(M, E)> act = ActionMonoid::act;
 
-	function<E(E, E)> h;
-	function<E(E, int)> iterate;
+	function<E(E, E)> h = ActionMonoid::append;
+	function<E(E, int)> iterate = ActionMonoid::iterate;
 	M m0 = Monoid::unit();
 	E e0 = ActionMonoid::unit();
 	vector<M> dat;
@@ -374,8 +377,6 @@ struct LazySegmentTree {
 	// Monoid has append, unit, iterate functions.
 	//template<typename Monoid>  
 	LazySegmentTree(int n_, vector<M> v = vector<M>())
-		:f(Monoid::append), act(ActionMonoid::act;)
-		, h(ActionMonoid::append), iterate(ActionMonoid::iterate)
 	{
 		init(n_);
 		if (n_ == (int)v.size()) build(n_, v);
