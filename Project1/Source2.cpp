@@ -23,50 +23,23 @@ int main() {
 	ios::sync_with_stdio(false);
 	cout << fixed << setprecision(12);
 
-	ll q;
-	cin >> q;
-	vector<modint<>> x(q), d(q);vll n(q);
-	vector<modint<>> S(MOD+1, 1);
-	rep(i, 1, MOD) {
-		S[i + 1] = S[i] * modint<>(i);
+	ll n;
+	modint<> A, B, C;
+	cin >> n >> A>> B >> C;
+	auto a = A/(A+B) ; auto b = B/(A+B) ;
+
+	modint<> res = 0;
+	auto cmb = Combination( MOD, 200000 );
+	rep(m, n, 2 * n) {
+		//cout << cmb(m - 1, n - 1) << endl;;
+		//cout << a * a << endl;
+		//cout << POW(b, m - n) << endl;;
+		res += modint<>(cmb(m - 1, n - 1)) * POW(a, n) * POW(b, m - n)*m;
+		//cout <<"res"<< res << endl;
+		res += modint<>(cmb(m - 1, n - 1)) * POW(b, n) * POW(a, m - n)*m;
+		//cout << "res" << res << endl;
 	}
-	rep(i, 0, q) {
-		cin >> x[i] >> d[i] >> n[i];
-		if (n[i] > MOD)cout << 0 << endl;
-		else {
-			if (d[i] == 0) {
-				cout << POW(x[i] ,n[i] % MOD)<<endl;
-			}
-			else if (n[i] == 1) {
-				cout << x[i].a << endl;
-			}
-			else {
-				auto D = x[i]/d[i];
-				modint<> res =1 ;
-				if (D.a + n[i] - 1 < MOD) {
-					res *= S[D.a + n[i] ] /S[D.a];
-
-				}
-				else {
-					res = 0;
-				}
-				res *= POW(d[i], n[i]%MOD - 2);
-				cout << res.a << endl;
-			}
-		}
-
-	}
-
-
-
-
-
-	
-
-
-
-
-
+	cout << (res*(100)/(A+B)) << endl;
 	return 0;
 
 }

@@ -38,7 +38,7 @@
 using namespace std;
 
 typedef long long ll;
-constexpr ll MOD = 1000003;//1000000007;
+constexpr ll MOD = 1000000007;
 constexpr ll INF = 1LL << 60;
 
 #define rep(i, N, M) for(ll i=N, i##_len=(M); i<i##_len; ++i)
@@ -326,7 +326,7 @@ modint<Modulus> POW(modint<Modulus> x, ll n) {
 
 // === Mll ===
 
-template<typename T = ll , T MOD = 1000000007>
+template<typename T = ll , T MOD = MOD>
 struct Mint {
 	T v;
 	Mint() :v(0) {}
@@ -486,36 +486,36 @@ class Combination {
 	// Constructor runs in O(MAX).
 	// get(n,k) returns nCk in O(1).
 
-	ll MAX, MOD;
+	ll N_MAX, mod;
 	vll fac;
 	vll finv;
 	vll inv;
 public:
-	Combination(ll MAX = 210000, ll MOD = 1000000007)
-		:MOD(MOD), MAX(max(MAX, 2LL)), fac(vll(MAX + 1)), finv(vll(MAX + 1)), inv(vll(MAX + 1)) {
+	Combination(ll mod = MOD, ll N_MAX = 210000)
+		:mod(mod), N_MAX(max(N_MAX, 2LL)), fac(vll(N_MAX + 1)), finv(vll(N_MAX + 1)), inv(vll(N_MAX + 1)) {
 		fac[0] = fac[1] = 1;
 		finv[0] = finv[1] = 1;
 		inv[1] = 1;
-		pre_process(2LL, MAX + 1);
+		pre_process(2LL, N_MAX + 1);
 	}
 
-	ll get(ll n, ll k) {
-		if (MAX < n)
-			pre_process(MAX + 1, n + 1);
+	ll operator()(ll n, ll k) {
+		if (N_MAX < n)
+			pre_process(N_MAX + 1, n + 1);
 
 		if (n < k)return 0;
 		if (n < 0 || k < 0)return 0;
-		return fac[n] * (finv[k] * finv[n - k] % MOD) % MOD;
+		return fac[n] * (finv[k] * finv[n - k] % mod) % mod;
 	}
 private:
 	void pre_process(ll m, ll n) {
-		if (MAX < n) {
+		if (N_MAX < n) {
 			fac.resize(n); inv.resize(n); finv.resize(n);
 		}
 		rep(i, m, n) {
-			fac[i] = fac[i - 1] * i % MOD;
-			inv[i] = MOD - inv[MOD%i] * (MOD / i) % MOD;
-			finv[i] = finv[i - 1] * inv[i] % MOD;
+			fac[i] = fac[i - 1] * i % mod;
+			inv[i] = mod - inv[mod%i] * (mod / i) % mod;
+			finv[i] = finv[i - 1] * inv[i] % mod;
 		}
 	}
 };
@@ -608,50 +608,23 @@ int main() {
 	ios::sync_with_stdio(false);
 	cout << fixed << setprecision(12);
 
-	ll q;
-	cin >> q;
-	vector<modint<>> x(q), d(q);vll n(q);
-	vector<modint<>> S(MOD+1, 1);
-	rep(i, 1, MOD) {
-		S[i + 1] = S[i] * modint<>(i);
+	ll n;
+	modint<> A, B, C;
+	cin >> n >> A>> B >> C;
+	auto a = A/(A+B) ; auto b = B/(A+B) ;
+
+	modint<> res = 0;
+	auto cmb = Combination( MOD, 200000 );
+	rep(m, n, 2 * n) {
+		//cout << cmb(m - 1, n - 1) << endl;;
+		//cout << a * a << endl;
+		//cout << POW(b, m - n) << endl;;
+		res += modint<>(cmb(m - 1, n - 1)) * POW(a, n) * POW(b, m - n)*m;
+		//cout <<"res"<< res << endl;
+		res += modint<>(cmb(m - 1, n - 1)) * POW(b, n) * POW(a, m - n)*m;
+		//cout << "res" << res << endl;
 	}
-	rep(i, 0, q) {
-		cin >> x[i] >> d[i] >> n[i];
-		if (n[i] > MOD)cout << 0 << endl;
-		else {
-			if (d[i] == 0) {
-				cout << POW(x[i] ,n[i] % MOD)<<endl;
-			}
-			else if (n[i] == 1) {
-				cout << x[i].a << endl;
-			}
-			else {
-				auto D = x[i]/d[i];
-				modint<> res =1 ;
-				if (D.a + n[i] - 1 < MOD) {
-					res *= S[D.a + n[i] ] /S[D.a];
-
-				}
-				else {
-					res = 0;
-				}
-				res *= POW(d[i], n[i] - 2);
-				cout << res.a << endl;
-			}
-		}
-
-	}
-
-
-
-
-
-	
-
-
-
-
-
+	cout << (res*(100)/(A+B)) << endl;
 	return 0;
 
 }

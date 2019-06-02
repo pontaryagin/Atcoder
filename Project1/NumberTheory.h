@@ -121,7 +121,7 @@ modint<Modulus> POW(modint<Modulus> x, ll n) {
 
 // === Mll ===
 
-template<typename T = ll , T MOD = 1000000007>
+template<typename T = ll , T MOD = MOD>
 struct Mint {
 	T v;
 	Mint() :v(0) {}
@@ -281,36 +281,36 @@ class Combination {
 	// Constructor runs in O(MAX).
 	// get(n,k) returns nCk in O(1).
 
-	ll MAX, MOD;
+	ll N_MAX, mod;
 	vll fac;
 	vll finv;
 	vll inv;
 public:
-	Combination(ll MAX = 210000, ll MOD = 1000000007)
-		:MOD(MOD), MAX(max(MAX, 2LL)), fac(vll(MAX + 1)), finv(vll(MAX + 1)), inv(vll(MAX + 1)) {
+	Combination(ll mod = MOD, ll N_MAX = 210000)
+		:mod(mod), N_MAX(max(N_MAX, 2LL)), fac(vll(N_MAX + 1)), finv(vll(N_MAX + 1)), inv(vll(N_MAX + 1)) {
 		fac[0] = fac[1] = 1;
 		finv[0] = finv[1] = 1;
 		inv[1] = 1;
-		pre_process(2LL, MAX + 1);
+		pre_process(2LL, N_MAX + 1);
 	}
 
-	ll get(ll n, ll k) {
-		if (MAX < n)
-			pre_process(MAX + 1, n + 1);
+	ll operator()(ll n, ll k) {
+		if (N_MAX < n)
+			pre_process(N_MAX + 1, n + 1);
 
 		if (n < k)return 0;
 		if (n < 0 || k < 0)return 0;
-		return fac[n] * (finv[k] * finv[n - k] % MOD) % MOD;
+		return fac[n] * (finv[k] * finv[n - k] % mod) % mod;
 	}
 private:
 	void pre_process(ll m, ll n) {
-		if (MAX < n) {
+		if (N_MAX < n) {
 			fac.resize(n); inv.resize(n); finv.resize(n);
 		}
 		rep(i, m, n) {
-			fac[i] = fac[i - 1] * i % MOD;
-			inv[i] = MOD - inv[MOD%i] * (MOD / i) % MOD;
-			finv[i] = finv[i - 1] * inv[i] % MOD;
+			fac[i] = fac[i - 1] * i % mod;
+			inv[i] = mod - inv[mod%i] * (mod / i) % mod;
+			finv[i] = finv[i - 1] * inv[i] % mod;
 		}
 	}
 };
