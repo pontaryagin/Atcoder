@@ -11,7 +11,7 @@ ll div_ferm(ll a, ll  b, ll mod) {
 
 // === Modint ===
 
-template <std::uint_fast64_t Modulus = 1000000007> 
+template <std::uint_fast64_t Modulus = MOD> 
 class modint 
 {
 	using u64 = std::uint_fast64_t;

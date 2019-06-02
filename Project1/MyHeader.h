@@ -38,7 +38,7 @@
 using namespace std;
 
 typedef long long ll;
-constexpr ll MOD = 1000000007;
+constexpr ll MOD = 1000003;//1000000007;
 constexpr ll INF = 1LL << 60;
 
 #define rep(i, N, M) for(ll i=N, i##_len=(M); i<i##_len; ++i)
@@ -125,22 +125,14 @@ void fill_v(T& t, const V& v) {
 }
 // ex:  fill_v(dp, INF);
 
-void read() { return; }
-
-template<typename T, typename... Ts>
-void read(ll n, T& x, Ts& ...y) {
-	read_impl(x);
-	read(y...);
-}
-
 template<typename T, typename enable_if < !is_vector<T>::value && !is_pair<T>::value, nullptr_t > ::type = nullptr >
-void read_impl(T& x) {	cin >> x;}
+void read(T& x) {	cin >> x;}
 
 template<typename T, typename enable_if<is_pair<T>::value, nullptr_t>::type = nullptr>
-void read_impl(T& x) { read_impl(x.first); read_impl(x.second); }
+void read(T& x) { read(x.first); read(x.second); }
 
 template<typename T, typename enable_if<is_vector<T>::value, nullptr_t>::type = nullptr>
-void read_impl(T& x) { rep(i,0,x.size()) read_impl(x[i]); }
+void read(T& x) { rep(i,0,x.size()) read(x[i]); }
 
 template<typename T, typename Delim_t = string, typename enable_if<!is_vector<T>::value, nullptr_t>::type = nullptr>
 void write_v(T & x, Delim_t delim = " ") { cout << x << delim; }
