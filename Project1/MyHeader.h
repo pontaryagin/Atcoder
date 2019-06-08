@@ -45,6 +45,8 @@ constexpr ll INF = 1LL << 60;
 #define rep_skip(i, N, M, ...) for(ll i=N, i##_len=(M); i<i##_len; i+=(skip))
 #define rrep(i, N, M)  for(ll i=(M)-1, i##_len=(N-1); i>i##_len; --i)
 #define pb push_back
+#define fir first
+#define sec second
 
 typedef pair<double, double> pd;
 typedef pair<ll, ll> pll;
@@ -135,10 +137,10 @@ template<typename T, typename enable_if<is_vector<T>::value, nullptr_t>::type = 
 void read(T& x) { rep(i,0,x.size()) read(x[i]); }
 
 template<typename T, typename Delim_t = string, typename enable_if<!is_vector<T>::value, nullptr_t>::type = nullptr>
-void write_v(T & x, Delim_t delim = " ") { cout << x << delim; }
+void write(T & x, Delim_t delim = " ") { cout << x << delim; }
 
 template<typename T, typename Delim_t = string, typename enable_if<is_vector<T>::value, nullptr_t>::type = nullptr>
-void write_v(T& x, Delim_t delim = " ") { rep(i, 0, x.size()) write_v(x[i]); cout << endl; }
+void write(T& x, Delim_t delim = " ") { rep(i, 0, x.size()) write(x[i], (i == (x.size() - 1) ? "" : delim)); cout << '\n'; }
 
 typedef vector<ll> vll;
 typedef vector<vll> vvll;
@@ -202,3 +204,8 @@ template<
 		[&f](const T& lhs, const T& rhs) { return f(lhs) < f(rhs); });
 }
 
+template<typename Inputs>
+void sort_uniq(Inputs& inputs) {
+	sort(all(inputs));
+	inputs.erase(unique(all(inputs)), inputs.end());
+}

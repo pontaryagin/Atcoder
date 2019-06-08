@@ -187,6 +187,14 @@ struct Graph {
 		// remark two end points of diameter are 'first' and 'ind';
 	}
 
+	vll leaves() {
+		vll res;
+		rep(i, 0, nodeSize) {
+			if (out(i).size() <= 1)
+				res.push_back(i);
+		}
+		return res;
+	}
 
 };
 
@@ -212,6 +220,41 @@ public:
 };
 
 pair<vll, vll> dijkstra(const Graph& graph, size_t start) {
+	// graph: weighted directed graph of adjacent representation
+	// start: index of start point
+	// return1: minimum path length from start
+	// return2: concrete shortest path info
+	// complexity : E*log(V)
+	ll node_size = graph.size();
+	vll dist(node_size, 1LL << 60);
+	vll from_list(node_size, -1);
+	dist[start] = 0;
+	pq_greater<pair<ll, pll>> pq;
+	pq.push({ 0, {start, start} });
+	while (!pq.empty()) {
+		auto node = pq.top(); pq.pop();
+		// if not shortest path fixed, fix
+		ll from = node.second.first;
+		ll to = node.second.second;
+		if (from_list[to] != -1)
+			continue;
+		from_list[to] = from;
+
+		for (ll edge_ind : graph.out(to)) {
+			auto& edge = graph[edge_ind];
+			ll adj = edge.to;
+			ll cost = dist[to] + edge.cost;
+			if (dist[adj] > cost) {
+				dist[adj] = min(dist[adj], cost);
+				pq.push({ cost ,{to, adj} });
+			}
+		}
+	}
+	return { dist, from_list };
+
+}
+
+pair<vll, vll> dijkstra2(const Graph& graph, size_t start) {
 	// graph: weighted directed graph of adjacent representation
 	// start: index of start point
 	// return1: minimum path length from start
