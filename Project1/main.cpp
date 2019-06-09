@@ -137,10 +137,10 @@ template<typename T, typename enable_if<is_vector<T>::value, nullptr_t>::type = 
 void read(T& x) { rep(i,0,x.size()) read(x[i]); }
 
 template<typename T, typename Delim_t = string, typename enable_if<!is_vector<T>::value, nullptr_t>::type = nullptr>
-void write_v(T & x, Delim_t delim = " ") { cout << x << delim; }
+void write(T & x, Delim_t delim = " ") { cout << x << delim; }
 
 template<typename T, typename Delim_t = string, typename enable_if<is_vector<T>::value, nullptr_t>::type = nullptr>
-void write_v(T& x, Delim_t delim = " ") { rep(i, 0, x.size()) write_v(x[i], (i == (x.size() - 1) ? "" : delim)); cout << '\n'; }
+void write(T& x, Delim_t delim = " ") { rep(i, 0, x.size()) write(x[i], (i == (x.size() - 1) ? "" : delim)); cout << '\n'; }
 
 typedef vector<ll> vll;
 typedef vector<vll> vvll;
@@ -204,6 +204,11 @@ template<
 		[&f](const T& lhs, const T& rhs) { return f(lhs) < f(rhs); });
 }
 
+template<typename Inputs>
+void sort_uniq(Inputs& inputs) {
+	sort(all(inputs));
+	inputs.erase(unique(all(inputs)), inputs.end());
+}
 
 
 
@@ -668,70 +673,34 @@ struct UnionFind {
 
 // ============================ Header  =================================
 
-template<typename Inputs>
-void sort_uniq(Inputs& inputs) {
-	sort(all(inputs));
-	inputs.erase(unique(all(inputs)), inputs.end());
-}
 
-pair<vll, vll> dijkstra2(const Graph& graph, size_t start, vll nodes) {
-	// graph: weighted directed graph of adjacent representation
-	// start: index of start point
-	// return1: minimum path length from start
-	// return2: concrete shortest path info
-	// complexity : E*log(V)
-	ll node_size = graph.size();
-	vll dist(node_size, 1LL << 60);
-	vll from_list(node_size, -1);
-	dist[start] = 0;
-	pq_greater<pair<ll, pll>> pq;
-	pq.push({ 0, {start, start} });
-	while (!pq.empty()) {
-		auto node = pq.top(); pq.pop();
-		// if not shortest path fixed, fix
-		ll from = node.second.first;
-		ll to = node.second.second;
-		if (from_list[to] != -1)
-			continue;
-		from_list[to] = from;
-		nodes.push_back(to);
-		for (ll edge_ind : graph.out(to)) {
-			auto& edge = graph[edge_ind];
-			ll adj = edge.to;
-			ll cost = dist[to] + edge.cost;
-			if (dist[adj] > cost) {
-				dist[adj] = min(dist[adj], cost);
-				pq.push({ cost ,{to, adj} });
-			}
-		}
-	}
-	return { dist, from_list };
-
-}
 
 int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 	cout << fixed << setprecision(12);
 
-	
-	ll a, b, c; cin >> a >> b >> c;
-	ll cnt = 0;
-	if (a == b && b == c && a%2 ==0) {
-		cnt = -1;
+	ll n, m; cin >> n >> m;
+	vpll ab(m);
+	read(ab);
+
+	UnionFind uf(n);
+	Graph g(n);
+	rep(i, 0, m) {
+		uf.unite(ab[i].fir-1, ab[i].sec-1);
+		g.push(Edge{ ab[i].first - 1,ab[i].sec - 1 });
+
 	}
-	else {
-		while (1) {
-			if (a % 2 == 0 && b % 2 == 0 && c % 2 == 0) {
-				tie(a, b, c) = tll<3>{ b / 2 + c / 2, a / 2 + c / 2, a / 2 + b / 2 };
-				cnt++;
-			}
-			else { 
-				break; 
-			}
+	bool ok = 1;
+	rep(i, 0, n) {
+		if ((g.out(i).size() + g.in(i).size()) % 2) {
+			ok = 0;
 		}
 	}
-	cout << cnt << endl;
+	if (ok)
+		cout << "YES" << endl;
+	else
+		cout << "NO" << endl;
 
 	return 0;
 
