@@ -20,13 +20,7 @@ public:
 	u64 a;
 
 	constexpr modint(const u64 x = 0) noexcept : a(x % Modulus) {}
-	//constexpr modint(const modint& rhs) noexcept {
-	//	this->a = rhs.value();
-	//}
-	//constexpr modint &operator=(const modint &rhs) noexcept {
-	//	this->a = rhs.value();
-	//	return *this;
-	//}
+	modint inv() { return pow(Modulus - 2); }
 	constexpr u64 value() const noexcept { return a; }
 	constexpr modint operator+(const modint rhs) const noexcept {
 		return modint(*this) += rhs;
@@ -85,21 +79,44 @@ public:
 		*this -= modint(1);
 		return t;
 	}
+	constexpr modint operator-() { return a ? Modulus - a : a; }
 	constexpr bool operator==(const modint rhs) const noexcept { return a == rhs.value(); }
 	constexpr bool operator!=(const modint rhs)const  noexcept { return a != rhs.value(); }
 	constexpr bool operator <(const modint rhs)const  noexcept { return a < rhs.value(); }
-	// should be moved to Google Test
-	//constexpr void test(){
-	//	constexpr auto x = modint<5>(3);
-	//	constexpr auto y = modint<5>(4);
-	//	constexpr auto z = modint<5>(2);
-	//	static_assert(x + y == z, "");
-	//	static_assert(x != y, "");
-	//	static_assert(++x == y && x++ != y && x == --y && x != y--, "");
-	//	static_assert(x + 6 == y, "");
-	//	static_assert(x / 2 == y, "");
-	//	
-	//}
+
+	modint pow(long long k) const {
+		modint v = *this;
+		modint res(1), tmp(v);
+		while (k) {
+			if (k & 1) res *= tmp;
+			tmp *= tmp;
+			k >>= 1;
+		}
+		return res;
+	}
+	
+	u64 log(modint b) {
+		modint a = *this;
+		const u64 sq = 40000;
+		map<modint, u64> dp;
+		//dp.reserve(sq);
+		modint res(1);
+		for (ll r = 0; r < sq; r++) {
+			if (!dp.count(res)) dp[res] = r;
+			res *= a;
+		}
+		modint p = a.inv().pow(sq);
+		res = b;
+		for (ll q = 0; q <= Modulus / sq + 1; q++) {
+			if (dp.count(res)) {
+				u64 idx = q * sq + dp[res];
+				if (idx > 0) return idx;
+			}
+			res *= p;
+		}
+		return INF;
+	}
+
 };
 
 template<uint_fast64_t Modulus>

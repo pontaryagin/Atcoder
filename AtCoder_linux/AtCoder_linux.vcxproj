@@ -78,6 +78,7 @@
     <ClInclude Include="..\Project1\Algorithm.h" />
     <ClInclude Include="..\Project1\Bit.h" />
     <ClInclude Include="..\Project1\Graph.h" />
+    <ClInclude Include="..\Project1\LinearAlgebra.h" />
     <ClInclude Include="..\Project1\MyHeader.h" />
     <ClInclude Include="..\Project1\NumberTheory.h" />
     <ClInclude Include="..\Project1\SegmentTree.h" />

@@ -13,6 +13,7 @@
     <ClInclude Include="UnionFind.h" />
     <ClInclude Include="Training.h" />
     <ClInclude Include="Source2.h" />
+    <ClInclude Include="LinearAlgebra.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
