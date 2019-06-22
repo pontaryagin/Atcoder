@@ -30,6 +30,7 @@ TEST(NumberTheory,modint) {
 TEST(NumberTheory, Combination){
 
 	Combination cmb;
+	EXPECT_EQ(cmb(4, 2), 6);
 
 
 }
