@@ -4,24 +4,40 @@
 
 
 
-ll div_ferm(ll a, ll  b, ll mod) {
-	return (a* POW(b, mod - 2, mod)) % mod;
+ll div_ferm(ll val, ll  b, ll mod) {
+	return (val* POW(b, mod - 2, mod)) % mod;
 }
 
 
 // === Modint ===
+static uint_fast64_t runtime_modulus = MOD;
 
-template <std::uint_fast64_t Modulus = MOD> 
+template <std::uint_fast64_t modulus = MOD> 
 class modint 
 {
 	using u64 = std::uint_fast64_t;
 
 public:
-	u64 a;
+	u64 val; 
 
-	constexpr modint(const u64 x = 0) noexcept : a(x % Modulus) {}
-	modint inv() { return pow(Modulus - 2); }
-	constexpr u64 value() const noexcept { return a; }
+	template<ll modulus_ = modulus, enable_if_t<(modulus_ <= 0), nullptr_t> = nullptr >
+	auto mod() {  return runtime_modulus; }
+	template<ll modulus_ = modulus, enable_if_t<(modulus_ > 0), nullptr_t> = nullptr >
+	auto mod() { return modulus; }
+	//template<class Ret = u64 &>
+	//static auto modulo() -> std::enable_if_t<(modulus <= 0), Ret> { static u64 runtime_modulus=0; return runtime_modulus; }
+	//template<class Ret = const u64>
+	//static auto mod() -> std::enable_if_t<(modulus <= 0), Ret> { return modulo(); }
+	//template<class Ret = const u64>
+	//static constexpr auto mod()->std::enable_if_t<(modulus > 0), Ret> { return modulus; }
+	//template<ll modulus_ = modulus, enable_if_t<(modulus_ <= 0), nullptr_t> = nullptr >
+	//static void set_modulo(u64 mod) { runtime_modulus = mod; }
+
+	constexpr modint(): val(0){}
+	constexpr modint(const u64 x) noexcept : val(x % mod()) {}
+	constexpr modint inv() { return pow(mod() - 2); }
+
+	constexpr u64 value() const noexcept { return val; }
 	constexpr modint operator+(const modint rhs) const noexcept {
 		return modint(*this) += rhs;
 	}
@@ -35,25 +51,25 @@ public:
 		return modint(*this) /= rhs;
 	}
 	modint &operator+=(const modint rhs) noexcept {
-		a += rhs.a;
-		if (a >= Modulus) {
-			a -= Modulus;
+		val += rhs.val;
+		if (val >= mod()) {
+			val -= mod();
 		}
 		return *this;
 	}
 	modint &operator-=(const modint rhs) noexcept {
-		if (a < rhs.a) {
-			a += Modulus;
+		if (val < rhs.val) {
+			val += mod();
 		}
-		a -= rhs.a;
+		val -= rhs.val;
 		return *this;
 	}
 	modint &operator*=(const modint rhs) noexcept {
-		a = a * rhs.a % Modulus;
+		val = val * rhs.val % mod();
 		return *this;
 	}
 	modint &operator/=(modint rhs) noexcept {
-		u64 exp = Modulus - 2;
+		u64 exp = mod() - 2;
 		while (exp) {
 			if (exp % 2) {
 				*this *= rhs;
@@ -79,10 +95,10 @@ public:
 		*this -= modint(1);
 		return t;
 	}
-	constexpr modint operator-() { return a ? Modulus - a : a; }
-	constexpr bool operator==(const modint rhs) const noexcept { return a == rhs.value(); }
-	constexpr bool operator!=(const modint rhs)const  noexcept { return a != rhs.value(); }
-	constexpr bool operator <(const modint rhs)const  noexcept { return a < rhs.value(); }
+	constexpr modint operator-() { return val ? mod() - val : val; }
+	constexpr bool operator==(const modint rhs) const noexcept { return val == rhs.value(); }
+	constexpr bool operator!=(const modint rhs)const  noexcept { return val != rhs.value(); }
+	constexpr bool operator <(const modint rhs)const  noexcept { return val < rhs.value(); }
 	static constexpr modint zero() { return modint(0); }
 	static constexpr modint unit() { return modint(1); }
 
@@ -98,18 +114,18 @@ public:
 	}
 	
 	u64 log(modint b) {
-		modint a = *this;
+		modint val = *this;
 		const u64 sq = 40000;
 		map<modint, u64> dp;
 		//dp.reserve(sq);
 		modint res(1);
 		for (ll r = 0; r < sq; r++) {
 			if (!dp.count(res)) dp[res] = r;
-			res *= a;
+			res *= val;
 		}
-		modint p = a.inv().pow(sq);
+		modint p = val.inv().pow(sq);
 		res = b;
-		for (ll q = 0; q <= Modulus / sq + 1; q++) {
+		for (ll q = 0; q <= mod() / sq + 1; q++) {
 			if (dp.count(res)) {
 				u64 idx = q * sq + dp[res];
 				if (idx > 0) return idx;
@@ -118,26 +134,21 @@ public:
 		}
 		return INF;
 	}
+	friend ostream& operator <<(ostream& o, const modint<modulus>& t) {
+		o << t.value();
+		return o;
+	}
+	friend istream& operator >>(istream& in, modint<modulus>& t) {
+		uint_fast64_t x;
+		in >> x;
+		t = modint<modulus>(x);
+		return in;
+	}
+	friend modint<modulus> POW(modint<modulus> x, ll n) {
+		return modint<modulus>(POW(x.value(), n, mod()));
+	}
 
 };
-
-template<uint_fast64_t Modulus>
-ostream& operator <<(ostream &o, const modint<Modulus> &t) {
-	o << t.value();
-	return o;
-}
-template<uint_fast64_t Modulus>
-istream& operator >>(istream &in, modint<Modulus> &t) {
-	uint_fast64_t x;
-	in >> x;
-	t = modint<Modulus>(x);
-	return in;
-}
-template<uint_fast64_t Modulus>
-modint<Modulus> POW(modint<Modulus> x, ll n) {
-	return modint<Modulus>(POW(x.value(), n, Modulus));
-}
-
 
 
 class Combination {
@@ -159,12 +170,18 @@ public:
 	}
 
 	ll operator()(ll n, ll k) {
+		// choose k from n
 		if (N_MAX < n)
 			pre_process(N_MAX + 1, n + 1);
 
 		if (n < k)return 0;
 		if (n < 0 || k < 0)return 0;
 		return fac[n] * (finv[k] * finv[n - k] % mod) % mod;
+	}
+	ll H(ll n, ll k) {
+		// 1) 区間[0, k) を（空を許して）n個に分割する場合の数
+		// 2) n個の中からk個を重複を許して選ぶ
+		return (n==0 && k==0)? 1 : operator()(n + k - 1, k);
 	}
 private:
 	void pre_process(ll m, ll n) {
@@ -186,9 +203,9 @@ ll choose(int n, int r) { // O(r) for small n
 	return acc;
 }
 
-ll gcd(ll a, ll b) {
-	if (a%b == 0) return b;
-	else return gcd(b, a%b);
+ll gcd(ll val, ll b) {
+	if (val%b == 0) return b;
+	else return gcd(b, val%b);
 }
 
 

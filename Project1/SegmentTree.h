@@ -83,10 +83,10 @@ private:
 };
 
 
-namespace M{
+namespace M {
 
 	template <typename T = ll>
-	struct sum_t  {
+	struct sum_t {
 		typedef T underlying_type;
 		static underlying_type unit() { return 0; }
 		static underlying_type append(underlying_type a, underlying_type b) { return a + b; }
@@ -130,7 +130,7 @@ namespace M{
 		}
 	};
 
-	template <typename under = ll, under uni = 0 , typename F  = decltype(plus<ll>())>
+	template <typename under = ll, under uni = 0, typename F = decltype(plus<ll>())>
 	struct monoid_t {
 		using underlying_type = under;
 		static underlying_type unit() { return uni; }
@@ -146,7 +146,7 @@ namespace M{
 }
 
 template<typename T>
-struct AddAct:T {
+struct AddAct :T {
 	static typename T::underlying_type act(typename T::underlying_type a, typename T::underlying_type b) {
 		return T::append(a, b);
 	}
@@ -178,7 +178,7 @@ struct LazySegmentTree {
 	}
 
 	LazySegmentTree(int n_, function<M(M, M)> f, function<M(M, E)> act, function<E(E, E)> h,
-		M m0, E e0,	vector<M> v = vector<M>(), function<E(E, int)> iterate = [](E a, int) {return a;})
+		M m0, E e0, vector<M> v = vector<M>(), function<E(E, int)> iterate = [](E a, int) {return a; })
 		:f(f), act(act), h(h), m0(m0), e0(e0), iterate(iterate)
 	{
 		init(n_);
@@ -231,6 +231,6 @@ struct LazySegmentTree {
 		return query(a, b, 0, 0, n);
 	}
 };
-	
+
 
 
