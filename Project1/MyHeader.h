@@ -178,7 +178,7 @@ constexpr ll POW_0(ll x, ll y) {
 	return ((POW_0(POW_0(x, y / 2), 2LL)) * (x)) ;
 }
 
-constexpr ll POW(ll x, ll y, ll mod = MOD) {
+constexpr ll POW(ll x, ll y, ll mod = 0) {
 	if (mod == 0)return POW_0(x, y);
 	if (y == 0)return 1;
 	if (y == 1)return x % mod;

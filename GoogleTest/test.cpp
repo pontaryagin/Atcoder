@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "../Project1/NumberTheory.h"
+#include "../Project1/SegmentTree.h"
+
 
 TEST(NumberTheory,modint) {
 
@@ -32,5 +34,31 @@ TEST(NumberTheory, Combination){
 	Combination cmb;
 	EXPECT_EQ(cmb(4, 2), 6);
 
+
+}
+
+TEST(SegmentTree, LazySegmentTree) {
+
+	LazySegmentTree<M::min_indexed_t<>> seg(10);
+	seg.update(0, pll{ 20,0 });
+	seg.update(1, pll{ 11,1 });
+	seg.update(3, 4, pll{ 3,0 });
+	EXPECT_EQ(seg.query(0, 1).first, 20);
+	EXPECT_EQ(seg.query(1, 4).first, 3);
+	EXPECT_EQ(seg.query(0, 2).first, 11);
+	EXPECT_EQ(seg.query(0, 0).first, numeric_limits<ll>::max());
+
+}
+
+TEST(SegmentTree, segment_tree) {
+
+	segment_tree<M::min_indexed_t<>> seg(10);
+	seg.update(0, pll{ 20,0 });
+	seg.update(1, pll{ 11,1 });
+	seg.update(3, pll{ 3,0 });
+	EXPECT_EQ(seg.query(0, 1).first, 20);
+	EXPECT_EQ(seg.query(1, 4).first, 3);
+	EXPECT_EQ(seg.query(0, 2).first, 11);
+	EXPECT_EQ(seg.query(0, 0).first, numeric_limits<ll>::max());
 
 }

@@ -105,6 +105,7 @@ namespace M {
 		}
 		static underlying_type unit() { return make_pair(numeric_limits<T>::max(), -1); }
 		static underlying_type append(underlying_type a, underlying_type b) { return min(a, b); }
+		static underlying_type iterate(underlying_type a, int n) { return a; }
 	};
 
 	template <typename T = ll>
@@ -218,6 +219,9 @@ struct LazySegmentTree {
 	}
 	M update(int a, int b, E x) {
 		return update(a, b, x, 0, 0, n);
+	}
+	M update(int a,  E x) {
+		return update(a, a + 1, x);
 	}
 	M query(int a, int b, int k, int l, int r) {
 		eval(r - l, k);
