@@ -259,10 +259,10 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
-/TestCases
-/Project1/main.out
-/Project1/test
-/Project1/a.out
-/Project1/Source2
-/Project1/main.cpp
+TestCases
+Project1/main.out
+Project1/test
+Project1/a.out
+Project1/Source2
+Project1/main.cpp
 
