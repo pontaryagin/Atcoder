@@ -214,6 +214,8 @@ public:
 		visited[startNode] = 1;
 		for (ll e_ind: graph->out(startNode)) {
 			auto& e = (*graph)[e_ind];
+			if (visited[e.to])
+				break;
 			func(e);
 			operator()(func, e.to);
 		}

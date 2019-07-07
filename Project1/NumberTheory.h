@@ -183,6 +183,10 @@ public:
 		// 2) n個の中からk個を重複を許して選ぶ
 		return (n==0 && k==0)? 1 : operator()(n + k - 1, k);
 	}
+	ll P(ll n, ll k) {
+		// n (n-1) ... (n-k+1)
+		return (n<k|| n<0 )? 0 : fac[n] * finv[n - k];
+	}
 private:
 	void pre_process(ll m, ll n) {
 		if (N_MAX < n) {
