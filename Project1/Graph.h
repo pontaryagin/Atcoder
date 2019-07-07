@@ -6,6 +6,7 @@ struct Edge
 	ll from;
 	ll to;
 	ll cost=1;
+	ll color;
 	Edge reverse() const {
 		return Edge{ to, from , cost };
 	}

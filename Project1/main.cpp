@@ -24,6 +24,7 @@
 #include <time.h>
 #include <iomanip>
 #include <random>
+#include <sstream>
 #ifdef _MSC_VER
 #include <intrin.h>
 #define popcnt __popcnt64
@@ -177,7 +178,7 @@ constexpr ll POW_0(ll x, ll y) {
 	return ((POW_0(POW_0(x, y / 2), 2LL)) * (x)) ;
 }
 
-constexpr ll POW(ll x, ll y, ll mod = MOD) {
+constexpr ll POW(ll x, ll y, ll mod = 0) {
 	if (mod == 0)return POW_0(x, y);
 	if (y == 0)return 1;
 	if (y == 1)return x % mod;
@@ -210,455 +211,276 @@ void sort_uniq(Inputs& inputs) {
 	inputs.erase(unique(all(inputs)), inputs.end());
 }
 
+vector<string> split(const string& s, char delim) {
+	vector<string> elems;
+	stringstream ss(s);
+	string item;
+	while (getline(ss, item, delim)) {
+		if (!item.empty()) {
+			elems.push_back(item);
+		}
+	}
+	return elems;
+}
 
 
 
-struct Edge
+
+
+
+
+ll div_ferm(ll val, ll  b, ll mod) {
+	return (val* POW(b, mod - 2, mod)) % mod;
+}
+
+
+// === Modint ===
+static uint_fast64_t runtime_modulus = MOD;
+
+template <std::uint_fast64_t modulus = MOD> 
+class modint 
 {
-	ll from;
-	ll to;
-	ll cost=1;
-	Edge reverse() const {
-		return Edge{ to, from , cost };
-	}
-	Edge(ll from , ll to, ll cost=1) : from(from),to(to),cost(cost){};
-	Edge(pll e) { from = e.first; to = e.second; cost = 1; }
-	Edge() :from(0), to(0), cost(0){ };
-	bool operator<  (const Edge& e) const {
-		return cost < e.cost;
-	}
-	bool operator>  (const Edge& e) const {
-		return cost > e.cost;
-	}
-};
+	using u64 = std::uint_fast64_t;
 
+public:
+	u64 val; 
 
-struct Graph {
-	ll nodeSize;
-	vector<Edge> edges;
-	vector<vector<ll>> out_edges;
-	vector<vector<ll>> in_edges;
-	enum Dir{dir, undir};
-	Graph(ll nodeSize, const vector<Edge>& edges_ = vector<Edge>(), Dir dirct= dir)
-		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize), edges(){
-		if (dirct == undir) {
-			for (const Edge& e : edges_) push_undir(e);
+	template<ll modulus_ = modulus, enable_if_t<(modulus_ <= 0), nullptr_t> = nullptr >
+	auto mod() {  return runtime_modulus; }
+	template<ll modulus_ = modulus, enable_if_t<(modulus_ > 0), nullptr_t> = nullptr >
+	auto mod() { return modulus; }
+	//template<class Ret = u64 &>
+	//static auto modulo() -> std::enable_if_t<(modulus <= 0), Ret> { static u64 runtime_modulus=0; return runtime_modulus; }
+	//template<class Ret = const u64>
+	//static auto mod() -> std::enable_if_t<(modulus <= 0), Ret> { return modulo(); }
+	//template<class Ret = const u64>
+	//static constexpr auto mod()->std::enable_if_t<(modulus > 0), Ret> { return modulus; }
+	//template<ll modulus_ = modulus, enable_if_t<(modulus_ <= 0), nullptr_t> = nullptr >
+	//static void set_modulo(u64 mod) { runtime_modulus = mod; }
+
+	constexpr modint(): val(0){}
+	constexpr modint(const u64 x) noexcept : val(x % mod()) {}
+	constexpr modint inv() { return pow(mod() - 2); }
+
+	constexpr u64 value() const noexcept { return val; }
+	constexpr modint operator+(const modint rhs) const noexcept {
+		return modint(*this) += rhs;
+	}
+	constexpr modint operator-(const modint rhs) const noexcept {
+		return modint(*this) -= rhs;
+	}
+	constexpr modint operator*(const modint rhs) const noexcept {
+		return modint(*this) *= rhs;
+	}
+	constexpr modint operator/(const modint rhs) const noexcept {
+		return modint(*this) /= rhs;
+	}
+	modint &operator+=(const modint rhs) noexcept {
+		val += rhs.val;
+		if (val >= mod()) {
+			val -= mod();
 		}
-		else {
-			for (const Edge& e : edges_) push(e);
+		return *this;
+	}
+	modint &operator-=(const modint rhs) noexcept {
+		if (val < rhs.val) {
+			val += mod();
 		}
-
+		val -= rhs.val;
+		return *this;
 	}
-	Graph(ll nodeSize, vector<pll> edges_, Dir dirct = dir)
-		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize), edges() {
-		if (dirct == undir) {
-			for (const pll& e : edges_) push_undir(Edge(e));
-		}
-		else {
-			for (const pll& e : edges_) push(Edge(e));
-		}
+	modint &operator*=(const modint rhs) noexcept {
+		val = val * rhs.val % mod();
+		return *this;
 	}
-	Graph(vvll ajacency_matrix, ll default_value) 
-		: nodeSize(ajacency_matrix.size()), out_edges(nodeSize), in_edges(nodeSize){
-		ll n = ajacency_matrix.size();
-		rep(i, 0, n)rep(j, 0, n) {
-			if (ajacency_matrix[i][j] != default_value)
-				push(Edge(i, j, ajacency_matrix[i][j]));
-		}
-	}
-	
-	Edge& operator[](ll ind) { return this->edges[ind]; } 
-	const Edge& operator[](ll ind) const{ return this->edges[ind]; }
-	vector<ll>& out(ll ind){ return this->out_edges[ind]; }
-	const vector<ll>& out(ll ind) const { return this->out_edges[ind]; }
-	vector<ll>& in(ll ind){ return this->in_edges[ind]; }
-	const vector<ll>& in(ll ind) const{ return this->in_edges[ind]; }
-
-	size_t size() const { return nodeSize; }
-
-	void push(const Edge& edge){
-		assert(max(edge.from, edge.to) < nodeSize);
-		edges.emplace_back(edge);
-		out_edges[edge.from].emplace_back(edges.size()-1);
-		in_edges[edge.to].emplace_back(edges.size() - 1);
-	}
-	void push_undir(const Edge& edge) {
-		push(edge); push(edge.reverse());
-	}
-
-	//void erase(ll from, ll to) {
-	//	// O(nodeSize)
-	//	assert(max(from, to) < out_edges.size());
-	//	for (Edge& e : out_edges[from]) {
-	//		if (e.to = to) {
-	//			edges.erase(edges.begin() + k);
-	//			out_edges
-	//		}
-	//	}
-	//}
-	//void erase(ll edge_ind) {
-	//	// O(nodeSize)
-	//	assert(edge_ind < edges.size());
-	//	edges.erase(edges.begin() + edge_ind);
-	//	auto& esin = in_edges[edges[edge_ind].to];
-	//	esin.erase(find(all(esin), edge_ind));
-	//	auto& esout = out_edges[edges[edge_ind].from];
-	//	esout.erase(find(all(esout), edge_ind));
-	//}
-	void push(vector<Edge> edges) {
-		for (const Edge& e : edges) {
-			push(e);
-		}
-	}
-	vvll adjacency_matrix(ll default_value = INF) const {
-		vvll d(size(), vll(size()));
-		for (auto& e : edges) {
-			d[e.from][e.to] = e.cost;
-		}
-		return d;
-	}
-
-	vll get_topologically_sorted_nodes()
-	{
-		// graph needs to be represented by adjacent list.
-		// complexity: O( node size + edge size)
-		ll nodeSize = this->size();
-
-		// find root
-		vll roots;
-		vll inDegree(nodeSize);
-		rep(i, 0, nodeSize)
-		{
-			for (ll sibling_ind : this->out(i)) {
-				inDegree[(*this)[sibling_ind].to]++;
+	modint &operator/=(modint rhs) noexcept {
+		u64 exp = mod() - 2;
+		while (exp) {
+			if (exp % 2) {
+				*this *= rhs;
 			}
+			rhs *= rhs;
+			exp /= 2;
 		}
-
-
-		rep(i, 0, nodeSize) {
-			if (inDegree[i] == 0) {
-				roots.push_back(i);
-			}
-		}
-
-		stack<ll> parents;
-		for (ll i : roots)
-			parents.push(i);
-
-		vll sortedNodes;
-		while (!parents.empty()) {
-			ll parent = parents.top();
-			parents.pop();
-			sortedNodes.push_back(parent);
-			for (ll sibling_ind : this->out(parent)) {
-				auto& sibling = (*this)[sibling_ind];
-				inDegree[sibling.to]--;
-				if (inDegree[sibling.to] == 0) {
-					parents.push(sibling.to);
-				}
-			}
-		}
-		return sortedNodes;
+		return *this;
 	}
-	void topological_sort() {
-		vll sorted = get_topologically_sorted_nodes();
-		vll new_ind(sorted.size());
-		vector<Edge> new_edges;
-		rep(i, 0, sorted.size()) {
-			new_ind[sorted[i]] = i;
-		}
-		for (Edge& e : edges) {
-			new_edges.emplace_back(Edge{ new_ind[e.from], new_ind[e.to],e.cost });
-		}
-		*this = Graph(this->size(), new_edges);
+	modint &operator++() noexcept {
+		return *this += modint(1);
 	}
-	ll diameter() {
-		// require : graph is tree
-		// calculate the diameter ( longest path length ) in O(N)
-		vll dp(size(),-1);
-		ll m = 0; ll ind;
-		function<void(ll)> dfs = [&](ll x) {
-			for (ll e_ind : out(x)) {
-				ll nextnode = (*this)[e_ind].to;
-				if (dp[nextnode] == -1) {
-					dp[nextnode] = dp[x] + 1;
-					if (dp[nextnode] > m) {
-						m = dp[nextnode];  ind = nextnode;
-					}
-					dfs(nextnode);
-				}
-			}
-		};
-		dp[0] = 0; ind = 0;
-		dfs(0);
-		ll first = ind;
-		fill_v(dp, -1);
-		dp[first] = 0; 
-		dfs(first);
-		return m;
-		// remark two end points of diameter are 'first' and 'ind';
+	modint &operator++(int) noexcept {
+		auto t = *this;
+		*this += modint(1);
+		return t;
 	}
+	modint &operator--() noexcept {
+		return *this -= modint(1);
+	}
+	modint &operator--(int) noexcept {
+		auto t = *this;
+		*this -= modint(1);
+		return t;
+	}
+	constexpr modint operator-() { return val ? mod() - val : val; }
+	constexpr bool operator==(const modint rhs) const noexcept { return val == rhs.value(); }
+	constexpr bool operator!=(const modint rhs)const  noexcept { return val != rhs.value(); }
+	constexpr bool operator <(const modint rhs)const  noexcept { return val < rhs.value(); }
+	static constexpr modint zero() { return modint(0); }
+	static constexpr modint unit() { return modint(1); }
 
-	vll leaves() {
-		vll res;
-		rep(i, 0, nodeSize) {
-			if (out(i).size() <= 1)
-				res.push_back(i);
+	modint pow(long long k) const {
+		modint v = *this;
+		modint res(1), tmp(v);
+		while (k) {
+			if (k & 1) res *= tmp;
+			tmp *= tmp;
+			k >>= 1;
 		}
 		return res;
 	}
+	
+	u64 log(modint b) {
+		modint val = *this;
+		const u64 sq = 40000;
+		map<modint, u64> dp;
+		//dp.reserve(sq);
+		modint res(1);
+		for (ll r = 0; r < sq; r++) {
+			if (!dp.count(res)) dp[res] = r;
+			res *= val;
+		}
+		modint p = val.inv().pow(sq);
+		res = b;
+		for (ll q = 0; q <= mod() / sq + 1; q++) {
+			if (dp.count(res)) {
+				u64 idx = q * sq + dp[res];
+				if (idx > 0) return idx;
+			}
+			res *= p;
+		}
+		return INF;
+	}
+	friend ostream& operator <<(ostream& o, const modint<modulus>& t) {
+		o << t.value();
+		return o;
+	}
+	friend istream& operator >>(istream& in, modint<modulus>& t) {
+		uint_fast64_t x;
+		in >> x;
+		t = modint<modulus>(x);
+		return in;
+	}
+	friend modint<modulus> POW(modint<modulus> x, ll n) {
+		return modint<modulus>(POW(x.value(), n, mod()));
+	}
 
 };
 
-class GraphDFS
-{
-	vb visited;
-	Graph* graph;
+
+class Combination {
+	// this calculates combination (nCk).
+	// Constructor runs in O(MAX).
+	// get(n,k) returns nCk in O(1).
+
+	ll N_MAX, mod;
+	vll fac;
+	vll finv;
+	vll inv;
 public:
-	GraphDFS(Graph& graph) :visited(graph.size()), graph(&(graph)){}
-
-	// Impliment func: void(Edge&) representing what this should do, when target node moves from visited node (e.from) to unvisited node (e.to).
-	template<class T>
-	void operator()(T&& func, ll startNode=0) {
-
-		if (visited[startNode] != 0) return;
-		visited[startNode] = 1;
-		for (ll e_ind: graph->out(startNode)) {
-			auto& e = (*graph)[e_ind];
-			func(e);
-			operator()(func, e.to);
-		}
+	Combination(ll mod = MOD, ll N_MAX = 210000)
+		:mod(mod), N_MAX(max(N_MAX, 2LL)), fac(vll(N_MAX + 1)), finv(vll(N_MAX + 1)), inv(vll(N_MAX + 1)) {
+		fac[0] = fac[1] = 1;
+		finv[0] = finv[1] = 1;
+		inv[1] = 1;
+		pre_process(2LL, N_MAX + 1);
 	}
-};
 
-pair<vll, vll> dijkstra(const Graph& graph, size_t start) {
-	// graph: weighted directed graph of adjacent representation
-	// start: index of start point
-	// return1: minimum path length from start
-	// return2: concrete shortest path info
-	// complexity : E*log(V)
-	ll node_size = graph.size();
-	vll dist(node_size, 1LL << 60);
-	vll from_list(node_size, -1);
-	dist[start] = 0;
-	pq_greater<pair<ll, pll>> pq;
-	pq.push({ 0, {start, start} });
-	while (!pq.empty()) {
-		auto node = pq.top(); pq.pop();
-		// if not shortest path fixed, fix
-		ll from = node.second.first;
-		ll to = node.second.second;
-		if (from_list[to] != -1)
-			continue;
-		from_list[to] = from;
+	ll operator()(ll n, ll k) {
+		// choose k from n
+		if (N_MAX < n)
+			pre_process(N_MAX + 1, n + 1);
 
-		for (ll edge_ind : graph.out(to)) {
-			auto& edge = graph[edge_ind];
-			ll adj = edge.to;
-			ll cost = dist[to] + edge.cost;
-			if (dist[adj] > cost) {
-				dist[adj] = min(dist[adj], cost);
-				pq.push({ cost ,{to, adj} });
-			}
-		}
+		if (n < k)return 0;
+		if (n < 0 || k < 0)return 0;
+		return fac[n] * (finv[k] * finv[n - k] % mod) % mod;
 	}
-	return { dist, from_list };
-
-}
-
-pair<vll, vll> dijkstra2(const Graph& graph, size_t start) {
-	// graph: weighted directed graph of adjacent representation
-	// start: index of start point
-	// return1: minimum path length from start
-	// return2: concrete shortest path info
-	// complexity : E*log(V)
-	ll node_size = graph.size();
-	vll dist(node_size, 1LL << 60);
-	vll from_list(node_size, -1);
-	dist[start] = 0;
-	pq_greater<pair<ll, pll>> pq;
-	pq.push({ 0, {start, start} });
-	while (!pq.empty()) {
-		auto node = pq.top(); pq.pop();
-		// if not shortest path fixed, fix
-		ll from = node.second.first;
-		ll to = node.second.second;
-		if (from_list[to] != -1)
-			continue;
-		from_list[to] = from;
-
-		for (ll edge_ind : graph.out(to)) {
-			auto& edge = graph[edge_ind];
-			ll adj = edge.to;
-			ll cost = dist[to] + edge.cost;
-			if (dist[adj] > cost) {
-				dist[adj] = min(dist[adj], cost);
-				pq.push({ cost ,{to, adj} });
-			}
-		}
+	ll H(ll n, ll k) {
+		// 1) 区間[0, k) を（空を許して）n個に分割する場合の数
+		// 2) n個の中からk個を重複を許して選ぶ
+		return (n==0 && k==0)? 1 : operator()(n + k - 1, k);
 	}
-	return { dist, from_list };
-
-}
-
-vll shortest_path(const vll& from_list, ll start, ll goal) {
-	// usage : vll path =  shortest_path(dijkstra(g,s).second, s, g);
-	vll path;
-	path.emplace_back(goal);
-	while (true) {
-		ll from = from_list[goal];
-		path.emplace_back(from);
-		if (from == start) {
-			break;
-		}
-		goal = from;
-	}
-	reverse(all(path));
-	return path;
-}
-
-vvll warshall_floyd(const Graph& g, ll default_value) {
-	ll n = g.size();
-	vvll d = g.adjacency_matrix(INF);
-	rep(k, 0, n)rep(i, 0, n)rep(j, 0, n) {
-		if (d[i][j] > d[i][k] + d[k][j])
-			d[i][j] = d[i][k] + d[k][j];
-	}
-	rep(i, 0, n)rep(j, 0, n) {
-		if (d[i][j] == INF)
-			d[i][j] = default_value;
-	}
-	return d;
-}
-
-class FordFulkerson {
 private:
-	vb usedNode;
-public:
-	struct RevEdge { ll from, to, cap, rev; };
-
-	FordFulkerson(ll n, Graph graph) 
-		:usedNode(vb(n)), G(vec_t<2,RevEdge>(n))
-	{
-		rep(i, 0, graph.size()) {
-			for (ll e_ind : graph.out(i)) {
-				add_revedge(graph[e_ind]);
-			}
+	void pre_process(ll m, ll n) {
+		if (N_MAX < n) {
+			fac.resize(n); inv.resize(n); finv.resize(n);
 		}
-
-	}
-	vec_t<2, RevEdge> G;
-	void add_revedge(Edge e) {
-		G[e.from].push_back(RevEdge{ e.from, e.to ,e.cost, SZ(G[e.to]) });
-		G[e.to].push_back(RevEdge{ e.to, e.from, 0 , SZ(G[e.from]) - 1 });
-	}
-
-	ll single_flow(ll from, ll to, ll flow) {
-		// fromからtoに向かってflowを超えない範囲で一本のFlowを流す。
-		if (from == to)
-			return flow;
-		usedNode[from] = 1;
-		rep(i, 0, G[from].size()) {
-			RevEdge& e = G[from][i];
-			if (usedNode[e.to] || e.cap <= 0)
-				continue;
-			ll flow_from_e = single_flow(e.to, to, min(flow, e.cap));
-			if (flow_from_e > 0) {
-				e.cap -= flow_from_e; assert(e.cap >= 0);
-				G[e.to][e.rev].cap += flow_from_e;
-				// 今までよりも最大流を増やすことに成功したのでrerurn
-				return flow_from_e;
-			}
+		rep(i, m, n) {
+			fac[i] = fac[i - 1] * i % mod;
+			inv[i] = mod - inv[mod%i] * (mod / i) % mod;
+			finv[i] = finv[i - 1] * inv[i] % mod;
 		}
-		//すでにfromから先すべての辺を訪れていたあるいはすべてのcapが0だったら流せない。
-		return 0;
 	}
-	ll max_flow(ll from, ll to) {
-		ll flow = 0;
-		while (true) {
-			fill_v(usedNode, 0);
-			ll f = single_flow(from, to, INF);
-			if (f == 0)
-				return flow;
-			else
-				flow += f;
-		}
-
-	}
-
 };
 
 
-// ================= Rectangle Area Problem =====================
-auto getNeighbor = [](ll i, ll w, ll h) {
-	ll H = i / w;
-	ll W = i % w;
+ll choose(int n, int r) { // O(r) for small n
+	ll acc = 1;
+	rep(i, 0, r) acc = acc * (n - i) / (i + 1);
+	return acc;
+}
+
+ll gcd(ll val, ll b) {
+	if (val%b == 0) return b;
+	else return gcd(b, val%b);
+}
+
+
+
+
+vll getDivisors(ll n) {
 	vll res;
-	if (H > 0) res.push_back(i - w);
-	if (H < h - 1) res.push_back(i + w);
-	if (W > 0)res.push_back(i - 1);
-	if (W < w - 1)res.push_back(i + 1);
+	ll i = 1;
+
+	for (; i*i < n; i++) {
+		if (n%i == 0) {
+			res.push_back(i);
+			res.push_back(n / i);
+		}
+	}
+	if (i*i == n)res.push_back(i);
+	sort(res.begin(), res.end());
 	return res;
-};
+}
 
-auto getHW = [](ll i, ll w) {
-	ll H = i / w;
-	ll W = i % w;
-	return pll{ H,W };
-};
+vll getDivisors(ll n, ll m) {
+	// O(sqrt(min(n,m)))
+	if (n > m) swap(n, m);
+	vll res;
+	ll i = 1;
 
-
-
-
-struct UnionFind {
-	vector<ll> data;
-	vll querySize_;
-	set<ll> roots;
-	UnionFind(ll size) : data(size, -1), querySize_(size, 0) {
-		rep(i, 0, size) roots.insert(i);
-	}
-
-	ll unite(ll x, ll y) {
-		// return: root
-		x = operator[](x); y = operator[](y);
-		if (x != y) {
-			if (data[y] < data[x]) swap(x, y);
-			data[x] += data[y]; data[y] = x;
-			querySize_[x] += querySize_[y] + 1;
-			roots.erase(y);
-			return x;
-		}
-		else {
-			querySize_[x]++;
-			return x;
+	for (; i*i < n; i++) {
+		if (n%i == 0) {
+			if (m%i == 0) res.push_back(i);
+			if (m % (n / i) == 0) res.push_back(n / i);
 		}
 	}
-	bool is_same(ll x, ll y) {
-		// check whether x and y are connected
-		return operator[](x) == operator[](y);
+	if (i*i == n) if (m%i == 0) res.push_back(i);
+	sort(res.begin(), res.end());
+	return res;
+}
+
+vector<pll >prime_factorize(ll n) {
+	vector<pll> res;
+	for (ll p = 2; p*p <= n; ++p) {
+		if (n%p != 0)continue;
+		ll num = 0;
+		while (n%p == 0) { ++num; n /= p; }
+		res.push_back({ p,num });
 	}
-	ll operator[](ll x) {
-		// get root
-		return data[x] < 0 ? x : data[x] = operator[](data[x]);
-	}
-	ll size(ll x) {
-		return -data[operator[](x)];
-	}
-	ll  query_size(ll x) {
-		return querySize_[operator[](x)];
-	}
-	const set<ll>& getRoots() {
-		return roots;
-	}
-	ll rank(ll x) {
-		return -data[operator[](x)];
-	}
-	void initialize() {
-		for (auto& i : data) {
-			i = -1;
-		}
-	}
-};
+	if (n != 1) res.push_back(make_pair(n, 1));
+	return res;
+}
+
+
 
 
 
@@ -674,34 +496,59 @@ struct UnionFind {
 // ============================ Header  =================================
 
 
-
 int main() {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 	cout << fixed << setprecision(12);
-
-	ll n, m; cin >> n >> m;
-	vpll ab(m);
-	read(ab);
-
-	UnionFind uf(n);
-	Graph g(n);
-	rep(i, 0, m) {
-		uf.unite(ab[i].fir-1, ab[i].sec-1);
-		g.push(Edge{ ab[i].first - 1,ab[i].sec - 1 });
-
+	
+	ll n; cin >> n;
+	vll a(n);
+	read(a);
+	vll res(n);
+	vll S0(n + 1), S1(n+1);
+	rep(i, 0, n / 2) {
+		S0[i*2+2 ] =S0[i*2]+ a[i * 2];
 	}
-	bool ok = 1;
-	rep(i, 0, n) {
-		if ((g.out(i).size() + g.in(i).size()) % 2) {
-			ok = 0;
+	rep(i, 0, n / 2) {
+		S1[1+ i * 2 + 2] = S1[1+ i * 2] + a[1+ i * 2];
+	}
+
+	ll tot = accumulate(all(a), 0LL);
+	res[n - 1] = tot;
+	rep(i, 0, n / 2)
+		res[n - 1] -= a[i * 2]*2;
+	ll x = n - 1;
+	rep(i, 0, n-1) {
+		ll tmp = tot ;
+		ll y = (x - 1 >= 0 ? x - 1 : x + n - 1);
+
+		tmp -= a[y]*2;
+		tmp = tot - tmp;
+		tmp -= res[x];
+		res[y] = tmp;
+		x = y;
+
+
+
+		/*if (i == 0) {
+			res[0] = tot -S1[n];
 		}
+		else if(i==1){
+			res[1] = tot;
+			res[1] -= a[0];
+			res[1] -= S1[n];
+		}
+		else if(i%2 ==0){
+			res[i] = tot;
+			res[i] -= S1[i];
+			res[i] -= (S1
+		}*/
 	}
-	if (ok)
-		cout << "YES" << endl;
-	else
-		cout << "NO" << endl;
-
+	cout << res[0];
+	rep(i, 1, n ) {
+		cout << " " << res[i] ;
+	}
+	cout << endl;
 	return 0;
 
 }
