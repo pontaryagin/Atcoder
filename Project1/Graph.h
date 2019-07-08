@@ -208,7 +208,7 @@ public:
 
 	// Impliment func: void(Edge&) representing what this should do, when target node moves from visited node (e.from) to unvisited node (e.to).
 	template<class T>
-	void operator()(T&& func, ll startNode=0) {
+	void operator()(ll startNode, T&& func) {
 		//if (visited[startNode] != 0) return;
 		visited[startNode] = 1;
 		for (ll e_ind: graph->out(startNode)) {
@@ -216,7 +216,36 @@ public:
 			if (visited[e.to])
 				continue;
 			func(e);
-			operator()(func, e.to);
+			operator()(e.to, func);
+		}
+	}
+};
+
+class GraphBFS
+{
+	vb visited;
+	Graph* graph;
+public:
+	GraphBFS(Graph& graph) :visited(graph.size()), graph(&(graph)) {}
+
+	// Impliment func: void(Edge&) representing what this should do, when target node moves from visited node (e.from) to unvisited node (e.to).
+	template<class T>
+	void operator()(ll startNode, T&& func) {
+		//if (visited[startNode] != 0) return;
+		visited[startNode] = 1;
+		queue<Edge> toVisit;
+		for(auto ei: graph->out(startNode))
+			toVisit.push((*graph)[ei]);
+		while (toVisit.size()) {
+			auto next = toVisit.front(); toVisit.pop();
+			if (visited[next.to])
+				continue;
+			visited[next.to] = 1;
+			func(next);
+			for (auto ei : graph->out(next.to)){
+				if(!visited[(*graph)[ei].to])
+					toVisit.push((*graph)[ei]);
+			}
 		}
 	}
 };
