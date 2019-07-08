@@ -209,13 +209,12 @@ public:
 	// Impliment func: void(Edge&) representing what this should do, when target node moves from visited node (e.from) to unvisited node (e.to).
 	template<class T>
 	void operator()(T&& func, ll startNode=0) {
-
-		if (visited[startNode] != 0) return;
+		//if (visited[startNode] != 0) return;
 		visited[startNode] = 1;
 		for (ll e_ind: graph->out(startNode)) {
 			auto& e = (*graph)[e_ind];
 			if (visited[e.to])
-				break;
+				continue;
 			func(e);
 			operator()(func, e.to);
 		}
