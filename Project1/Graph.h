@@ -409,6 +409,7 @@ public:
 		}
 		return parent[node1][0];
 	}
+private:
 	ll max_par;
 	vvll parent;
 	vll depth;
