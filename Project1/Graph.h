@@ -202,9 +202,9 @@ struct Graph {
 class GraphDFS
 {
 	vb visited;
-	Graph* graph;
+	const Graph* graph;
 public:
-	GraphDFS(Graph& graph) :visited(graph.size()), graph(&(graph)){}
+	GraphDFS(const Graph& graph) :visited(graph.size()), graph(&(graph)){}
 
 	// Impliment func: void(Edge&) representing what this should do, when target node moves from visited node (e.from) to unvisited node (e.to).
 	template<class T>
@@ -224,9 +224,9 @@ public:
 class GraphBFS
 {
 	vb visited;
-	Graph* graph;
+	const Graph* graph;
 public:
-	GraphBFS(Graph& graph) :visited(graph.size()), graph(&(graph)) {}
+	GraphBFS(const Graph& graph) :visited(graph.size()), graph(&(graph)) {}
 
 	// Impliment func: void(Edge&) representing what this should do, when target node moves from visited node (e.from) to unvisited node (e.to).
 	template<class T>
@@ -249,6 +249,7 @@ public:
 		}
 	}
 };
+
 
 pair<vll, vll> dijkstra(const Graph& graph, size_t start) {
 	// graph: weighted directed graph of adjacent representation
@@ -370,6 +371,47 @@ public:
 
 	}
 
+};
+
+
+// Least Common Ancestor
+class LCA {
+public:
+	LCA(const Graph& graph, ll root) : max_par(ceil(log2(graph.size()) + 2)), parent(graph.size(), vll(max_par,-1)),
+		depth() {
+		GraphDFS dfs(graph);
+		//parent[root][0] = root;
+		dfs(root, [&](const Edge & e) {
+			ll to = e.to;
+			parent[to][0] = e.from;
+			rep(i, 1, parent[to].size()) {
+				if (parent[to][i - 1] == -1)
+					return;
+				else
+					parent[to][i] = (parent[parent[to][i - 1]][i - 1]);
+			}
+			});
+		depth = dijkstra(graph, root).first;
+	}
+	ll operator()(ll node1, ll node2) {
+		if (depth[node1] > depth[node2]) swap(node1, node2);
+		rrep(i, 0, max_par) {
+			if (((depth[node2] - depth[node1]) >> i) & 1) {
+				node2 = parent[node2][i];
+			}
+		}
+		if (node1 == node2)return node1;
+		rrep(i, 0, max_par) {
+			if (parent[node1][i] != parent[node2][i]) {
+				node1 = parent[node1][i];
+				node2 = parent[node2][i];
+			}
+		}
+		return parent[node1][0];
+	}
+	ll max_par;
+	vvll parent;
+	vll depth;
 };
 
 

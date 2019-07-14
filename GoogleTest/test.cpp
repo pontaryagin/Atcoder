@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "../Project1/NumberTheory.h"
 #include "../Project1/SegmentTree.h"
-
+#include "../Project1/Graph.h"
 
 TEST(NumberTheory,modint) {
 
@@ -60,5 +60,23 @@ TEST(SegmentTree, segment_tree) {
 	EXPECT_EQ(seg.query(1, 4).first, 3);
 	EXPECT_EQ(seg.query(0, 2).first, 11);
 	EXPECT_EQ(seg.query(0, 0).first, numeric_limits<ll>::max());
+
+}
+
+TEST(Graph, LCA) {
+
+	Graph g(5);
+	g.push_undir({ 0,1 });
+	g.push_undir({ 0,2 });
+	g.push_undir({ 2,3 });
+	g.push_undir({ 2,4 });
+	LCA lca(g, 0);
+	EXPECT_EQ(lca(1, 4), 0);
+	EXPECT_EQ(lca(3, 4), 2);
+	EXPECT_EQ(lca(2, 4), 2);
+	EXPECT_EQ(lca(0, 4), 0);
+	LCA lca4(g, 4);
+	EXPECT_EQ(lca4(3, 0), 2);
+	EXPECT_EQ(lca4(1, 4), 4);
 
 }
