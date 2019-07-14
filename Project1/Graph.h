@@ -197,69 +197,71 @@ struct Graph {
 		return res;
 	}
 
-};
-
-class GraphDFS
-{
-	vb visited;
-	const Graph* graph;
-public:
-	GraphDFS(const Graph& graph) :visited(graph.size()), graph(&(graph)){}
-
+	template<class T>
+	void dfs(ll startNode, T&& func) const;
 	// Impliment func: void(Edge&) representing what this should do, when target node moves from visited node (e.from) to unvisited node (e.to).
 	template<class T>
-	void operator()(ll startNode, T&& func) {
-		//if (visited[startNode] != 0) return;
+	void bfs(ll startNode, T&& func) const;
+	// Impliment func: void(Edge&) representing what this should do, when target node moves from visited node (e.from) to unvisited node (e.to).
+	vll dijkstra(size_t start, vll& from_list = vll()) const;
+};
+
+template<class T>
+void Graph::dfs(ll startNode, T&& func) const
+{
+	// Impliment func: void(const Edge&) representing what this should do, when target node moves from visited node (e.from) to unvisited node (e.to).
+	const auto& graph = *this;
+	vb visited(graph.size());
+	auto dfs_impl = [&](auto dfs_impl, ll startNode, T && func)-> void {
 		visited[startNode] = 1;
-		for (ll e_ind: graph->out(startNode)) {
-			auto& e = (*graph)[e_ind];
+		for (ll e_ind : graph.out(startNode)) {
+			auto& e = graph[e_ind];
 			if (visited[e.to])
 				continue;
 			func(e);
-			operator()(e.to, func);
+			dfs_impl(dfs_impl, e.to, forward<T>(func));
 		}
-	}
+	};
+	dfs_impl(dfs_impl, startNode, forward<T>(func));
+
 };
 
-class GraphBFS
+template<class T>
+void Graph::bfs(ll startNode, T&& func) const
 {
-	vb visited;
-	const Graph* graph;
-public:
-	GraphBFS(const Graph& graph) :visited(graph.size()), graph(&(graph)) {}
-
-	// Impliment func: void(Edge&) representing what this should do, when target node moves from visited node (e.from) to unvisited node (e.to).
-	template<class T>
-	void operator()(ll startNode, T&& func) {
+	const auto& graph = *this;
+	vb visited(graph.size());
+	auto bfs_impl = [&](auto bfs_impl, ll startNode, T && func) {
 		//if (visited[startNode] != 0) return;
 		visited[startNode] = 1;
 		queue<Edge> toVisit;
-		for(auto ei: graph->out(startNode))
-			toVisit.push((*graph)[ei]);
+		for (auto ei : graph.out(startNode))
+			toVisit.push(graph[ei]);
 		while (toVisit.size()) {
 			auto next = toVisit.front(); toVisit.pop();
 			if (visited[next.to])
 				continue;
 			visited[next.to] = 1;
 			func(next);
-			for (auto ei : graph->out(next.to)){
-				if(!visited[(*graph)[ei].to])
-					toVisit.push((*graph)[ei]);
+			for (auto ei : graph.out(next.to)) {
+				if (!visited[graph[ei].to])
+					toVisit.push(graph[ei]);
 			}
 		}
-	}
+	};
+	bfs_impl(bfs_impl, startNode, forward<T>(func));
 };
 
-
-pair<vll, vll> dijkstra(const Graph& graph, size_t start) {
+vll Graph::dijkstra(size_t start, vll& from_list) const {
 	// graph: weighted directed graph of adjacent representation
 	// start: index of start point
 	// return1: minimum path length from start
-	// return2: concrete shortest path info
 	// complexity : E*log(V)
+	const auto& graph = *this;
 	ll node_size = graph.size();
 	vll dist(node_size, 1LL << 60);
-	vll from_list(node_size, -1);
+	from_list.resize(node_size);
+	fill_v(from_list, -1);
 	dist[start] = 0;
 	pq_greater<pair<ll, pll>> pq;
 	pq.push({ 0, {start, start} });
@@ -282,11 +284,10 @@ pair<vll, vll> dijkstra(const Graph& graph, size_t start) {
 			}
 		}
 	}
-	return { dist, from_list };
-
+	return dist;
 }
 
-vll shortest_path(const vll& from_list, ll start, ll goal) {
+vll shortest_path_generator(const vll& from_list, ll start, ll goal) {
 	// usage : vll path =  shortest_path(dijkstra(g,s).second, s, g);
 	vll path;
 	path.emplace_back(goal);
@@ -379,9 +380,8 @@ class LCA {
 public:
 	LCA(const Graph& graph, ll root) : max_par(ceil(log2(graph.size()) + 2)), parent(graph.size(), vll(max_par,-1)),
 		depth() {
-		GraphDFS dfs(graph);
 		//parent[root][0] = root;
-		dfs(root, [&](const Edge & e) {
+		graph.dfs(root, [&](const Edge & e) {
 			ll to = e.to;
 			parent[to][0] = e.from;
 			rep(i, 1, parent[to].size()) {
@@ -391,7 +391,7 @@ public:
 					parent[to][i] = (parent[parent[to][i - 1]][i - 1]);
 			}
 			});
-		depth = dijkstra(graph, root).first;
+		depth = graph.dijkstra(root);
 	}
 	ll operator()(ll node1, ll node2) {
 		if (depth[node1] > depth[node2]) swap(node1, node2);
@@ -413,6 +413,12 @@ public:
 	vvll parent;
 	vll depth;
 };
+
+vll euler_tour(const Graph& graph) {
+	vll res;
+
+	return res;
+}
 
 
 // ================= Rectangle Area Problem =====================
