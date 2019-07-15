@@ -415,7 +415,6 @@ vll Graph::euler_tour(ll start) const {
 		}, [&](const Edge& e) {
 			res.push_back(e.from);
 		});
-	//res.push_back(start);
 	return res;
 }
 
