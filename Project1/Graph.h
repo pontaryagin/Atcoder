@@ -413,8 +413,7 @@ vll Graph::euler_tour(ll start) const {
 	dfs(start, [&](const Edge& e) {
 			res.push_back(e.to);
 		}, [&](const Edge& e) {
-			//if(out(e.to).size()>1)
-				res.push_back(e.from);
+			res.push_back(e.from);
 		});
 	//res.push_back(start);
 	return res;
