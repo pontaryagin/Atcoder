@@ -97,7 +97,6 @@ TEST(Graph, DFSBFS) {
 }
 
 TEST(Graph, LCA) {
-
 	Graph g(5);
 	g.push_undir({ 0,1 });
 	g.push_undir({ 0,2 });
@@ -123,8 +122,8 @@ TEST(Graph, EulerTour) {
 	g.push_undir({ 2,4 });
 	// 0
 	// \1  \2
-	//        \3  \4
-	auto tour = euler_tour(g);
+	//       \3  \4
+	auto tour = g.euler_tour(0);
 	auto res = vll{ 0,1,0,2,3,2,4,2,0 };
 	EXPECT_EQ(tour, res);
 
