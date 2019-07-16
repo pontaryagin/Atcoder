@@ -128,3 +128,27 @@ TEST(Graph, EulerTour) {
 	EXPECT_EQ(tour, res);
 
 }
+
+TEST(Graph, Kruskal) {
+
+	Graph g(5);
+	g.push_undir({ 0,1,1 });
+	g.push_undir({ 0,2,3 });
+	g.push_undir({ 0,3,4 });
+	g.push_undir({ 1,3,2 });
+	g.push_undir({ 2,3,1 });
+	// 0 - 1
+	// | \ |
+	// \2- \3
+	Graph mst = g.kruskal();
+	set<Edge> edgeMST, edgeRes;
+	rep(i, 0, mst.edges.size())
+		edgeMST.insert(mst[i]);
+	edgeRes.insert({ 0,1,1 });
+	edgeRes.insert({ 1,0,1 });
+	edgeRes.insert({ 1,3,2 });
+	edgeRes.insert({ 3,1,2 });
+	edgeRes.insert({ 2,3,1 });
+	edgeRes.insert({ 3,2,1});
+	EXPECT_EQ(edgeMST, edgeRes);
+}

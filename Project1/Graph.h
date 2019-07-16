@@ -1,5 +1,6 @@
 #pragma once
 #include "MyHeader.h"
+#include "UnionFind.h"
 
 struct Edge
 {
@@ -17,6 +18,9 @@ struct Edge
 	}
 	bool operator>  (const Edge& e) const {
 		return cost > e.cost;
+	}
+	bool operator== (const Edge & e) const {
+		return cost == e.cost && from == e.from && to == e.to;
 	}
 };
 
@@ -71,6 +75,12 @@ struct Graph {
 		out_edges[edge.from].emplace_back(edges.size()-1);
 		in_edges[edge.to].emplace_back(edges.size() - 1);
 	}
+	void push(const Edge& edge, Graph::Dir dir) {
+		if (dir == Dir::undir)
+			push_undir(edge);
+		else
+			push(edge);
+	}
 	void push_undir(const Edge& edge) {
 		push(edge); push(edge.reverse());
 	}
@@ -120,6 +130,7 @@ struct Graph {
 	vll dijkstra(ll start) const;
 	vll dijkstra(ll start, vll& from_list) const;
 	vll euler_tour(ll start) const;
+	Graph kruskal(Graph::Dir = Dir::undir) const; //returns minimal spanning tree
 };
 
 vll Graph::get_topologically_sorted_nodes() const {
@@ -418,6 +429,25 @@ vll Graph::euler_tour(ll start) const {
 	return res;
 }
 
+Graph Graph::kruskal(Graph::Dir dir) const {
+	Graph res(nodeSize);
+	vpll sortedEdges;
+	rep(i, 0, edges.size()) {
+		sortedEdges.push_back({ edges[i].cost, i });
+	}
+	sort(all(sortedEdges));
+	UnionFind uf(nodeSize);
+	rep (i, 0, sortedEdges.size()) {
+		ll cost, eInd;
+		tie(cost, eInd) = sortedEdges[i];
+		ll from = (*this)[eInd].from; ll to = (*this)[eInd].to;
+		if (!uf.is_same(from, to) ){
+			res.push((*this)[eInd], dir);
+		}
+		uf.unite(from ,to);
+	}
+	return res;
+}
 
 // ================= Rectangle Area Problem =====================
 auto getNeighbor = [](ll i, ll w, ll h) {
