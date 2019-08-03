@@ -24,8 +24,22 @@ TEST(NumberTheory,modint) {
 	EXPECT_EQ(x.pow( 2), 4);
 	EXPECT_EQ(x.pow( 4*100000), 1);
 	EXPECT_EQ(x.log( 4), 2);
+}
 
-
+TEST(NumberTheory, runtime_modint) {
+	modint<-1>::set_modulo(7);
+	auto x = modint<-1>(5);
+	auto y = modint<-1>(3);
+	modint<-2>::set_modulo(5);
+	auto u = modint<-2>(5);
+	auto v = modint<-2>(3);
+	EXPECT_EQ(x + y, 1);
+	EXPECT_EQ(u + v, 3);
+	auto w = modint<-3>(11, 5);
+	EXPECT_EQ(w, 1);
+	auto a = modint<-4>(6);
+	a.reset_modulo(5);
+	EXPECT_EQ(a, 1);
 
 }
 
