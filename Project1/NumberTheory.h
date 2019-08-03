@@ -10,34 +10,33 @@ ll div_ferm(ll val, ll  b, ll mod) {
 
 
 // === Modint ===
-static uint_fast64_t runtime_modulus = MOD;
+//static uint_fast64_t runtime_modulus = MOD;
 
-template <std::uint_fast64_t modulus = MOD> 
+template <ll modulus = MOD> 
 class modint 
 {
-	using u64 = std::uint_fast64_t;
-
 public:
-	u64 val; 
+	ll val; 
+	constexpr modint() : val(0) {}
+	constexpr modint(ll x) : val((x %= mod()) < 0 ? x + mod() : x) {}
+	constexpr modint(ll x, ll modulus) {
+		set_modulo(modulus); val = (x %= mod()) < 0 ? x + mod() : x;
+	}
+	template<class Ret = ll &> 
+	static auto modulo() -> std::enable_if_t<(modulus <= 0), Ret> { 
+		static ll runtime_modulus= numeric_limits<ll>::max(); return runtime_modulus; // singleton technique
+	}
+	template<class Ret = const ll>
+	static auto mod() -> std::enable_if_t<(modulus <= 0), Ret> { return modulo(); }
+
+	template<class Ret = const ll>
+	static constexpr auto mod()->std::enable_if_t<(modulus > 0), Ret> { return modulus; }
 
 	template<ll modulus_ = modulus, enable_if_t<(modulus_ <= 0), nullptr_t> = nullptr >
-	auto mod() {  return runtime_modulus; }
-	template<ll modulus_ = modulus, enable_if_t<(modulus_ > 0), nullptr_t> = nullptr >
-	auto mod() { return modulus; }
-	//template<class Ret = u64 &>
-	//static auto modulo() -> std::enable_if_t<(modulus <= 0), Ret> { static u64 runtime_modulus=0; return runtime_modulus; }
-	//template<class Ret = const u64>
-	//static auto mod() -> std::enable_if_t<(modulus <= 0), Ret> { return modulo(); }
-	//template<class Ret = const u64>
-	//static constexpr auto mod()->std::enable_if_t<(modulus > 0), Ret> { return modulus; }
-	//template<ll modulus_ = modulus, enable_if_t<(modulus_ <= 0), nullptr_t> = nullptr >
-	//static void set_modulo(u64 mod) { runtime_modulus = mod; }
-
-	constexpr modint(): val(0){}
-	constexpr modint(const u64 x) noexcept : val(x % mod()) {}
+	static void set_modulo(ll mod) { modulo() = mod; }
+	void reset_modulo(ll modulus) { modulo() = modulus; val %= mod();}
 	constexpr modint inv() { return pow(mod() - 2); }
-
-	constexpr u64 value() const noexcept { return val; }
+	constexpr ll value() const noexcept { return val; }
 	constexpr modint operator+(const modint rhs) const noexcept {
 		return modint(*this) += rhs;
 	}
@@ -69,7 +68,7 @@ public:
 		return *this;
 	}
 	modint &operator/=(modint rhs) noexcept {
-		u64 exp = mod() - 2;
+		ll exp = mod() - 2;
 		while (exp) {
 			if (exp % 2) {
 				*this *= rhs;
@@ -113,10 +112,10 @@ public:
 		return res;
 	}
 	
-	u64 log(modint b) {
+	ll log(modint b) {
 		modint val = *this;
-		const u64 sq = 40000;
-		map<modint, u64> dp;
+		const ll sq = 40000;
+		map<modint, ll> dp;
 		//dp.reserve(sq);
 		modint res(1);
 		for (ll r = 0; r < sq; r++) {
@@ -127,7 +126,7 @@ public:
 		res = b;
 		for (ll q = 0; q <= mod() / sq + 1; q++) {
 			if (dp.count(res)) {
-				u64 idx = q * sq + dp[res];
+				ll idx = q * sq + dp[res];
 				if (idx > 0) return idx;
 			}
 			res *= p;
@@ -139,7 +138,7 @@ public:
 		return o;
 	}
 	friend istream& operator >>(istream& in, modint<modulus>& t) {
-		uint_fast64_t x;
+		ll x;
 		in >> x;
 		t = modint<modulus>(x);
 		return in;
