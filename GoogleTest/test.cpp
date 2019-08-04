@@ -2,6 +2,7 @@
 #include "../Project1/NumberTheory.h"
 #include "../Project1/SegmentTree.h"
 #include "../Project1/Graph.h"
+#include "../Project1/Text.h"
 
 TEST(NumberTheory,modint) {
 
@@ -165,4 +166,16 @@ TEST(Graph, Kruskal) {
 	edgeRes.insert({ 2,3,1 });
 	edgeRes.insert({ 3,2,1});
 	EXPECT_EQ(edgeMST, edgeRes);
+}
+
+TEST(Text, RollingHash) {
+	auto rh = RollingHash<>("abcdefg");
+	auto rh2 = RollingHash<>("xbc");
+	EXPECT_EQ(rh(1, 3), rh2(1, 3));
+}
+
+TEST(Text, kmp_search) {
+	EXPECT_EQ(kmp_search("aaaabbaabcb", "aabc"),6);
+	EXPECT_EQ(kmp_search("aaaaaa", "aaa"), 0);
+	EXPECT_EQ(kmp_search("aaa", "aaaa"),3);
 }
