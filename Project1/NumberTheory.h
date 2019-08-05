@@ -19,8 +19,8 @@ public:
 	ll val; 
 	constexpr modint() : val(0) {}
 	constexpr modint(ll x) : val((x %= mod()) < 0 ? x + mod() : x) {}
-	constexpr modint(ll x, ll modulus) {
-		set_modulo(modulus); val = (x %= mod()) < 0 ? x + mod() : x;
+	constexpr modint(ll x, ll modulus_) {
+		set_modulo(modulus_); val = (x %= mod()) < 0 ? x + mod() : x;
 	}
 	template<class Ret = ll &> 
 	static auto modulo() -> std::enable_if_t<(modulus <= 0), Ret> { 
@@ -34,7 +34,7 @@ public:
 
 	template<ll modulus_ = modulus, enable_if_t<(modulus_ <= 0), nullptr_t> = nullptr >
 	static void set_modulo(ll mod) { modulo() = mod; }
-	void reset_modulo(ll modulus) { modulo() = modulus; val %= mod();}
+	void reset_modulo(ll modulus_) { modulo() = modulus_; val %= mod();}
 	constexpr modint inv() { return pow(mod() - 2); }
 	constexpr ll value() const noexcept { return val; }
 	constexpr modint operator+(const modint rhs) const noexcept {
