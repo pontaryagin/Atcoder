@@ -147,8 +147,12 @@ public:
 		return modint<modulus>(POW(x.value(), n, mod()));
 	}
 
-};
 
+};
+// user defined literal
+modint<MOD> operator"" _mod(unsigned long long x) {
+	return modint<MOD>(x);
+}
 
 class Combination {
 	// this calculates combination (nCk).
