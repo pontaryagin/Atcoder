@@ -63,6 +63,7 @@ typedef vector<string> vs;
 template<typename T>
 using pq_greater = priority_queue<T, vector<T>, greater<T>>;
 struct Point { ll x; ll y; };
+using vpt = vector<Point>;
 
 template<int n>
 struct tll_impl {
