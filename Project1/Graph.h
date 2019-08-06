@@ -7,21 +7,25 @@ struct Edge
 	ll from;
 	ll to;
 	ll cost=1;
-	Edge reverse() const {
-		return Edge{ to, from , cost };
-	}
+	Edge reverse() const { return Edge{ to, from , cost }; }
 	Edge(ll from , ll to, ll cost=1) : from(from),to(to),cost(cost){};
 	Edge(pll e) { from = e.first; to = e.second; cost = 1; }
 	Edge() :from(0), to(0), cost(0){ };
-	bool operator<  (const Edge& e) const {
-		return cost < e.cost;
-	}
-	bool operator>  (const Edge& e) const {
-		return cost > e.cost;
-	}
-	bool operator== (const Edge & e) const {
-		return cost == e.cost && from == e.from && to == e.to;
-	}
+	bool operator<  (const Edge& e) const {	return cost < e.cost; }
+	bool operator>  (const Edge& e) const {	return cost > e.cost; }
+	bool operator== (const Edge & e) const { return cost == e.cost && from == e.from && to == e.to; }
+};
+
+struct Edge_Itr {
+	Edge_Itr():index(), edges(nullptr){}
+	Edge_Itr(ll index, vector<Edge>& edges_):index(index), edges(&edges_){}
+	Edge_Itr& operator++() { index++; }
+	bool operator==(const Edge_Itr& rhs) const { return index == rhs.index; }
+	Edge* operator->() const { return &(*edges)[index]; }
+	Edge& operator*() const { return (*edges)[index]; }
+	Edge_Itr& operator+=(ll n) { index += n; return *this; }
+	ll index;
+	vector<Edge>* edges;
 };
 
 auto nullAction = [](const Edge&) {};
@@ -29,8 +33,8 @@ auto nullAction = [](const Edge&) {};
 struct Graph {
 	ll nodeSize;
 	vector<Edge> edges;
-	vector<vector<ll>> out_edges;
-	vector<vector<ll>> in_edges;
+	vector<vector<Edge_Itr>> out_edges;
+	vector<vector<Edge_Itr>> in_edges;
 	enum Dir{dir, undir};
 	Graph(ll nodeSize, const vector<Edge>& edges_ = vector<Edge>(), Dir dirct= dir)
 		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize), edges(){
@@ -40,7 +44,6 @@ struct Graph {
 		else {
 			for (const Edge& e : edges_) push(e);
 		}
-
 	}
 	Graph(ll nodeSize, vector<pll> edges_, Dir dirct = dir)
 		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize), edges() {
@@ -62,18 +65,18 @@ struct Graph {
 	
 	Edge& operator[](ll ind) { return this->edges[ind]; } 
 	const Edge& operator[](ll ind) const{ return this->edges[ind]; }
-	vector<ll>& out(ll ind){ return this->out_edges[ind]; }
-	const vector<ll>& out(ll ind) const { return this->out_edges[ind]; }
-	vector<ll>& in(ll ind){ return this->in_edges[ind]; }
-	const vector<ll>& in(ll ind) const{ return this->in_edges[ind]; }
+	vector<Edge_Itr>& out(ll ind){ return this->out_edges[ind]; }
+	const vector<Edge_Itr>& out(ll ind) const { return this->out_edges[ind]; }
+	vector<Edge_Itr>& in(ll ind){ return this->in_edges[ind]; }
+	const vector<Edge_Itr>& in(ll ind) const{ return this->in_edges[ind]; }
 
 	size_t size() const { return nodeSize; }
 
 	void push(const Edge& edge){
 		assert(max(edge.from, edge.to) < nodeSize);
 		edges.emplace_back(edge);
-		out_edges[edge.from].emplace_back(edges.size()-1);
-		in_edges[edge.to].emplace_back(edges.size() - 1);
+		out_edges[edge.from].emplace_back(Edge_Itr(edges.size()-1,edges));
+		in_edges[edge.to].emplace_back(Edge_Itr(edges.size() - 1, edges));
 	}
 	void push(const Edge& edge, Graph::Dir dir) {
 		if (dir == Dir::undir)
@@ -143,12 +146,10 @@ vll Graph::get_topologically_sorted_nodes() const {
 	vll inDegree(nodeSize);
 	rep(i, 0, nodeSize)
 	{
-		for (ll sibling_ind : this->out(i)) {
-			inDegree[(*this)[sibling_ind].to]++;
+		for (auto& sibling : this->out(i)) {
+			inDegree[sibling->to]++;
 		}
 	}
-
-
 	rep(i, 0, nodeSize) {
 		if (inDegree[i] == 0) {
 			roots.push_back(i);
@@ -164,11 +165,10 @@ vll Graph::get_topologically_sorted_nodes() const {
 		ll parent = parents.top();
 		parents.pop();
 		sortedNodes.push_back(parent);
-		for (ll sibling_ind : this->out(parent)) {
-			auto& sibling = (*this)[sibling_ind];
-			inDegree[sibling.to]--;
-			if (inDegree[sibling.to] == 0) {
-				parents.push(sibling.to);
+		for (auto& sibling : this->out(parent)) {
+			inDegree[sibling->to]--;
+			if (inDegree[sibling->to] == 0) {
+				parents.push(sibling->to);
 			}
 		}
 	}
@@ -183,13 +183,12 @@ void Graph::dfs(ll startNode, T beforeAct, S afterAct) const
 	vb visited(graph.size());
 	auto dfs_impl = [&](auto dfs_impl, ll startNode)-> void {
 		visited[startNode] = 1;
-		for (ll e_ind : graph.out(startNode)) {
-			auto& e = graph[e_ind];
-			if (visited[e.to])
+		for (auto& e : graph.out(startNode)) {
+			if (visited[e->to])
 				continue;
-			beforeAct(e);
-			dfs_impl(dfs_impl, e.to);
-			afterAct(e);
+			beforeAct(*e);
+			dfs_impl(dfs_impl, e->to);
+			afterAct(*e);
 		}
 	};
 	dfs_impl(dfs_impl, startNode);
@@ -202,8 +201,8 @@ ll Graph::diameter() const {
 	vll dp(size(), -1);
 	ll m = 0; ll ind;
 	function<void(ll)> dfs = [&](ll x) {
-		for (ll e_ind : out(x)) {
-			ll nextnode = (*this)[e_ind].to;
+		for (auto& e : out(x)) {
+			ll nextnode = e->to;
 			if (dp[nextnode] == -1) {
 				dp[nextnode] = dp[x] + 1;
 				if (dp[nextnode] > m) {
@@ -232,17 +231,17 @@ void Graph::bfs(ll startNode, T beforeAct, S afterAct) const
 		//if (visited[startNode] != 0) return;
 		visited[startNode] = 1;
 		queue<Edge> toVisit;
-		for (auto ei : graph.out(startNode))
-			toVisit.push(graph[ei]);
+		for (auto& e : graph.out(startNode))
+			toVisit.push(*e);
 		while (toVisit.size()) {
 			auto next = toVisit.front(); toVisit.pop();
 			if (visited[next.to])
 				continue;
 			visited[next.to] = 1;
 			beforeAct(next);
-			for (auto ei : graph.out(next.to)) {
-				if (!visited[graph[ei].to])
-					toVisit.push(graph[ei]);
+			for (auto& e : graph.out(next.to)) {
+				if (!visited[e->to])
+					toVisit.push(*e);
 			}
 			afterAct(next);
 		}
@@ -277,10 +276,9 @@ vll Graph::dijkstra(ll start, vll& fromList) const {
 			continue;
 		fromList[to] = from;
 
-		for (ll edge_ind : graph.out(to)) {
-			auto& edge = graph[edge_ind];
-			ll adj = edge.to;
-			ll cost = dist[to] + edge.cost;
+		for (auto& edge : graph.out(to)) {
+			ll adj = edge->to;
+			ll cost = dist[to] + edge->cost;
 			if (dist[adj] > cost) {
 				dist[adj] = min(dist[adj], cost);
 				pq.push({ cost ,{to, adj} });
@@ -330,14 +328,14 @@ public:
 		:usedNode(vb(n)), G(vec_t<2,RevEdge>(n))
 	{
 		rep(i, 0, graph.size()) {
-			for (ll e_ind : graph.out(i)) {
-				add_revedge(graph[e_ind]);
+			for (auto& e : graph.out(i)) {
+				add_revedge(*e);
 			}
 		}
 
 	}
 	vec_t<2, RevEdge> G;
-	void add_revedge(Edge e) {
+	void add_revedge(const Edge& e) {
 		G[e.from].push_back(RevEdge{ e.from, e.to ,e.cost, SZ(G[e.to]) });
 		G[e.to].push_back(RevEdge{ e.to, e.from, 0 , SZ(G[e.from]) - 1 });
 	}
