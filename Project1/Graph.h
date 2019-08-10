@@ -100,7 +100,45 @@ struct Graph {
 		return d;
 	}
 
-	vll get_topologically_sorted_nodes() const;
+	vll get_topologically_sorted_nodes() const
+	{
+		// graph needs to be represented by adjacent list.
+		// complexity: O( node size + edge size)
+		ll nodeSize = this->size();
+
+		// find root
+		vll roots;
+		vll inDegree(nodeSize);
+		rep(i, 0, nodeSize)
+		{
+			for (auto& sibling : this->out(i)) {
+				inDegree[sibling->to]++;
+			}
+		}
+		rep(i, 0, nodeSize) {
+			if (inDegree[i] == 0) {
+				roots.push_back(i);
+			}
+		}
+
+		stack<ll> parents;
+		for (ll i : roots)
+			parents.push(i);
+
+		vll sortedNodes;
+		while (!parents.empty()) {
+			ll parent = parents.top();
+			parents.pop();
+			sortedNodes.push_back(parent);
+			for (auto& sibling : this->out(parent)) {
+				inDegree[sibling->to]--;
+				if (inDegree[sibling->to] == 0) {
+					parents.push(sibling->to);
+				}
+			}
+		}
+		return sortedNodes;
+	}
 
 	void topological_sort() {
 		vll sorted = get_topologically_sorted_nodes();
@@ -114,7 +152,33 @@ struct Graph {
 		}
 		*this = Graph(this->size(), new_edges);
 	}
-	ll diameter() const;
+	ll diameter() const
+	{
+		// require : graph is tree
+		// calculate the diameter ( longest path length ) in O(N)
+		vll dp(size(), -1);
+		ll m = 0; ll ind;
+		function<void(ll)> dfs = [&](ll x) {
+			for (auto& e : out(x)) {
+				ll nextnode = e->to;
+				if (dp[nextnode] == -1) {
+					dp[nextnode] = dp[x] + 1;
+					if (dp[nextnode] > m) {
+						m = dp[nextnode];  ind = nextnode;
+					}
+					dfs(nextnode);
+				}
+			}
+		};
+		dp[0] = 0; ind = 0;
+		dfs(0);
+		ll first = ind;
+		fill_v(dp, -1);
+		dp[first] = 0;
+		dfs(first);
+		return m;
+		// remark two end points of diameter are 'first' and 'ind';
+	}
 
 	vll leaves() const {
 		vll res;
@@ -125,168 +189,150 @@ struct Graph {
 		return res;
 	}
 	template<class T, class S = decltype(nullAction)>
-	void dfs(ll startNode, T before_act, S after_act = nullAction) const;
-	// Impliment func: void(Edge&) representing what this should do, when target node moves from visited node (e.from) to unvisited node (e.to).
-	template<class T, class S = decltype(nullAction)>
-	void bfs(ll startNode, T before_act, S after_act = nullAction) const;
-	// Impliment func: void(Edge&) representing what this should do, when target node moves from visited node (e.from) to unvisited node (e.to).
-	vll dijkstra(ll start) const;
-	vll dijkstra(ll start, vll& from_list) const;
-	vll euler_tour(ll start) const;
-	Graph kruskal(Graph::Dir = Dir::undir) const; //returns minimal spanning tree
-};
-
-vll Graph::get_topologically_sorted_nodes() const {
-	// graph needs to be represented by adjacent list.
-	// complexity: O( node size + edge size)
-	ll nodeSize = this->size();
-
-	// find root
-	vll roots;
-	vll inDegree(nodeSize);
-	rep(i, 0, nodeSize)
+	void dfs(ll startNode, T before_act, S after_act = nullAction) const
 	{
-		for (auto& sibling : this->out(i)) {
-			inDegree[sibling->to]++;
-		}
-	}
-	rep(i, 0, nodeSize) {
-		if (inDegree[i] == 0) {
-			roots.push_back(i);
-		}
-	}
-
-	stack<ll> parents;
-	for (ll i : roots)
-		parents.push(i);
-
-	vll sortedNodes;
-	while (!parents.empty()) {
-		ll parent = parents.top();
-		parents.pop();
-		sortedNodes.push_back(parent);
-		for (auto& sibling : this->out(parent)) {
-			inDegree[sibling->to]--;
-			if (inDegree[sibling->to] == 0) {
-				parents.push(sibling->to);
+		// Impliment func: void(const Edge&) representing what this should do, when target node moves from visited node (e.from) to unvisited node (e.to).
+		const auto& graph = *this;
+		vb visited(graph.size());
+		auto dfs_impl = [&](auto dfs_impl, ll startNode)-> void {
+			visited[startNode] = 1;
+			for (auto& e : graph.out(startNode)) {
+				if (visited[e->to])
+					continue;
+				before_act(*e);
+				dfs_impl(dfs_impl, e->to);
+				after_act(*e);
 			}
-		}
-	}
-	return sortedNodes;
-}
+		};
+		dfs_impl(dfs_impl, startNode);
 
-template<class T, class S>
-void Graph::dfs(ll startNode, T beforeAct, S afterAct) const
-{
-	// Impliment func: void(const Edge&) representing what this should do, when target node moves from visited node (e.from) to unvisited node (e.to).
-	const auto& graph = *this;
-	vb visited(graph.size());
-	auto dfs_impl = [&](auto dfs_impl, ll startNode)-> void {
-		visited[startNode] = 1;
-		for (auto& e : graph.out(startNode)) {
-			if (visited[e->to])
-				continue;
-			beforeAct(*e);
-			dfs_impl(dfs_impl, e->to);
-			afterAct(*e);
-		}
 	};
-	dfs_impl(dfs_impl, startNode);
 
-};
-
-ll Graph::diameter() const {
-	// require : graph is tree
-	// calculate the diameter ( longest path length ) in O(N)
-	vll dp(size(), -1);
-	ll m = 0; ll ind;
-	function<void(ll)> dfs = [&](ll x) {
-		for (auto& e : out(x)) {
-			ll nextnode = e->to;
-			if (dp[nextnode] == -1) {
-				dp[nextnode] = dp[x] + 1;
-				if (dp[nextnode] > m) {
-					m = dp[nextnode];  ind = nextnode;
+	template<class T, class S = decltype(nullAction)>
+	void bfs(ll startNode, T before_act, S after_act = nullAction) const
+	{
+		const auto& graph = *this;
+		vb visited(graph.size());
+		auto bfs_impl = [&](auto bfs_impl, ll startNode) {
+			//if (visited[startNode] != 0) return;
+			visited[startNode] = 1;
+			queue<Edge> toVisit;
+			for (auto& e : graph.out(startNode))
+				toVisit.push(*e);
+			while (toVisit.size()) {
+				auto next = toVisit.front(); toVisit.pop();
+				if (visited[next.to])
+					continue;
+				visited[next.to] = 1;
+				before_act(next);
+				for (auto& e : graph.out(next.to)) {
+					if (!visited[e->to])
+						toVisit.push(*e);
 				}
-				dfs(nextnode);
+				after_act(next);
 			}
-		}
+		};
+		bfs_impl(bfs_impl, startNode);
 	};
-	dp[0] = 0; ind = 0;
-	dfs(0);
-	ll first = ind;
-	fill_v(dp, -1);
-	dp[first] = 0;
-	dfs(first);
-	return m;
-	// remark two end points of diameter are 'first' and 'ind';
-}
+	
+	vll dijkstra(ll start) const {
+		vll fromList;
+		return dijkstra(start, fromList);
+	}
 
-template<class T, class S>
-void Graph::bfs(ll startNode, T beforeAct, S afterAct) const
-{
-	const auto& graph = *this;
-	vb visited(graph.size());
-	auto bfs_impl = [&](auto bfs_impl, ll startNode) {
-		//if (visited[startNode] != 0) return;
-		visited[startNode] = 1;
-		queue<Edge> toVisit;
-		for (auto& e : graph.out(startNode))
-			toVisit.push(*e);
-		while (toVisit.size()) {
-			auto next = toVisit.front(); toVisit.pop();
-			if (visited[next.to])
+	vll dijkstra(ll start, vll& from_list) const {
+		// graph: weighted directed graph of adjacent representation
+		// start: index of start point
+		// return1: minimum path length from start
+		// complexity : E*log(V)
+		const auto& graph = *this;
+		ll node_size = graph.size();
+		vll dist(node_size, 1LL << 60);
+		from_list.resize(node_size);
+		fill_v(from_list, -1);
+		dist[start] = 0;
+		pq_greater<pair<ll, pll>> pq;
+		pq.push({ 0, {start, start} });
+		while (!pq.empty()) {
+			auto node = pq.top(); pq.pop();
+			// if not shortest path fixed, fix
+			ll from = node.second.first;
+			ll to = node.second.second;
+			if (from_list[to] != -1)
 				continue;
-			visited[next.to] = 1;
-			beforeAct(next);
-			for (auto& e : graph.out(next.to)) {
-				if (!visited[e->to])
-					toVisit.push(*e);
+			from_list[to] = from;
+
+			for (auto& edge : graph.out(to)) {
+				ll adj = edge->to;
+				ll cost = dist[to] + edge->cost;
+				if (dist[adj] > cost) {
+					dist[adj] = min(dist[adj], cost);
+					pq.push({ cost ,{to, adj} });
+				}
 			}
-			afterAct(next);
 		}
-	};
-	bfs_impl(bfs_impl, startNode);
+		return dist;
+	}
+
+	vll euler_tour(ll start) const
+	{
+		vll res;
+		res.push_back(start);
+		dfs(start, [&](const Edge& e) {
+			res.push_back(e.to);
+			}, [&](const Edge& e) {
+				res.push_back(e.from);
+			});
+		return res;
+	}
+
+	Graph kruskal(Graph::Dir = Dir::undir) const
+	{
+		//returns minimal spanning tree
+		Graph res(nodeSize);
+		vpll sortedEdges;
+		rep(i, 0, edges.size()) {
+			sortedEdges.push_back({ edges[i].cost, i });
+		}
+		sort(all(sortedEdges));
+		UnionFind uf(nodeSize);
+		rep(i, 0, sortedEdges.size()) {
+			ll cost, eInd;
+			tie(cost, eInd) = sortedEdges[i];
+			ll from = (*this)[eInd].from; ll to = (*this)[eInd].to;
+			if (!uf.is_same(from, to)) {
+				res.push((*this)[eInd], dir);
+			}
+			uf.unite(from, to);
+		}
+		return res;
+	}
+
+	vvll warshall_floyd(ll default_value = INF) const {
+		const Graph& g = *this;
+		ll n = g.size();
+		vvll d = g.adjacency_matrix(INF);
+		rep(k, 0, n)rep(i, 0, n)rep(j, 0, n) {
+			if (d[i][j] > d[i][k] + d[k][j])
+				d[i][j] = d[i][k] + d[k][j];
+		}
+		rep(i, 0, n)rep(j, 0, n) {
+			if (d[i][j] == INF)
+				d[i][j] = default_value;
+		}
+		return d;
+	}
+
+	vll bellman_ford(ll start, vll& from_list) const {
+		const Graph& g = *this;
+		vll dist(g.size(), INF);
+		rep(i, 0, g.size()) {
+
+		}
+
+	}
 };
 
-vll Graph::dijkstra(ll start) const {
-	vll fromList;
-	return dijkstra(start, fromList);
-}
-
-vll Graph::dijkstra(ll start, vll& fromList) const {
-	// graph: weighted directed graph of adjacent representation
-	// start: index of start point
-	// return1: minimum path length from start
-	// complexity : E*log(V)
-	const auto& graph = *this;
-	ll node_size = graph.size();
-	vll dist(node_size, 1LL << 60);
-	fromList.resize(node_size);
-	fill_v(fromList, -1);
-	dist[start] = 0;
-	pq_greater<pair<ll, pll>> pq;
-	pq.push({ 0, {start, start} });
-	while (!pq.empty()) {
-		auto node = pq.top(); pq.pop();
-		// if not shortest path fixed, fix
-		ll from = node.second.first;
-		ll to = node.second.second;
-		if (fromList[to] != -1)
-			continue;
-		fromList[to] = from;
-
-		for (auto& edge : graph.out(to)) {
-			ll adj = edge->to;
-			ll cost = dist[to] + edge->cost;
-			if (dist[adj] > cost) {
-				dist[adj] = min(dist[adj], cost);
-				pq.push({ cost ,{to, adj} });
-			}
-		}
-	}
-	return dist;
-}
 
 vll shortest_path_generator(const vll& from_list, ll start, ll goal) {
 	// usage : vll path =  shortest_path(dijkstra(g,s).second, s, g);
@@ -302,20 +348,6 @@ vll shortest_path_generator(const vll& from_list, ll start, ll goal) {
 	}
 	reverse(all(path));
 	return path;
-}
-
-vvll warshall_floyd(const Graph& g, ll default_value) {
-	ll n = g.size();
-	vvll d = g.adjacency_matrix(INF);
-	rep(k, 0, n)rep(i, 0, n)rep(j, 0, n) {
-		if (d[i][j] > d[i][k] + d[k][j])
-			d[i][j] = d[i][k] + d[k][j];
-	}
-	rep(i, 0, n)rep(j, 0, n) {
-		if (d[i][j] == INF)
-			d[i][j] = default_value;
-	}
-	return d;
 }
 
 class FordFulkerson {
@@ -416,36 +448,6 @@ private:
 	vll depth;
 };
 
-vll Graph::euler_tour(ll start) const {
-	vll res;
-	res.push_back(start);
-	dfs(start, [&](const Edge& e) {
-			res.push_back(e.to);
-		}, [&](const Edge& e) {
-			res.push_back(e.from);
-		});
-	return res;
-}
-
-Graph Graph::kruskal(Graph::Dir dir) const {
-	Graph res(nodeSize);
-	vpll sortedEdges;
-	rep(i, 0, edges.size()) {
-		sortedEdges.push_back({ edges[i].cost, i });
-	}
-	sort(all(sortedEdges));
-	UnionFind uf(nodeSize);
-	rep (i, 0, sortedEdges.size()) {
-		ll cost, eInd;
-		tie(cost, eInd) = sortedEdges[i];
-		ll from = (*this)[eInd].from; ll to = (*this)[eInd].to;
-		if (!uf.is_same(from, to) ){
-			res.push((*this)[eInd], dir);
-		}
-		uf.unite(from ,to);
-	}
-	return res;
-}
 
 // ================= Rectangle Area Problem =====================
 auto getNeighbor = [](ll i, ll w, ll h) {
