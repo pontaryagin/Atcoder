@@ -92,20 +92,13 @@ namespace M {
 		static underlying_type append(underlying_type a, underlying_type b) { return a + b; }
 		static underlying_type iterate(underlying_type a, int n) { return a * n; }
 	};
-	template <typename T = ll>
-	struct min_indexed_t {
-		typedef pair<T, ll> underlying_type;
-		static underlying_type make_indexed(vector<T> v)
-		{
-			underlying_type w(v.size());
-			rep(i, 0, v.size()) {
-				w[i] = { v[i],i };
-			}
-			return w;
-		}
-		static underlying_type unit() { return make_pair(numeric_limits<T>::max(), -1); }
-		static underlying_type append(underlying_type a, underlying_type b) { return min(a, b); }
-		static underlying_type iterate(underlying_type a, int n) { return a; }
+
+	template<typename S, typename T>
+	struct pair_t {
+		typedef pair<typename S::underlying_type, typename T::underlying_type> underlying_type;
+		static underlying_type unit() { return make_pair(S::unit(), T::unit()); }
+		static underlying_type append(underlying_type a, underlying_type b) { return make_pair(S::append(a.first, b.first), T::append(a.second, b.second)); }
+		static underlying_type iterate(underlying_type a, int n) { return make_pair(S::iterate(a.first,n), T::iterate(a.second,n)); }
 	};
 
 	template <typename T = ll>
@@ -113,6 +106,7 @@ namespace M {
 		typedef T underlying_type;
 		static underlying_type unit() { return numeric_limits<T>::max(); }
 		static underlying_type append(underlying_type a, underlying_type b) { return min(a, b); }
+		static underlying_type iterate(underlying_type a, size_t n) { return a; }
 	};
 
 	template <typename T = ll>
@@ -120,8 +114,23 @@ namespace M {
 		typedef T underlying_type;
 		static underlying_type unit() { return numeric_limits<T>::min(); }
 		static underlying_type append(underlying_type a, underlying_type b) { return max(a, b); }
+		static underlying_type iterate(underlying_type a, size_t n) { return a; }
 	};
 
+	template <typename T = ll, typename IndexType = ll>
+	struct min_indexed_t {
+		typedef pair<typename min_t<T>::underlying_type, IndexType> underlying_type;
+		static underlying_type unit() { return make_pair(numeric_limits<T>::max(), IndexType{}); }
+		static underlying_type append(underlying_type a, underlying_type b) { return min(a, b); }
+		static underlying_type iterate(underlying_type a, int n) { return a; }
+	};
+	template <typename T = ll, typename IndexType = ll>
+	struct max_indexed_t {
+		typedef pair<typename min_t<T>::underlying_type, IndexType> underlying_type;
+		static underlying_type unit() { return make_pair(numeric_limits<T>::min(), IndexType{}); }
+		static underlying_type append(underlying_type a, underlying_type b) { return max(a, b); }
+		static underlying_type iterate(underlying_type a, int n) { return a; }
+	};
 
 	struct linear_t {
 		typedef pd underlying_type;
