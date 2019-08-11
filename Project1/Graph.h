@@ -323,13 +323,38 @@ struct Graph {
 		return d;
 	}
 
-	vll bellman_ford(ll start, vll& from_list) const {
+	vll bellman_ford(ll start, ll negative_closed_loop_value = -INF) const {
+		vll from_list;
+		return bellman_ford(start, from_list, negative_closed_loop_value);
+	}
+
+	vll bellman_ford(ll start, vll& from_list, ll negative_closed_loop_value = -INF) const {
 		const Graph& g = *this;
 		vll dist(g.size(), INF);
+		dist[start] = 0;
+		from_list.resize(g.size());
 		rep(i, 0, g.size()) {
-
+			rep(j, 0, g.edges.size()) {
+				auto& e = g.edges[j];
+				if (dist[e.from] != INF && dist[e.to] > dist[e.from] + e.cost) {
+					dist[e.to] = dist[e.from] + e.cost;
+					from_list[e.to] = e.from;
+					if (i == g.size() - 1 && dist[e.to] != INF) {
+						// check negative closed loop
+						dist[e.to] = negative_closed_loop_value;
+					}
+				}
+			}
 		}
-
+		// propagate negative path
+		rep(i, 0, g.size()) {
+			rep(j, 0, g.edges.size()) {
+				auto& e = g.edges[j];
+				if (dist[e.from] == negative_closed_loop_value && dist[e.from] != INF)
+					dist[e.to] = negative_closed_loop_value;
+			}
+		}
+		return dist;
 	}
 };
 

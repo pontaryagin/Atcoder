@@ -96,6 +96,36 @@ TEST(Graph, Dijkstra) {
 	EXPECT_EQ(path2, path2_res);
 }
 
+TEST(Graph, Bellman_Ford) {
+	// normal case
+	Graph g(5);
+	g.push_undir({ 0,1 });
+	g.push_undir({ 0,2, 2 });
+	g.push_undir({ 2,3 , 4 });
+	g.push_undir({ 2,4 });
+	vll shortestPathInfo;
+	auto depth = g.bellman_ford(0, shortestPathInfo);
+	auto depth_res = vll{ 0, 1, 2, 6, 3 };
+	EXPECT_EQ(depth, depth_res);
+	vll path1 = shortest_path_generator(shortestPathInfo, 0, 3);
+	auto path1_res = vll{ 0,2,3 };
+	EXPECT_EQ(path1, path1_res);
+	vll path2 = shortest_path_generator(shortestPathInfo, 2, 3);
+	auto path2_res = vll{ 2,3 };
+	EXPECT_EQ(path2, path2_res);
+	// negative loop
+	Graph g2(5);
+	g2.push({ 0,1, -1 });
+	g2.push({ 1,1, -100 });
+	g2.push({ 0,3,-1 });
+	g2.push({ 2,3,-1 });
+	g2.push({ 2,2,-100 });
+	g2.push({ 1,4,-1 });
+	auto dist = g2.bellman_ford(0,-INF);
+	vll res = { 0,-INF,INF,-1,-INF };
+	EXPECT_EQ(dist, res);
+}
+
 TEST(Graph, DFSBFS) {
 	Graph g(5);
 	g.push_undir({ 0,1 });
