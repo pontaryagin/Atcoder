@@ -1,5 +1,9 @@
 echo "Compiling unit tests..."
 clang++ -std=c++11 -g -Wall -Wextra -o unit_test test.cpp -lgtest -pthread 
+if [ $? ]; then
+    echo "Compile failed!"
+    exit $?
+fi
 echo "Running unit tests..."
 ./unit_test -v
 result=$?
