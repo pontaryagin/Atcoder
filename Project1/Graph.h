@@ -309,6 +309,7 @@ struct Graph {
 	}
 
 	vvll warshall_floyd(ll default_value = INF) const {
+		// O(|V|^3)
 		const Graph& g = *this;
 		ll n = g.size();
 		vvll d = g.adjacency_matrix(INF);
