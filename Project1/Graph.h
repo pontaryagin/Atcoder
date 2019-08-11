@@ -329,6 +329,7 @@ struct Graph {
 	}
 
 	vll bellman_ford(ll start, vll& from_list, ll negative_closed_loop_value = -INF) const {
+		// O(|E| * |V|)
 		const Graph& g = *this;
 		vll dist(g.size(), INF);
 		dist[start] = 0;
