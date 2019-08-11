@@ -14,5 +14,6 @@ before_install:
     - pip3 install -U setuptools
     - pip3 install -U online-judge-tools
 script:
+    - cd ./Project1
     - ./test.sh
     
