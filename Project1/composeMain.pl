@@ -56,6 +56,10 @@ elsif($problemName =~ /http.*/){
             print "submittion failed\n";
         }
     }
+    elsif($what eq 'test-sys'){
+        if(system("oj dl $problemName --system")){die("downloading test case failed\n");}
+        if(system("oj test")) {die("test failed\n");}
+    }
     exit(0);
 }
 else{

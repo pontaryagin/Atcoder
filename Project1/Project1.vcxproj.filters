@@ -9,7 +9,6 @@
     <ClInclude Include="SegmentTree.h" />
     <ClInclude Include="UnionFind.h" />
     <ClInclude Include="Training.h" />
-    <ClInclude Include="LinearAlgebra.h" />
     <ClInclude Include="Text.h" />
   </ItemGroup>
   <ItemGroup>
