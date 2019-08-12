@@ -96,6 +96,18 @@ TEST(Graph, Dijkstra) {
 	EXPECT_EQ(path2, path2_res);
 }
 
+TEST(Graph, EdgeItr) {
+	Graph g(3);
+	g.push({ 0,1, 1});
+	g.push({ 0,2, 2 });
+	g.push({ 1,2 , 3 });
+	ll i = 0;
+	for (auto& e : g) {
+		EXPECT_EQ(e.cost, ++i);
+	}
+	EXPECT_EQ(i, 3);
+}
+
 TEST(Graph, Bellman_Ford) {
 	// normal case
 	Graph g(5);

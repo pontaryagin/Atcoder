@@ -10,6 +10,7 @@
     <ClInclude Include="UnionFind.h" />
     <ClInclude Include="Training.h" />
     <ClInclude Include="Text.h" />
+    <ClInclude Include="Algebra.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

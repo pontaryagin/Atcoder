@@ -16,17 +16,22 @@ struct Edge
 	bool operator== (const Edge & e) const { return cost == e.cost && from == e.from && to == e.to; }
 };
 
-struct Edge_Itr {
-	Edge_Itr():index(), edges(nullptr){}
-	Edge_Itr(ll index, vector<Edge>& edges_):index(index), edges(&edges_){}
-	Edge_Itr& operator++() { ++index; return *this; }
-	bool operator==(const Edge_Itr& rhs) const { return index == rhs.index; }
-	Edge* operator->() const { return &(*edges)[index]; }
-	Edge& operator*() const { return (*edges)[index]; }
-	Edge_Itr& operator+=(ll n) { index += n; return *this; }
+template<class EdgeType, class EdgeContainerType>
+struct Edge_Itr_Base {
+	Edge_Itr_Base() :index(), edges(nullptr) {}
+	Edge_Itr_Base(ll index, EdgeContainerType& edges_) :index(index), edges(&edges_) {}
+	Edge_Itr_Base& operator++() { ++index; return *this; }
+	bool operator==(const Edge_Itr_Base& rhs) const { return index == rhs.index; }
+	bool operator!=(const Edge_Itr_Base& rhs) const { return index != rhs.index; }
+	EdgeType* operator->() const { return &(*edges)[index]; }
+	EdgeType& operator*() const { return (*edges)[index]; }
+	Edge_Itr_Base& operator+=(ll n) { index += n; return *this; }
 	ll index;
-	vector<Edge>* edges;
+	EdgeContainerType* edges;
 };
+
+using Edge_Itr = Edge_Itr_Base<Edge, vector<Edge>>;
+using Edge_CItr = Edge_Itr_Base<const Edge, const vector<Edge>>;
 
 auto nullAction = [](const Edge&) {};
 
@@ -69,8 +74,13 @@ struct Graph {
 	const vector<Edge_Itr>& out(ll ind) const { return this->out_edges[ind]; }
 	vector<Edge_Itr>& in(ll ind){ return this->in_edges[ind]; }
 	const vector<Edge_Itr>& in(ll ind) const{ return this->in_edges[ind]; }
+	Edge_Itr begin() { return Edge_Itr(0, edges); }
+	Edge_Itr end() { return Edge_Itr(edges.size(), edges); }
+	Edge_CItr begin() const { return Edge_CItr(0, edges); }
+	Edge_CItr end() const { return Edge_CItr(edges.size(), edges); }
 
-	size_t size() const { return nodeSize; }
+	ll size() const { return nodeSize; }
+	ll sizeEdges() const { return edges.size(); }
 
 	void push(const Edge& edge){
 		assert(max(edge.from, edge.to) < nodeSize);
@@ -336,8 +346,7 @@ struct Graph {
 		dist[start] = 0;
 		from_list.resize(g.size());
 		rep(i, 0, g.size()) {
-			rep(j, 0, g.edges.size()) {
-				auto& e = g.edges[j];
+			for(const Edge& e: g){
 				if (dist[e.from] != INF && dist[e.to] > dist[e.from] + e.cost) {
 					dist[e.to] = dist[e.from] + e.cost;
 					from_list[e.to] = e.from;

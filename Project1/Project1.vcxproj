@@ -138,6 +138,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Algebra.h" />
     <ClInclude Include="Algorithm.h" />
     <ClInclude Include="Bit.h" />
     <ClInclude Include="Graph.h" />
