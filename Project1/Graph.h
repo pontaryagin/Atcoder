@@ -19,7 +19,7 @@ struct Edge
 struct Edge_Itr {
 	Edge_Itr():index(), edges(nullptr){}
 	Edge_Itr(ll index, vector<Edge>& edges_):index(index), edges(&edges_){}
-	Edge_Itr& operator++() { index++; }
+	Edge_Itr& operator++() { ++index; return *this; }
 	bool operator==(const Edge_Itr& rhs) const { return index == rhs.index; }
 	Edge* operator->() const { return &(*edges)[index]; }
 	Edge& operator*() const { return (*edges)[index]; }

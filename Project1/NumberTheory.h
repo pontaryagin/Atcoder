@@ -159,7 +159,7 @@ class Combination {
 	// Constructor runs in O(MAX).
 	// get(n,k) returns nCk in O(1).
 
-	ll N_MAX, mod;
+	ll mod, N_MAX;
 	vll fac;
 	vll finv;
 	vll inv;
