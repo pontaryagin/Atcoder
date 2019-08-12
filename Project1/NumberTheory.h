@@ -81,16 +81,16 @@ public:
 	modint &operator++() noexcept {
 		return *this += modint(1);
 	}
-	modint &operator++(int) noexcept {
-		auto t = *this;
+	modint operator++(int) noexcept {
+		modint t = *this;
 		*this += modint(1);
 		return t;
 	}
 	modint &operator--() noexcept {
 		return *this -= modint(1);
 	}
-	modint &operator--(int) noexcept {
-		auto t = *this;
+	modint operator--(int) noexcept {
+		modint t = *this;
 		*this -= modint(1);
 		return t;
 	}
