@@ -21,4 +21,8 @@ script:
     - "cd -"
     - "cd ./GoogleTest && ./gtest.sh"
     - "cd -"
+
+notifications:
+  emails:
+    - ponta1496@gmail.com
     
