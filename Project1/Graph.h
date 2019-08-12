@@ -213,7 +213,7 @@ struct Graph {
 	{
 		const auto& graph = *this;
 		vb visited(graph.size());
-		auto bfs_impl = [&](auto bfs_impl, ll startNode) {
+		auto bfs_impl = [&](ll startNode) {
 			//if (visited[startNode] != 0) return;
 			visited[startNode] = 1;
 			queue<Edge> toVisit;
@@ -232,7 +232,7 @@ struct Graph {
 				after_act(next);
 			}
 		};
-		bfs_impl(bfs_impl, startNode);
+		bfs_impl(startNode);
 	};
 	
 	vll dijkstra(ll start) const {

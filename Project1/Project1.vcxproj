@@ -138,9 +138,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source2.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Algorithm.h" />
     <ClInclude Include="Bit.h" />
     <ClInclude Include="Graph.h" />
@@ -148,13 +145,15 @@
     <ClInclude Include="MyHeader.h" />
     <ClInclude Include="NumberTheory.h" />
     <ClInclude Include="SegmentTree.h" />
-    <ClInclude Include="Source2.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Training.h" />
     <ClInclude Include="UnionFind.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source2.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
