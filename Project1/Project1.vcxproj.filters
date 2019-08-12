@@ -11,6 +11,8 @@
     <ClInclude Include="Training.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Algebra.h" />
+    <ClInclude Include="FFT.h" />
+    <ClInclude Include="LagrangeInterpolation.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

@@ -190,7 +190,8 @@ public:
 		// n (n-1) ... (n-k+1)
 		return (n<k|| n<0 )? 0 : fac[n] * finv[n - k];
 	}
-	ll Fac(ll n) { return P(n, n); }
+	ll Fac(ll n) { return P(n,n); }
+	ll FacInv(ll n) { return n<0? 0: finv[n]; }
 private:
 	void pre_process(ll m, ll n) {
 		if (N_MAX < n) {

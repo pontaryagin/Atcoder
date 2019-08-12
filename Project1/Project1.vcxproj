@@ -141,7 +141,9 @@
     <ClInclude Include="Algebra.h" />
     <ClInclude Include="Algorithm.h" />
     <ClInclude Include="Bit.h" />
+    <ClInclude Include="FFT.h" />
     <ClInclude Include="Graph.h" />
+    <ClInclude Include="LagrangeInterpolation.h" />
     <ClInclude Include="MyHeader.h" />
     <ClInclude Include="NumberTheory.h" />
     <ClInclude Include="SegmentTree.h" />
