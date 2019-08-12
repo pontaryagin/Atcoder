@@ -209,3 +209,9 @@ TEST(Text, kmp_search) {
 	EXPECT_EQ(kmp_search("aaaaaa", "aaa"), 0);
 	EXPECT_EQ(kmp_search("aaa", "aaaa"),3);
 }
+
+int main(int argc, char** argv)
+{
+	::testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
+}
