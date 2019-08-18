@@ -62,6 +62,11 @@ struct segment_tree
 		return Monoid::append(lacc, racc);
 	}
 
+	underlying_type query(ll i) { // return value at i
+		assert(0 <= i && i < size_original);
+		return a[i + n - 1];
+	}
+
 	ll size() { return size_original; }
 
 private:

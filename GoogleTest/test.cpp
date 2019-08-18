@@ -75,6 +75,7 @@ TEST(SegmentTree, segment_tree) {
 	EXPECT_EQ(seg.query(1, 4).first, 3);
 	EXPECT_EQ(seg.query(0, 2).first, 11);
 	EXPECT_EQ(seg.query(0, 0).first, numeric_limits<ll>::max());
+	EXPECT_EQ(seg.query(3).first, 3);
 
 }
 
