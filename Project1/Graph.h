@@ -34,6 +34,7 @@ using Edge_Itr = Edge_Itr_Base<Edge, vector<Edge>>;
 using Edge_CItr = Edge_Itr_Base<const Edge, const vector<Edge>>;
 
 auto nullAction = [](const Edge&) {};
+auto nullActionNode = [](ll) {};
 
 struct Graph {
 	ll nodeSize;
@@ -216,6 +217,25 @@ struct Graph {
 		};
 		dfs_impl(dfs_impl, startNode);
 
+	};
+
+	template<class T, class S = decltype(nullActionNode)>
+	void dfs_node(ll startNode, T before_act, S after_act = nullActionNode) const
+	{
+		// Impliment func: void(ll node_ind) representing what this should do, when target node moves from visited node to unvisited node (node_ind).
+		const auto& graph = *this;
+		vb visited(graph.size());
+		auto dfs_impl = [&](auto dfs_impl, ll startNode)-> void {
+			before_act(startNode);
+			visited[startNode] = 1;
+			for (auto& e : graph.out(startNode)) {
+				if (visited[e->to])
+					continue;
+				dfs_impl(dfs_impl, e->to);
+			}
+			after_act(startNode);
+		};
+		dfs_impl(dfs_impl, startNode);
 	};
 
 	template<class T, class S = decltype(nullAction)>
