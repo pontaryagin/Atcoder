@@ -23,6 +23,6 @@ script:
     - "cd -"
 
 notifications:
-  emails:
+  email:
     - ponta1496@gmail.com
     

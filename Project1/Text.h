@@ -6,16 +6,16 @@ ll kmp_search(const string& text, const string& word) {
 	if (word.empty()) return 0;
 
 	vector<int> pi(word.size(), 0);
-	for (int i = 1, k = 0; i < word.size(); ++i) {
+	for (int i = 1, k = 0; i < (int)word.size(); ++i) {
 		while (k && word[k] != word[i]) k = pi[k - 1];
 		if (word[k] == word[i]) ++k;
 		pi[i] = k;
 	}
 
-	for (int i = 0, k = 0; i < text.size(); ++i) {
+	for (int i = 0, k = 0; i < (int)text.size(); ++i) {
 		while (k && word[k] != text[i]) k = pi[k - 1];
 		if (word[k] == text[i]) ++k;
-		if (k == word.size()) return i - k + 1;
+		if (k == (int)word.size()) return i - k + 1;
 	}
 	return text.size();
 }

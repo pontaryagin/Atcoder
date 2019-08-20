@@ -43,7 +43,7 @@ struct Graph {
 	vector<vector<Edge_Itr>> in_edges;
 	enum Dir{dir, undir};
 	Graph(ll nodeSize, const vector<Edge>& edges_ = vector<Edge>(), Dir dirct= dir)
-		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize), edges(){
+		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize){
 		if (dirct == undir) {
 			for (const Edge& e : edges_) push_undir(e);
 		}
@@ -52,7 +52,7 @@ struct Graph {
 		}
 	}
 	Graph(ll nodeSize, vector<pll> edges_, Dir dirct = dir)
-		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize), edges() {
+		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize){
 		if (dirct == undir) {
 			for (const pll& e : edges_) push_undir(Edge(e));
 		}
@@ -103,7 +103,7 @@ struct Graph {
 			push(e);
 		}
 	}
-	vvll adjacency_matrix(ll default_value = INF) const {
+	vvll adjacency_matrix() const {
 		vvll d(size(), vll(size()));
 		for (auto& e : edges) {
 			d[e.from][e.to] = e.cost;
@@ -338,18 +338,14 @@ struct Graph {
 		return res;
 	}
 
-	vvll warshall_floyd(ll default_value = INF) const {
+	vvll warshall_floyd() const {
 		// O(|V|^3)
 		const Graph& g = *this;
 		ll n = g.size();
-		vvll d = g.adjacency_matrix(INF);
+		vvll d = g.adjacency_matrix();
 		rep(k, 0, n)rep(i, 0, n)rep(j, 0, n) {
 			if (d[i][j] > d[i][k] + d[k][j])
 				d[i][j] = d[i][k] + d[k][j];
-		}
-		rep(i, 0, n)rep(j, 0, n) {
-			if (d[i][j] == INF)
-				d[i][j] = default_value;
 		}
 		return d;
 	}
