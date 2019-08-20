@@ -148,7 +148,7 @@ TEST(Graph, DFSBFS) {
 	vll dfs, bfs, dfs_node;
 	g.dfs(0, [&](const Edge & e) {dfs.push_back(e.to); });
 	g.bfs(0, [&](const Edge & e) {bfs.push_back(e.to); });
-	g.dfs(0, [&](ll node) {dfs_node.push_back(node); });
+	g.dfs_node(0, [&](ll node) {dfs_node.push_back(node); });
 	vll dfs_res = { 1,2,3,4 };
 	vll bfs_res = { 1,3,2,4 };
 	vll dfs_node_res = { 0,1,2,3,4 };
