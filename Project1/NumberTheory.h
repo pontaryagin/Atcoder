@@ -1,9 +1,6 @@
 #pragma once
 #include "MyHeader.h"
 
-
-
-
 ll div_ferm(ll val, ll  b, ll mod) {
 	return (val* POW(b, mod - 2, mod)) % mod;
 }
