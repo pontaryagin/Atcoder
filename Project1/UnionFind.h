@@ -41,9 +41,6 @@ struct UnionFind {
 	const set<ll>& get_roots() {
 		return roots;
 	}
-	ll rank(ll x) {
-		return -data[get_root(x)];
-	}
 	void initialize() {
 		for (auto& i : data) {
 			i = -1;
