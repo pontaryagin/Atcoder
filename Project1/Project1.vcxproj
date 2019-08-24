@@ -148,7 +148,6 @@
     <ClInclude Include="NumberTheory.h" />
     <ClInclude Include="SegmentTree.h" />
     <ClInclude Include="Text.h" />
-    <ClInclude Include="Training.h" />
     <ClInclude Include="UnionFind.h" />
   </ItemGroup>
   <ItemGroup>

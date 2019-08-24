@@ -4,6 +4,16 @@
 #include "../Project1/Graph.h"
 #include "../Project1/Text.h"
 
+TEST(MyHeader, inv_map) {
+	vll x = { 4, 5, 10 };
+	auto mp = inv_map(x);
+	EXPECT_EQ(mp[4], 0);
+	EXPECT_EQ(mp[10], 2);
+	vector<double> y = { 0.1, 10., 100., 1000. };
+	auto mp2 = inv_map(y);
+	EXPECT_EQ(mp2[100.], 2);
+}
+
 TEST(NumberTheory,modint) {
 
 	auto x = modint<5>(3);
