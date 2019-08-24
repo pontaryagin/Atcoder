@@ -11,7 +11,7 @@ struct UnionFind {
 
 	ll unite(ll x, ll y) {
 		// return: root
-		x = operator[](x); y = operator[](y);
+		x = get_root(x); y = get_root(y);
 		if (x != y) {
 			if (data[y] < data[x]) swap(x, y);
 			data[x] += data[y]; data[y] = x;
@@ -26,23 +26,23 @@ struct UnionFind {
 	}
 	bool is_same(ll x, ll y) {
 		// check whether x and y are connected
-		return operator[](x) == operator[](y);
+		return get_root(x) == get_root(y);
 	}
-	ll operator[](ll x) {
+	ll get_root(ll x) {
 		// get root
-		return data[x] < 0 ? x : data[x] = operator[](data[x]);
+		return data[x] < 0 ? x : data[x] = get_root(data[x]);
 	}
 	ll size(ll x) {
-		return -data[operator[](x)];
+		return -data[get_root(x)];
 	}
 	ll  query_size(ll x) {
-		return querySize_[operator[](x)];
+		return querySize_[get_root(x)];
 	}
-	const set<ll>& getRoots() {
+	const set<ll>& get_roots() {
 		return roots;
 	}
 	ll rank(ll x) {
-		return -data[operator[](x)];
+		return -data[get_root(x)];
 	}
 	void initialize() {
 		for (auto& i : data) {
