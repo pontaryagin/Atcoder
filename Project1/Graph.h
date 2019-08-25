@@ -7,10 +7,10 @@ struct Edge
 	ll from;
 	ll to;
 	ll cost=1;
-	Edge reverse() const { return Edge{ to, from , cost }; }
-	Edge(ll from , ll to, ll cost=1) : from(from),to(to),cost(cost){};
-	Edge(pll e) { from = e.first; to = e.second; cost = 1; }
-	Edge() :from(0), to(0), cost(0){ };
+	constexpr Edge reverse() const { return Edge{ to, from , cost }; }
+	constexpr Edge(ll from , ll to, ll cost=1) : from(from),to(to),cost(cost){};
+	constexpr Edge(pll e) :from(e.first), to(e.second), cost(1) { }
+	constexpr Edge() :from(0), to(0), cost(0){ };
 	constexpr bool operator<  (const Edge& e) const {	return cost < e.cost; }
 	constexpr bool operator>  (const Edge& e) const {	return cost > e.cost; }
 	constexpr bool operator== (const Edge & e) const { return cost == e.cost && from == e.from && to == e.to; }
