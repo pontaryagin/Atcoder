@@ -1,0 +1,28 @@
+language: cpp
+compiler:
+#    - clang
+    - gcc
+dist: xenial
+addons:
+    apt:
+        packages:
+            - python3
+            - python3-pip
+            - python3-setuptools
+
+before_install:
+    - pip3 install -U setuptools
+    - pip3 install -U online-judge-tools
+    - sudo apt-get install cmake
+    - sudo apt-get install libgtest-dev
+    - "cd /usr/src/gtest && sudo cmake . && sudo cmake --build . && sudo mv libg* /usr/local/lib/ ; cd -"
+script:
+    - "cd ./Project1 && ./test.sh"
+    - "cd -"
+    - "cd ./GoogleTest && ./gtest.sh"
+    - "cd -"
+
+notifications:
+  email:
+    - ponta1496@gmail.com
+    

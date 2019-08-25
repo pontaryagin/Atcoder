@@ -48,9 +48,22 @@ constexpr ll INF = 1LL << 60;
 #define pb push_back
 #define fir first
 #define sec second
+#define all(a)  (a).begin(),(a).end()
+#define rall(a) (a).rbegin(), (a).rend()
+#define perm(c) sort(all(c));for(bool c##perm=1;c##perm;c##perm=next_permutation(all(c))) //perm(c){write(c)} writes all permutation of c 
 
 typedef pair<double, double> pd;
 typedef pair<ll, ll> pll;
+typedef vector<ll> vll;
+typedef vector<vll> vvll;
+typedef vector<pll> vpll;
+typedef vector<bool> vb;
+typedef vector<vb> vvb;
+typedef vector<string> vs;
+template<typename T>
+using pq_greater = priority_queue<T, vector<T>, greater<T>>;
+struct Point { ll x; ll y; };
+using vpt = vector<Point>;
 
 template<int n>
 struct tll_impl {
@@ -137,25 +150,16 @@ void read(T& x) { read(x.first); read(x.second); }
 template<typename T, typename enable_if<is_vector<T>::value, nullptr_t>::type = nullptr>
 void read(T& x) { rep(i,0,x.size()) read(x[i]); }
 
+template<>
+void read(Point& p) { cin >> p.x >> p.y; }
+
 template<typename T, typename Delim_t = string, typename enable_if<!is_vector<T>::value, nullptr_t>::type = nullptr>
-void write(T & x, Delim_t delim = " ") { cout << x << delim; }
+void write(T& x, Delim_t delim = " ") { cout << x << delim; }
 
 template<typename T, typename Delim_t = string, typename enable_if<is_vector<T>::value, nullptr_t>::type = nullptr>
 void write(T& x, Delim_t delim = " ") { rep(i, 0, x.size()) write(x[i], (i == (x.size() - 1) ? "" : delim)); cout << '\n'; }
 
-typedef vector<ll> vll;
-typedef vector<vll> vvll;
-typedef vector<pll> vpll;
-typedef vector<bool> vb;
-typedef vector<vb> vvb;
-typedef vector<string> vs;
-template<typename T>
-using pq_greater = priority_queue<T, vector<T>, greater<T>>;
 
-
-#define all(a)  (a).begin(),(a).end()
-#define rall(a) (a).rbegin(), (a).rend()
-#define perm(c) sort(all(c));for(bool c##perm=1;c##perm;c##perm=next_permutation(all(c)))
 
 template<typename T> void chmin(T &a, T b) {
 	if (a > b) a = b;

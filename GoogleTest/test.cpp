@@ -2,6 +2,7 @@
 #include "../Project1/NumberTheory.h"
 #include "../Project1/SegmentTree.h"
 #include "../Project1/Graph.h"
+#include "../Project1/Text.h"
 
 TEST(NumberTheory,modint) {
 
@@ -24,8 +25,22 @@ TEST(NumberTheory,modint) {
 	EXPECT_EQ(x.pow( 2), 4);
 	EXPECT_EQ(x.pow( 4*100000), 1);
 	EXPECT_EQ(x.log( 4), 2);
+}
 
-
+TEST(NumberTheory, runtime_modint) {
+	modint<-1>::set_modulo(7);
+	auto x = modint<-1>(5);
+	auto y = modint<-1>(3);
+	modint<-2>::set_modulo(5);
+	auto u = modint<-2>(5);
+	auto v = modint<-2>(3);
+	EXPECT_EQ(x + y, 1);
+	EXPECT_EQ(u + v, 3);
+	auto w = modint<-3>(11, 5);
+	EXPECT_EQ(w, 1);
+	auto a = modint<-4>(6);
+	a.reset_modulo(5);
+	EXPECT_EQ(a, 1);
 
 }
 
@@ -60,6 +75,7 @@ TEST(SegmentTree, segment_tree) {
 	EXPECT_EQ(seg.query(1, 4).first, 3);
 	EXPECT_EQ(seg.query(0, 2).first, 11);
 	EXPECT_EQ(seg.query(0, 0).first, numeric_limits<ll>::max());
+	EXPECT_EQ(seg.query(3).first, 3);
 
 }
 
@@ -81,19 +97,64 @@ TEST(Graph, Dijkstra) {
 	EXPECT_EQ(path2, path2_res);
 }
 
+TEST(Graph, EdgeItr) {
+	Graph g(3);
+	g.push({ 0,1, 1});
+	g.push({ 0,2, 2 });
+	g.push({ 1,2 , 3 });
+	ll i = 0;
+	for (auto& e : g) {
+		EXPECT_EQ(e.cost, ++i);
+	}
+	EXPECT_EQ(i, 3);
+}
+
+TEST(Graph, Bellman_Ford) {
+	// normal case
+	Graph g(5);
+	g.push_undir({ 0,1 });
+	g.push_undir({ 0,2, 2 });
+	g.push_undir({ 2,3 , 4 });
+	g.push_undir({ 2,4 });
+	vll shortestPathInfo;
+	auto depth = g.bellman_ford(0, shortestPathInfo);
+	auto depth_res = vll{ 0, 1, 2, 6, 3 };
+	EXPECT_EQ(depth, depth_res);
+	vll path1 = shortest_path_generator(shortestPathInfo, 0, 3);
+	auto path1_res = vll{ 0,2,3 };
+	EXPECT_EQ(path1, path1_res);
+	vll path2 = shortest_path_generator(shortestPathInfo, 2, 3);
+	auto path2_res = vll{ 2,3 };
+	EXPECT_EQ(path2, path2_res);
+	// negative loop
+	Graph g2(5);
+	g2.push({ 0,1, -1 });
+	g2.push({ 1,1, -100 });
+	g2.push({ 0,3,-1 });
+	g2.push({ 2,3,-1 });
+	g2.push({ 2,2,-100 });
+	g2.push({ 1,4,-1 });
+	auto dist = g2.bellman_ford(0,-INF);
+	vll res = { 0,-INF,INF,-1,-INF };
+	EXPECT_EQ(dist, res);
+}
+
 TEST(Graph, DFSBFS) {
 	Graph g(5);
 	g.push_undir({ 0,1 });
 	g.push_undir({ 1,2 });
 	g.push_undir({ 0,3 });
 	g.push_undir({ 3,4 });
-	vll dfs, bfs;
+	vll dfs, bfs, dfs_node;
 	g.dfs(0, [&](const Edge & e) {dfs.push_back(e.to); });
 	g.bfs(0, [&](const Edge & e) {bfs.push_back(e.to); });
+	g.dfs_node(0, [&](ll node) {dfs_node.push_back(node); });
 	vll dfs_res = { 1,2,3,4 };
 	vll bfs_res = { 1,3,2,4 };
+	vll dfs_node_res = { 0,1,2,3,4 };
 	EXPECT_EQ(dfs, dfs_res);
 	EXPECT_EQ(bfs, bfs_res);
+	EXPECT_EQ(dfs_node, dfs_node_res);
 }
 
 TEST(Graph, LCA) {
@@ -151,4 +212,22 @@ TEST(Graph, Kruskal) {
 	edgeRes.insert({ 2,3,1 });
 	edgeRes.insert({ 3,2,1});
 	EXPECT_EQ(edgeMST, edgeRes);
+}
+
+TEST(Text, RollingHash) {
+	auto rh = RollingHash<>("abcdefg");
+	auto rh2 = RollingHash<>("xbc");
+	EXPECT_EQ(rh(1, 3), rh2(1, 3));
+}
+
+TEST(Text, kmp_search) {
+	EXPECT_EQ(kmp_search("aaaabbaabcb", "aabc"),6);
+	EXPECT_EQ(kmp_search("aaaaaa", "aaa"), 0);
+	EXPECT_EQ(kmp_search("aaa", "aaaa"),3);
+}
+
+int main(int argc, char** argv)
+{
+	::testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
 }
