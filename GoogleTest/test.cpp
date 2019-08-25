@@ -224,6 +224,21 @@ TEST(Graph, Kruskal) {
 	EXPECT_EQ(edgeMST, edgeRes);
 }
 
+TEST(Graph, is_bipartite) {
+	Graph g(5);
+	g.push_undir({ 0,1 });
+	g.push_undir({ 0,2 });
+	g.push_undir({ 0,3 });
+	g.push_undir({ 1,3 });
+	EXPECT_EQ(g.is_bipartite(), false);
+	Graph g2(5);
+	g2.push_undir({ 0,1 });
+	g2.push_undir({ 1,2 });
+	g2.push_undir({ 2,3 });
+	g2.push_undir({ 3,0 });
+	EXPECT_EQ(g2.is_bipartite(), true);
+}
+
 TEST(Text, RollingHash) {
 	auto rh = RollingHash<>("abcdefg");
 	auto rh2 = RollingHash<>("xbc");
