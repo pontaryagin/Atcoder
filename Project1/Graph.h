@@ -11,21 +11,21 @@ struct Edge
 	Edge(ll from , ll to, ll cost=1) : from(from),to(to),cost(cost){};
 	Edge(pll e) { from = e.first; to = e.second; cost = 1; }
 	Edge() :from(0), to(0), cost(0){ };
-	bool operator<  (const Edge& e) const {	return cost < e.cost; }
-	bool operator>  (const Edge& e) const {	return cost > e.cost; }
-	bool operator== (const Edge & e) const { return cost == e.cost && from == e.from && to == e.to; }
+	constexpr bool operator<  (const Edge& e) const {	return cost < e.cost; }
+	constexpr bool operator>  (const Edge& e) const {	return cost > e.cost; }
+	constexpr bool operator== (const Edge & e) const { return cost == e.cost && from == e.from && to == e.to; }
 };
 
 template<class EdgeType, class EdgeContainerType>
 struct Edge_Itr_Base {
-	Edge_Itr_Base() :index(), edges(nullptr) {}
-	Edge_Itr_Base(ll index, EdgeContainerType& edges_) :index(index), edges(&edges_) {}
-	Edge_Itr_Base& operator++() { ++index; return *this; }
-	bool operator==(const Edge_Itr_Base& rhs) const { return index == rhs.index; }
-	bool operator!=(const Edge_Itr_Base& rhs) const { return index != rhs.index; }
-	EdgeType* operator->() const { return &(*edges)[index]; }
-	EdgeType& operator*() const { return (*edges)[index]; }
-	Edge_Itr_Base& operator+=(ll n) { index += n; return *this; }
+	constexpr Edge_Itr_Base() :index(), edges(nullptr) {}
+	constexpr Edge_Itr_Base(ll index, EdgeContainerType& edges_) :index(index), edges(&edges_) {}
+	constexpr Edge_Itr_Base& operator++() { ++index; return *this; }
+	constexpr bool operator==(const Edge_Itr_Base& rhs) const { return index == rhs.index; }
+	constexpr bool operator!=(const Edge_Itr_Base& rhs) const { return index != rhs.index; }
+	constexpr EdgeType* operator->() const { return &(*edges)[index]; }
+	constexpr EdgeType& operator*() const { return (*edges)[index]; }
+	constexpr Edge_Itr_Base& operator+=(ll n) { index += n; return *this; }
 	ll index;
 	EdgeContainerType* edges;
 };
@@ -382,6 +382,27 @@ struct Graph {
 			}
 		}
 		return dist;
+	}
+
+	bool is_bipartite() const {
+		vll even(size(),-1);
+		even[0] = 0;
+		bool ok = true;
+		dfs_node(0,
+			[&](ll node) {
+				for (auto& e : out(node)) {
+					if (even[e->to] != -1 ) {
+						if (even[e->from] == even[e->to]) {
+							ok = false;
+							break;
+						}
+					}
+					else {
+						even[e->to] = !even[e->from];
+					}
+				}
+			});
+		return ok;
 	}
 };
 

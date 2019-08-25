@@ -4,6 +4,16 @@
 #include "../Project1/Graph.h"
 #include "../Project1/Text.h"
 
+TEST(MyHeader, inv_map) {
+	vll x = { 4, 5, 10 };
+	auto mp = inv_map(x);
+	EXPECT_EQ(mp[4], 0);
+	EXPECT_EQ(mp[10], 2);
+	vector<double> y = { 0.1, 10., 100., 1000. };
+	auto mp2 = inv_map(y);
+	EXPECT_EQ(mp2[100.], 2);
+}
+
 TEST(NumberTheory,modint) {
 
 	auto x = modint<5>(3);
@@ -212,6 +222,21 @@ TEST(Graph, Kruskal) {
 	edgeRes.insert({ 2,3,1 });
 	edgeRes.insert({ 3,2,1});
 	EXPECT_EQ(edgeMST, edgeRes);
+}
+
+TEST(Graph, is_bipartite) {
+	Graph g(5);
+	g.push_undir({ 0,1 });
+	g.push_undir({ 0,2 });
+	g.push_undir({ 0,3 });
+	g.push_undir({ 1,3 });
+	EXPECT_EQ(g.is_bipartite(), false);
+	Graph g2(5);
+	g2.push_undir({ 0,1 });
+	g2.push_undir({ 1,2 });
+	g2.push_undir({ 2,3 });
+	g2.push_undir({ 3,0 });
+	EXPECT_EQ(g2.is_bipartite(), true);
 }
 
 TEST(Text, RollingHash) {

@@ -226,3 +226,13 @@ vector<string> split(const string& s, char delim) {
 	}
 	return elems;
 }
+
+template<class T>
+map<T,ll> inv_map(vector<T>& x) {
+	map<T, ll> res;
+	rep(i, 0, x.size()) {
+		res[x[i]] = i;
+	}
+	return res;
+}
+
