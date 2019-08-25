@@ -1,6 +1,7 @@
 #! /usr/bin/perl
 
 use strict;
+use Term::ANSIColor;
 #use Getopt::Long;
 
 my $source = 'Source2.cpp';
@@ -44,6 +45,27 @@ if(@ARGV == 0){exit(0);}
 elsif($what eq 'build'){gpp; print "\nbuild success!\n"; exit(0);}
 elsif($what eq 'open'){gpp; print "\nbuild success!\n"; `notepad.exe ./$out`; exit(0);}
 elsif($what eq 'code'){`code $out`; exit(0);}
+elsif($what eq 'test-man'){
+    gpp;
+    print colored("build success!\n",'cyan');
+    print colored("Input EOF\n",'cyan');
+    my $EOF = <STDIN>; chomp($EOF);
+    while(1){
+        print colored("Input test in data: \n",'cyan');
+        my @test_in;
+        while(<STDIN>){
+            chomp($_);
+            if($_ ne $EOF){
+                push(@test_in, $_);
+            }
+            else{ last; }
+        }
+        # test begin
+        my $test_in = join('\n', @test_in);
+        print colored("result: ", "yellow");
+        system("echo $test_in | ./a.out");
+    }
+}
 elsif($problemName =~ /http.*/){
     system("rm -f ./test/*");
     print "oj dl $problemName";
