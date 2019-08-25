@@ -22,7 +22,6 @@ sub expand{
     print  "analysing: $_";
     my $num =0;
     for my $file (@includes){
-        print "checking${num}: $file \n";
         if($used{$file}==0){
             print "expanding: $file\n";
             expand($file);
