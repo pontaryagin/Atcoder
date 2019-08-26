@@ -90,7 +90,7 @@ ll garner(vector<Pii> mr, int mod) {
 	vector<ll> coffs(sz(mr), 1);
 	vector<ll> constants(sz(mr), 0);
 	FOR(i, sz(mr) - 1) {
-		// coffs[i] * v + constants[i] == mr[i].second (mod mr[i].first) を解く
+		// solve coffs[i] * v + constants[i] == mr[i].second (mod mr[i].first)
 		ll v = (mr[i].second - constants[i]) * mod_inv<ll>(coffs[i], mr[i].first) % mr[i].first;
 		if (v < 0) v += mr[i].first;
 
