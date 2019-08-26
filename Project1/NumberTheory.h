@@ -174,14 +174,15 @@ public:
 		if (N_MAX < n)
 			pre_process(N_MAX + 1, n + 1);
 
-		if (n < k)return 0;
-		if (n < 0 || k < 0)return 0;
+		if (0<= n && n < k) return 0;
+		if (k == 0) return 1;
+		if (n < 0) return operator()(-n+k-1, k)* (k%2?-1:0);
 		return fac[n] * (finv[k] * finv[n - k] % mod) % mod;
 	}
 	ll H(ll n, ll k) {
 		// 1) 区間[0, k) を（空を許して）n個に分割する場合の数
 		// 2) n個の中からk個を重複を許して選ぶ
-		return (n==0 && k==0)? 1 : operator()(n + k - 1, k);
+		return operator()(n + k - 1, k);
 	}
 	ll P(ll n, ll k) {
 		// n (n-1) ... (n-k+1)
