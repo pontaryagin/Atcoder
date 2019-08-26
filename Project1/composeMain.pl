@@ -16,14 +16,17 @@ sub gpp{
 }
 sub expand{
     $_ = `g++ -std=c++14 -MM $_[0]`;
+    $_ =~ s/\\//;
     my @files = split(" ", $_);
     my @includes = @files[2..$#files];
     print  "analysing: $_";
+    my $num =0;
     for my $file (@includes){
         if($used{$file}==0){
             print "expanding: $file\n";
             expand($file);
         }
+        $num++;
     }   
     print "writing file[1] $files[1]\n";
     $used{$files[1]}=1;
