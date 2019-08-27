@@ -475,11 +475,8 @@ public:
 			else
 				flow += f;
 		}
-
 	}
-
 };
-
 
 // Least Common Ancestor
 class LCA {
@@ -520,6 +517,52 @@ private:
 	vvll parent;
 	vll depth;
 };
+
+class BipartiteMatching {
+	// O(V*E)
+	int n, left, right;
+	vector< vector< int > > graph;
+	vector< int > used;
+	int timestamp;
+public:
+	BipartiteMatching(int left, ll right) : n(left+right), left(left), right(right), graph(n), used(n, 0), timestamp(0){}
+
+	void push(int u, int v) {
+		graph[u].push_back(v + left);
+		graph[v + left].push_back(u);
+	}
+
+	bool dfs(int idx, vector<int>& match) {
+		used[idx] = timestamp;
+		for (auto& to : graph[idx]) {
+			int to_match = match[to];
+			if (to_match == -1 || (used[to_match] != timestamp && dfs(to_match, match))) {
+				match[idx] = to;
+				match[to] = idx;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	int bipartite_match(vector<int>& match) {
+		match.resize(n); fill_v(match, -1);
+		int ret = 0;
+		for (int i = 0; i < SZ(graph); i++) {
+			if (match[i] == -1) {
+				++timestamp;
+				ret += dfs(i, match);
+			}
+		}
+		return ret;
+	}
+
+	int bipartite_match() {
+		vector<int> match;
+		return bipartite_match(match);
+	}
+};
+
 
 
 // ================= Rectangle Area Problem =====================
