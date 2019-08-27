@@ -239,6 +239,20 @@ TEST(Graph, is_bipartite) {
 	EXPECT_EQ(g2.is_bipartite(), true);
 }
 
+TEST(Graph, max_flow){
+	Graph g(6);
+	g.push({0,1});
+	g.push({0,2});
+	g.push({1,2});
+	g.push({1,3});
+	g.push({1,4});
+	g.push({2,3});
+	g.push({3,5});
+	g.push({4,5});
+	FordFulkerson ff(g);
+	EXPECT_EQ(ff.max_flow(0, 5), 2);
+}
+
 TEST(Text, RollingHash) {
 	auto rh = RollingHash<>("abcdefg");
 	auto rh2 = RollingHash<>("xbc");

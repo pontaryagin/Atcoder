@@ -429,8 +429,8 @@ private:
 public:
 	struct RevEdge { ll from, to, cap, rev; };
 
-	FordFulkerson(ll n, Graph graph) 
-		:usedNode(vb(n)), G(vec_t<2,RevEdge>(n))
+	FordFulkerson(Graph graph) 
+		:usedNode(graph.size()), G(vec_t<2,RevEdge>(graph.size()))
 	{
 		rep(i, 0, graph.size()) {
 			for (auto& e : graph.out(i)) {
