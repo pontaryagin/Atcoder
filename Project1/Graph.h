@@ -277,7 +277,7 @@ struct Graph {
 		// complexity : E*log(V)
 		const auto& graph = *this;
 		ll node_size = graph.size();
-		vll dist(node_size, 1LL << 60);
+		vll dist(node_size, INF);
 		from_list.resize(node_size);
 		fill_v(from_list, -1);
 		dist[start] = 0;
