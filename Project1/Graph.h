@@ -446,7 +446,7 @@ public:
 	}
 	
 	ll single_flow(ll from, ll to, ll flow) {
-		// fromからtoに向かってflowを超えない範囲で一本のFlowを流す。
+		// make a single flow
 		if (from == to)
 			return flow;
 		usedNode[from] = 1;
@@ -458,11 +458,11 @@ public:
 			if (flow_from_e > 0) {
 				e.cap -= flow_from_e; assert(e.cap >= 0);
 				G[e.to][e.rev].cap += flow_from_e;
-				// 今までよりも最大流を増やすことに成功したのでrerurn
+				// get a larger flow
 				return flow_from_e;
 			}
 		}
-		//すでにfromから先すべての辺を訪れていたあるいはすべてのcapが0だったら流せない。
+		// if we already visited all edges or cap = 0 flow = 0;
 		return 0;
 	}
 	ll max_flow(ll from, ll to) {
