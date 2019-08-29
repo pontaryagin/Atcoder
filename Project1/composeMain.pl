@@ -98,6 +98,13 @@ else{
     chdir $workspace;
     gpp;
     print "starting test\n\n";
+    if($what eq "submit-f"){
+    	print colored("submit without check. ok? (y/n):", "red");
+	my $ok = <STDIN>; chomp($ok);
+	if($ok ne "y"){
+		exit 1;
+	}
+    }
     $what=~s/^submit$/submit -u/;
     $what=~s/^submit-f$/submit -u -f/;
     system("atcoder-tools $what");
