@@ -253,6 +253,15 @@ TEST(Graph, max_flow){
 	EXPECT_EQ(ff.max_flow(0, 5), 2);
 }
 
+TEST(Graph, diameter) {
+	Graph_Base<double> g(5);
+	g.push_undir({ 0,1,1. });
+	g.push_undir({ 1,2,2. });
+	g.push_undir({ 2,4,2.5 });
+	g.push_undir({ 1,3, .5 });
+	EXPECT_EQ(g.diameter(), 5.5);
+}
+
 TEST(Text, RollingHash) {
 	auto rh = RollingHash<>("abcdefg");
 	auto rh2 = RollingHash<>("xbc");

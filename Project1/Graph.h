@@ -168,17 +168,17 @@ struct Graph_Base {
 		}
 		*this = Graph_Base(this->size(), new_edges);
 	}
-	ll diameter() const
+	cost_t diameter() const
 	{
 		// require : graph is tree
 		// calculate the diameter ( longest path length ) in O(N)
-		vll dp(size(), -1);
-		ll m = 0; ll ind;
+		vector<cost_t> dp(size(), -1);
+		cost_t m = 0; ll ind;
 		function<void(ll)> dfs = [&](ll x) {
 			for (auto& e : out(x)) {
 				ll nextnode = e->to;
 				if (dp[nextnode] == -1) {
-					dp[nextnode] = dp[x] + 1;
+					dp[nextnode] = dp[x] + e->cost;
 					if (dp[nextnode] > m) {
 						m = dp[nextnode];  ind = nextnode;
 					}
