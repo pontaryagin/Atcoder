@@ -2,19 +2,21 @@
 #include "MyHeader.h"
 #include "UnionFind.h"
 
-struct Edge
+template<class cost_t>
+struct Edge_Base
 {
 	ll from;
 	ll to;
-	ll cost=1;
-	constexpr Edge reverse() const { return Edge{ to, from , cost }; }
-	constexpr Edge(ll from , ll to, ll cost=1) : from(from),to(to),cost(cost){};
-	constexpr Edge(pll e) :from(e.first), to(e.second), cost(1) { }
-	constexpr Edge() :from(0), to(0), cost(0){ };
-	constexpr bool operator<  (const Edge& e) const {	return cost < e.cost; }
-	constexpr bool operator>  (const Edge& e) const {	return cost > e.cost; }
-	constexpr bool operator== (const Edge & e) const { return cost == e.cost && from == e.from && to == e.to; }
+	cost_t cost;
+	Edge_Base reverse() const { return Edge_Base{ to, from , cost }; }
+	Edge_Base(ll from , ll to, ll cost=1) : from(from),to(to),cost(cost){};
+	Edge_Base(pll e) :from(e.first), to(e.second), cost(1) { }
+	Edge_Base() :from(0), to(0), cost(0){ };
+	bool operator<  (const Edge_Base& e) const {	return cost < e.cost; }
+	bool operator>  (const Edge_Base& e) const {	return cost > e.cost; }
+	bool operator== (const Edge_Base& e) const { return cost == e.cost && from == e.from && to == e.to; }
 };
+using Edge = Edge_Base<ll>;
 
 template<class EdgeType, class EdgeContainerType>
 struct Edge_Itr_Base {
@@ -30,19 +32,22 @@ struct Edge_Itr_Base {
 	EdgeContainerType* edges;
 };
 
-using Edge_Itr = Edge_Itr_Base<Edge, vector<Edge>>;
-using Edge_CItr = Edge_Itr_Base<const Edge, const vector<Edge>>;
 
-auto nullAction = [](const Edge&) {};
-auto nullActionNode = [](ll) {};
 
-struct Graph {
+auto nullAction = [](const auto&) {};
+
+template<class cost_t>
+struct Graph_Base {
+	using Edge = Edge_Base<cost_t>;
+	using Edge_Itr = Edge_Itr_Base<Edge_Base<cost_t>, vector<Edge_Base<cost_t>>>;
+	using Edge_CItr = Edge_Itr_Base<const Edge_Base<cost_t>, const vector<Edge_Base<cost_t>>>;
+
 	ll nodeSize;
 	vector<Edge> edges;
 	vector<vector<Edge_Itr>> out_edges;
 	vector<vector<Edge_Itr>> in_edges;
 	enum Dir{dir, undir};
-	Graph(ll nodeSize, const vector<Edge>& edges_ = vector<Edge>(), Dir dirct= dir)
+	Graph_Base(ll nodeSize, const vector<Edge>& edges_ = vector<Edge>(), Dir dirct= dir)
 		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize){
 		if (dirct == undir) {
 			for (const Edge& e : edges_) push_undir(e);
@@ -51,7 +56,7 @@ struct Graph {
 			for (const Edge& e : edges_) push(e);
 		}
 	}
-	Graph(ll nodeSize, vector<pll> edges_, Dir dirct = dir)
+	Graph_Base(ll nodeSize, vector<pll> edges_, Dir dirct = dir)
 		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize){
 		if (dirct == undir) {
 			for (const pll& e : edges_) push_undir(Edge(e));
@@ -60,7 +65,7 @@ struct Graph {
 			for (const pll& e : edges_) push(Edge(e));
 		}
 	}
-	Graph(vvll ajacency_matrix, ll default_value) 
+	Graph_Base(vvll ajacency_matrix, ll default_value) 
 		: nodeSize(ajacency_matrix.size()), out_edges(nodeSize), in_edges(nodeSize){
 		ll n = ajacency_matrix.size();
 		rep(i, 0, n)rep(j, 0, n) {
@@ -89,7 +94,7 @@ struct Graph {
 		out_edges[edge.from].emplace_back(Edge_Itr(edges.size()-1,edges));
 		in_edges[edge.to].emplace_back(Edge_Itr(edges.size() - 1, edges));
 	}
-	void push(const Edge& edge, Graph::Dir dir) {
+	void push(const Edge& edge, Graph_Base::Dir dir) {
 		if (dir == Dir::undir)
 			push_undir(edge);
 		else
@@ -161,7 +166,7 @@ struct Graph {
 		for (Edge& e : edges) {
 			new_edges.emplace_back(Edge{ new_ind[e.from], new_ind[e.to],e.cost });
 		}
-		*this = Graph(this->size(), new_edges);
+		*this = Graph_Base(this->size(), new_edges);
 	}
 	ll diameter() const
 	{
@@ -219,8 +224,8 @@ struct Graph {
 
 	};
 
-	template<class T, class S = decltype(nullActionNode)>
-	void dfs_node(ll startNode, T before_act, S after_act = nullActionNode) const
+	template<class T, class S = decltype(nullAction)>
+	void dfs_node(ll startNode, T before_act, S after_act = nullAction) const
 	{
 		// Impliment func: void(ll node_ind) representing what this should do, when target node moves from visited node to unvisited node (node_ind).
 		const auto& graph = *this;
@@ -316,10 +321,10 @@ struct Graph {
 		return res;
 	}
 
-	Graph kruskal(Graph::Dir = Dir::undir) const
+	Graph_Base kruskal(Graph_Base::Dir = Dir::undir) const
 	{
 		//returns minimal spanning tree
-		Graph res(nodeSize);
+		Graph_Base res(nodeSize);
 		vpll sortedEdges;
 		rep(i, 0, edges.size()) {
 			sortedEdges.push_back({ edges[i].cost, i });
@@ -340,7 +345,7 @@ struct Graph {
 
 	vvll warshall_floyd() const {
 		// O(|V|^3)
-		const Graph& g = *this;
+		const Graph_Base& g = *this;
 		ll n = g.size();
 		vvll d = g.adjacency_matrix();
 		rep(k, 0, n)rep(i, 0, n)rep(j, 0, n) {
@@ -357,7 +362,7 @@ struct Graph {
 
 	vll bellman_ford(ll start, vll& from_list, ll negative_closed_loop_value = -INF) const {
 		// O(|E| * |V|)
-		const Graph& g = *this;
+		const Graph_Base& g = *this;
 		vll dist(g.size(), INF);
 		dist[start] = 0;
 		from_list.resize(g.size());
@@ -406,6 +411,7 @@ struct Graph {
 	}
 };
 
+using Graph = Graph_Base<ll>;
 
 vll shortest_path_generator(const vll& from_list, ll start, ll goal) {
 	// usage : vll path =  shortest_path(dijkstra(g,s).second, s, g);
@@ -426,6 +432,7 @@ vll shortest_path_generator(const vll& from_list, ll start, ll goal) {
 class FordFulkerson {
 private:
 	vb usedNode;
+	using Edge = Edge_Base<ll>;
 public:
 	struct RevEdge { ll from, to, cap, rev; };
 
