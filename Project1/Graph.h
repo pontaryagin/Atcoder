@@ -9,7 +9,7 @@ struct Edge_Base
 	ll to;
 	cost_t cost;
 	Edge_Base reverse() const { return Edge_Base{ to, from , cost }; }
-	Edge_Base(ll from , ll to, ll cost=1) : from(from),to(to),cost(cost){};
+	Edge_Base(ll from , ll to, cost_t cost=1) : from(from),to(to),cost(cost){};
 	Edge_Base(pll e) :from(e.first), to(e.second), cost(1) { }
 	Edge_Base() :from(0), to(0), cost(0){ };
 	bool operator<  (const Edge_Base& e) const {	return cost < e.cost; }
@@ -270,23 +270,23 @@ struct Graph_Base {
 		bfs_impl(startNode);
 	};
 	
-	vll dijkstra(ll start) const {
-		vll fromList;
+	vector<cost_t> dijkstra(ll start) const {
+		vector<cost_t> fromList;
 		return dijkstra(start, fromList);
 	}
 
-	vll dijkstra(ll start, vll& from_list) const {
+	vector<cost_t> dijkstra(ll start, vector<cost_t>& from_list) const {
 		// graph: weighted directed graph of adjacent representation
 		// start: index of start point
 		// return1: minimum path length from start
 		// complexity : E*log(V)
 		const auto& graph = *this;
 		ll node_size = graph.size();
-		vll dist(node_size, INF);
+		vector<cost_t> dist(node_size, INF);
 		from_list.resize(node_size);
 		fill_v(from_list, -1);
 		dist[start] = 0;
-		pq_greater<pair<ll, pll>> pq;
+		pq_greater<pair<cost_t, pll>> pq;
 		pq.push({ 0, {start, start} });
 		while (!pq.empty()) {
 			auto node = pq.top(); pq.pop();
@@ -299,7 +299,7 @@ struct Graph_Base {
 
 			for (auto& edge : graph.out(to)) {
 				ll adj = edge->to;
-				ll cost = dist[to] + edge->cost;
+				cost_t cost = dist[to] + edge->cost;
 				if (dist[adj] > cost) {
 					dist[adj] = min(dist[adj], cost);
 					pq.push({ cost ,{to, adj} });
