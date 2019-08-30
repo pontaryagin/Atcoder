@@ -12,7 +12,7 @@ my ($what, $problemName, $problemNumber) = @ARGV;
 # $what = build, test, submit, submit-f, gen
 sub gpp{
     #system("g++ -std=c++14 main.cpp -fsanitize=address");
-    if(system("g++ -std=c++14 main.cpp")) {die("compile error\n");}
+    if(system("g++ -std=c++14 -O3 main.cpp")) {die("compile error\n");}
 }
 sub expand{
     $_ = `g++ -std=c++14 -MM $_[0]`;
@@ -65,7 +65,7 @@ elsif($what eq 'test-man'){
         }
         # test begin
         my $test_in = join('\n', @test_in);
-        print colored("result: ", "yellow");
+        print colored("result: \n", "yellow");
         system("echo $test_in | ./a.out");
     }
 }
