@@ -235,4 +235,8 @@ map<T,ll> inv_map(vector<T>& x) {
 	}
 	return res;
 }
+template<class T, class val_t = typename T::value_type, enable_if_t<!is_same<T, set<val_t>>::value >* = nullptr >
+constexpr bool exist(const T& container, val_t val) { return find(all(container), val) != container.end(); }
+template<class T, class val_t = typename T::value_type,  enable_if_t<is_same<T, set<val_t>>::value >* = nullptr >
+constexpr bool exist(const T& container, val_t val) { return container.find(val) != container.end(); }
 
