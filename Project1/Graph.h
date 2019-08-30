@@ -570,22 +570,12 @@ public:
 	}
 };
 
-
-
-// ================= Rectangle Area Problem =====================
-auto getNeighbor = [](ll i, ll w, ll h) {
-	ll H = i / w;
-	ll W = i % w;
-	vll res;
-	if (H > 0) res.push_back(i - w);
-	if (H < h - 1) res.push_back(i + w);
-	if (W > 0)res.push_back(i - 1);
-	if (W < w - 1)res.push_back(i + 1);
-	return res;
-};
-
-auto getHW = [](ll i, ll w) {
-	ll H = i / w;
-	ll W = i % w;
-	return pll{ H,W };
-};
+// tree dfs
+//auto dfs = [&](auto dfs, ll from, ll to) ->void {
+//	for (auto& e : g.out(to)) {
+//		if (e->to != from) {
+//			// do something
+//		}
+//	}
+//};
+//dfs(dfs, 0, 0);
