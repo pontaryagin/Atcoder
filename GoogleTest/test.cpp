@@ -14,6 +14,15 @@ TEST(MyHeader, inv_map) {
 	EXPECT_EQ(mp2[100.], 2);
 }
 
+TEST(MyHeader, complex) {
+	complex<ll> c1{ 1,2 };
+	complex<ll> c2{ 2,3 };
+	EXPECT_EQ(c1 + c2, complex<ll>(3, 5));
+	EXPECT_EQ(c1.imag(), 2);
+	c2.imag(4);
+	EXPECT_EQ(c2, complex<ll>(2, 4));
+}
+
 TEST(NumberTheory,modint) {
 
 	auto x = modint<5>(3);

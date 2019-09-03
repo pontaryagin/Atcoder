@@ -25,6 +25,7 @@
 #include <iomanip>
 #include <random>
 #include <sstream>
+#include <complex>
 #ifdef _MSC_VER
 #include <intrin.h>
 #define popcnt __popcnt64
@@ -60,10 +61,8 @@ typedef vector<pll> vpll;
 typedef vector<bool> vb;
 typedef vector<vb> vvb;
 typedef vector<string> vs;
-template<typename T>
-using pq_greater = priority_queue<T, vector<T>, greater<T>>;
-struct Point { ll x; ll y; };
-using vpt = vector<Point>;
+template<typename T> using pq_greater = priority_queue<T, vector<T>, greater<T>>;
+template<typename T> using vpt = vector<complex<T>>;
 
 template<int n>
 struct tll_impl {
@@ -112,12 +111,10 @@ vector<T> makev(size_t a) { return vector<T>(a); }
 template<typename T = ll, typename... Ts>
 auto makev(size_t a, Ts... ts) {
 	return vector<decltype(makev<T>(ts...))>(a, makev<T>(ts...));
-}
-// ex:  auto dp =  makev<ll>(4,5) => vector<vector<ll>> dp(4,vector<ll>(5));
+} // ex:  auto dp =  makev<ll>(4,5) => vector<vector<ll>> dp(4,vector<ll>(5));
 
-// check if T is vector
 template < typename T >
-struct is_vector : std::false_type {};
+struct is_vector : std::false_type {}; // check if T is vector
 
 template < typename T >
 struct is_vector<vector<T>> : std::true_type {};
@@ -138,28 +135,22 @@ template<typename T, typename V, typename enable_if<is_vector<T>::value, nullptr
 void fill_v(T& t, const V& v) {
 	for (auto &&x : t)
 		fill_v(x, v);
-}
-// ex:  fill_v(dp, INF);
+} // ex:  fill_v(dp, INF);
 
-template<typename T, typename enable_if < !is_vector<T>::value && !is_pair<T>::value, nullptr_t > ::type = nullptr >
-void read(T& x) {	cin >> x;}
+namespace std {
+	template<class T> bool operator<(const complex<T>& a, const complex<T>& b) {
+		return a.real() == b.real() ? a.imag() < b.imag() : a.real() < b.real();
+	}
+};
 
-template<typename T, typename enable_if<is_pair<T>::value, nullptr_t>::type = nullptr>
-void read(T& x) { read(x.first); read(x.second); }
-
-template<typename T, typename enable_if<is_vector<T>::value, nullptr_t>::type = nullptr>
-void read(T& x) { rep(i,0,x.size()) read(x[i]); }
-
-template<>
-void read(Point& p) { cin >> p.x >> p.y; }
+template<typename T, typename S> istream& operator>>(istream& istr, pair<T, S>& x) { return istr>> x.first >> x.second; }
+template<typename T> istream& operator>>(istream& istr, vector<T>& x) {	rep(i, 0, x.size()) istr >> x[i]; return istr; }
+template<typename T> istream& operator>>(istream& istr, complex<T>& x) { T r, i; istr >> r >> i; x.real(r); x.imag(i); return istr; }
 
 template<typename T, typename Delim_t = string, typename enable_if<!is_vector<T>::value, nullptr_t>::type = nullptr>
 void write(T& x, Delim_t delim = " ") { cout << x << delim; }
-
 template<typename T, typename Delim_t = string, typename enable_if<is_vector<T>::value, nullptr_t>::type = nullptr>
 void write(T& x, Delim_t delim = " ") { rep(i, 0, x.size()) write(x[i], (i == (x.size() - 1) ? "" : delim)); cout << '\n'; }
-
-
 
 template<typename T> void chmin(T &a, T b) {
 	if (a > b) a = b;
