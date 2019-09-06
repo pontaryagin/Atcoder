@@ -156,18 +156,19 @@ struct Graph_Base {
 		return sortedNodes;
 	}
 
-	void topological_sort() {
-		vll sorted = get_topologically_sorted_nodes();
-		vll new_ind(sorted.size());
-		vector<Edge> new_edges;
-		rep(i, 0, sorted.size()) {
-			new_ind[sorted[i]] = i;
-		}
-		for (Edge& e : edges) {
-			new_edges.emplace_back(Edge{ new_ind[e.from], new_ind[e.to],e.cost });
-		}
-		*this = Graph_Base(this->size(), new_edges);
-	}
+	// not safe for Edge_Itr
+	//void topological_sort() {
+	//	vll sorted = get_topologically_sorted_nodes();
+	//	vll new_ind(sorted.size());
+	//	vector<Edge> new_edges;
+	//	rep(i, 0, sorted.size()) {
+	//		new_ind[sorted[i]] = i;
+	//	}
+	//	for (Edge& e : edges) {
+	//		new_edges.emplace_back(Edge{ new_ind[e.from], new_ind[e.to],e.cost });
+	//	}
+	//	*this = Graph_Base(this->size(), new_edges);
+	//}
 	cost_t diameter() const
 	{
 		// require : graph is tree
@@ -175,7 +176,7 @@ struct Graph_Base {
 		vector<cost_t> dp(size(), -1);
 		cost_t m = 0; ll ind;
 		function<void(ll)> dfs = [&](ll x) {
-			for (auto& e : out(x)) {
+			for (auto& e : this->out(x)) {
 				ll nextnode = e->to;
 				if (dp[nextnode] == -1) {
 					dp[nextnode] = dp[x] + e->cost;
@@ -194,6 +195,23 @@ struct Graph_Base {
 		dfs(first);
 		return m;
 		// remark two end points of diameter are 'first' and 'ind';
+	}
+
+	cost_t max_length() const {
+		// calculate the max lenth of path in the graph
+		vector<cost_t> dp(size(), -1);
+		auto dfs = [&](auto dfs, ll x) -> void{
+			for (auto& e : this->out(x)) {
+				if (dp[e->to] == -1) {
+					dp[e->to] = 0;
+					dfs(dfs, e->to);
+				}
+				chmax(dp[e->from], dp[e->to] + e->cost);
+			}
+		};
+		rep(node, 0, size())
+			dfs(dfs, node);
+		return *max_element(all(dp));
 	}
 
 	vll leaves() const {
@@ -408,6 +426,27 @@ struct Graph_Base {
 				}
 			});
 		return ok;
+	}
+
+	bool acyclic() const {
+		auto& g = *this;
+		vll visited(size());
+		auto dfs = [&](auto dfs, ll node) -> bool {
+			visited[node] = 1;
+			for (auto& e : g.out(node)) {
+				if (visited[e->to] == 1)
+					return false;
+				else if (visited[e->to] == 0 && !dfs(dfs, e->to))
+					return false;
+			}
+			visited[node] = 2;
+			return true;
+		};
+		rep(i, 0, g.size()) {
+			if (!dfs(dfs, i))
+				return false;
+		}
+		return true;
 	}
 };
 

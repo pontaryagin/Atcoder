@@ -271,6 +271,28 @@ TEST(Graph, diameter) {
 	EXPECT_EQ(g.diameter(), 5.5);
 }
 
+TEST(Graph, max_length) {
+	Graph g(5);
+	g.push({ 1,0 });
+	g.push({ 1,2 });
+	g.push({ 2,3 });
+	g.push({ 4,1 });
+	EXPECT_EQ(g.max_length(), 3);
+}
+
+TEST(Graph, acyclic) {
+	Graph g(5);
+	g.push({ 1,0 });
+	g.push({ 1,2 });
+	g.push({ 2,3 });
+	g.push({ 4,1 });
+	//EXPECT_EQ(g.acyclic(), true);
+	g.push({ 4,3 });
+	//EXPECT_EQ(g.acyclic(), true);
+	g.push({ 3,1 });
+	EXPECT_EQ(g.acyclic(), false);
+}
+
 TEST(Text, RollingHash) {
 	auto rh = RollingHash<>("abcdefg");
 	auto rh2 = RollingHash<>("xbc");
