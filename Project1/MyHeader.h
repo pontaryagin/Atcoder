@@ -231,3 +231,7 @@ constexpr bool exist(const T& container, val_t val) { return find(all(container)
 template<class T, class val_t = typename T::value_type,  enable_if_t<is_same<T, set<val_t>>::value >* = nullptr >
 constexpr bool exist(const T& container, val_t val) { return container.find(val) != container.end(); }
 
+// inner prod: |a||b|cos(theta)
+template<class T> T dot(complex<T> a, complex<T> b) {	return a.real() * b.real() + a.imag() * b.imag(); }
+// outer prod |a||b|sin(theta)
+template<class T> T cross(complex<T> a, complex<T> b) { return a.real() * b.imag() - a.imag() * b.real(); }
