@@ -35,3 +35,6 @@ struct RollingHash {
 		return hash[r] - hash[l] * p[r - l];
 	}
 };
+using RollingHash1 = RollingHash<MOD>;
+using RollingHash2 = RollingHash<999999937>;
+
