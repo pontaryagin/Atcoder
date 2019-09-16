@@ -162,7 +162,7 @@ class Combination {
 	vll inv;
 public:
 	Combination(ll mod = MOD, ll N_MAX = 210000)
-		:mod(mod), N_MAX(max(N_MAX, 2LL)), fac(vll(N_MAX + 1)), finv(vll(N_MAX + 1)), inv(vll(N_MAX + 1)) {
+		:mod(mod), N_MAX(max(N_MAX, (ll)2)), fac(vll(N_MAX + 1)), finv(vll(N_MAX + 1)), inv(vll(N_MAX + 1)) {
 		fac[0] = fac[1] = 1;
 		finv[0] = finv[1] = 1;
 		inv[1] = 1;
