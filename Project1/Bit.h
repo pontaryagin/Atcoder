@@ -50,3 +50,26 @@ ll get_max_bit<2>(ll n) {
 	}
 	return at;
 }
+
+ll check_bit(ll N, int POS) { return (N & (1LL << POS)); }
+// Function to return maximum XOR subset in set by gaussian elimination
+ll max_subset_xor(vector<ll>& v)
+{
+	int n = v.size();
+	int ind = 0;  // Array index
+	for (int bit = 61; bit >= 0; bit--)
+	{
+		int x = ind;
+		while (x < n && check_bit(v[x], bit) == 0)
+			x++;
+		if (x == n)
+			continue; // skip if there is no number below ind where current bit is 1
+		swap(v[ind], v[x]);
+		for (int j = 0; j < n; j++){
+			if (j != ind && check_bit(v[j], bit))
+				v[j] ^= v[ind];
+		}
+		ind++;
+	}
+	return accumulate(all(v), 0LL, [](ll x, ll y) {return x ^ y; });
+}

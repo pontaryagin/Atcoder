@@ -97,7 +97,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>
       </AdditionalOptions>
-      <AdditionalIncludeDirectories>C:\lib\boost_1_66_0\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\lib\boost_1_66_0\;C:\lib\Sprout\;</AdditionalIncludeDirectories>
       <EnablePREfast>false</EnablePREfast>
     </ClCompile>
     <Link>
@@ -128,7 +128,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>
       </AdditionalOptions>
-      <AdditionalIncludeDirectories>C:\lib\boost_1_66_0\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\lib\boost_1_66_0\;C:\lib\Sprout\;</AdditionalIncludeDirectories>
       <EnablePREfast>false</EnablePREfast>
     </ClCompile>
     <Link>
