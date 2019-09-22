@@ -12,6 +12,8 @@
     <ClInclude Include="Algebra.h" />
     <ClInclude Include="FFT.h" />
     <ClInclude Include="LagrangeInterpolation.h" />
+    <ClInclude Include="Annealing.h" />
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
