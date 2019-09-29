@@ -286,11 +286,34 @@ TEST(Graph, acyclic) {
 	g.push({ 1,2 });
 	g.push({ 2,3 });
 	g.push({ 4,1 });
-	//EXPECT_EQ(g.acyclic(), true);
+	EXPECT_EQ(g.acyclic(Graph::dir), true);
 	g.push({ 4,3 });
-	//EXPECT_EQ(g.acyclic(), true);
+	EXPECT_EQ(g.acyclic(Graph::dir), true);
 	g.push({ 3,1 });
-	EXPECT_EQ(g.acyclic(), false);
+	EXPECT_EQ(g.acyclic(Graph::dir), false);
+	vll loop;
+	g.acyclic(loop, Graph::dir);
+	vll res{ 1,2,3 };
+	EXPECT_EQ(loop, res);
+}
+
+TEST(Graph, acyclic_undir) {
+	Graph g(5);
+	g.push_undir({ 1,0 });
+	g.push_undir({ 1,2 });
+	g.push_undir({ 2,3 });
+	g.push_undir({ 4,1 });
+	EXPECT_EQ(g.acyclic(Graph::undir), true);
+	g.push_undir({ 4,3 });
+	EXPECT_EQ(g.acyclic(Graph::undir), false);
+	vll res{ 1,2,3,4 };
+	vll loop;
+	g.acyclic(loop, Graph::undir);
+	EXPECT_EQ(loop, res);
+	g.push_undir({ 3,1 });
+	EXPECT_EQ(g.acyclic(Graph::undir), false);
+
+
 }
 
 TEST(Text, RollingHash) {

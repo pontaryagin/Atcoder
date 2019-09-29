@@ -11,7 +11,7 @@ struct Edge_Base
 	Edge_Base reverse() const { return Edge_Base{ to, from , cost }; }
 	Edge_Base(ll from , ll to, cost_t cost=1) : from(from),to(to),cost(cost){};
 	Edge_Base(pll e) :from(e.first), to(e.second), cost(1) { }
-	Edge_Base() :from(0), to(0), cost(0){ };
+	Edge_Base() :from(0), to(0), cost(1){ };
 	bool operator<  (const Edge_Base& e) const {	return cost < e.cost; }
 	bool operator>  (const Edge_Base& e) const {	return cost > e.cost; }
 	bool operator== (const Edge_Base& e) const { return cost == e.cost && from == e.from && to == e.to; }
@@ -428,26 +428,40 @@ struct Graph_Base {
 		return ok;
 	}
 
-	bool acyclic() const {
+
+	bool acyclic(Dir dir) const {
+		vll loop; 
+		return acyclic(loop, dir);
+	}
+	bool acyclic(vll& loop, Dir dir) const {
+		// check whether directed graph has cycle in O(nodes + edges)
+		// found loop is stored to "loop"
 		auto& g = *this;
 		vll visited(size());
-		auto dfs = [&](auto dfs, ll node) -> bool {
-			visited[node] = 1;
+		vll stack;
+		auto dfs = [&](auto dfs, ll node, ll par) -> bool {
+			visited[node] = 1; stack.push_back(node);
 			for (auto& e : g.out(node)) {
-				if (visited[e->to] == 1)
+				if ((dir == Dir::dir || par != e->to) && visited[e->to] == 1) {
+					if (loop.empty()) {
+						auto it = find(all(stack), e->to);
+						copy(it, stack.end(), back_inserter(loop));
+					}
 					return false;
-				else if (visited[e->to] == 0 && !dfs(dfs, e->to))
+				}
+				else if (visited[e->to] == 0 && !dfs(dfs, e->to, e->from))
 					return false;
 			}
-			visited[node] = 2;
+			visited[node] = 2; stack.pop_back();
 			return true;
 		};
 		rep(i, 0, g.size()) {
-			if (!dfs(dfs, i))
+			if (!dfs(dfs, i, i))
 				return false;
 		}
 		return true;
 	}
+
 };
 
 using Graph = Graph_Base<ll>;
@@ -527,7 +541,7 @@ public:
 // Least Common Ancestor
 class LCA {
 public:
-	LCA(const Graph& graph, ll root) : max_par(ceil(log2(graph.size()) + 2)), parent(graph.size(), vll(max_par,-1)),
+	LCA(const Graph& graph, ll root) : max_par(ll(ceil(log2(graph.size()) + 2))), parent(graph.size(), vll(max_par,-1)),
 		depth() {
 		//parent[root][0] = root;
 		graph.dfs(root, [&](const Edge & e) {
@@ -571,7 +585,7 @@ class BipartiteMatching {
 	vector< int > used;
 	int timestamp;
 public:
-	BipartiteMatching(int left, ll right) : n(left+right), left(left), right(right), graph(n), used(n, 0), timestamp(0){}
+	BipartiteMatching(ll left, ll right) : n(left+right), left(left), right(right), graph(n), used(n, 0), timestamp(0){}
 
 	void push(int u, int v) {
 		graph[u].push_back(v + left);

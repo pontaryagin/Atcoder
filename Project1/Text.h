@@ -36,5 +36,6 @@ struct RollingHash {
 	}
 };
 using RollingHash1 = RollingHash<MOD>;
-using RollingHash2 = RollingHash<999999937>;
+using RollingHash2 = RollingHash<(1LL << 61) - 1>; 
+using RollingHash3 = RollingHash<999999937>;
 
