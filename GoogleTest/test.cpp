@@ -316,6 +316,19 @@ TEST(Graph, acyclic_undir) {
 
 }
 
+TEST(UnionFind, weight) {
+	UnionFind uf(4);
+	uf.unite(0, 3, 2);
+	uf.unite(1, 3, 4);
+	EXPECT_EQ(uf.is_same(0, 1), true);
+	EXPECT_EQ(uf.is_same(3, 1), true);
+	EXPECT_EQ(uf.is_same(1, 2), false);
+	EXPECT_EQ(uf.weight_diff(3, 1), -4);
+	EXPECT_EQ(uf.weight_diff(0, 3), 2);
+	EXPECT_EQ(uf.weight_diff(0, 1), -2);
+}
+
+
 TEST(Text, RollingHash) {
 	auto rh = RollingHash<>("abcdefg");
 	auto rh2 = RollingHash<>("xbc");
