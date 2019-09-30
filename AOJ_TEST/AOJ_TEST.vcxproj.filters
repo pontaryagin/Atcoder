@@ -4,5 +4,6 @@
     <ClCompile Include="..\Project1\Graph.bellman_ford.test.cpp" />
     <ClCompile Include="..\Project1\Graph.min_span_tree.test.cpp" />
     <ClCompile Include="..\Project1\Graph.bipatite_matching.test.cpp" />
+    <ClCompile Include="..\Project1\Graph.scc.test.cpp" />
   </ItemGroup>
 </Project>

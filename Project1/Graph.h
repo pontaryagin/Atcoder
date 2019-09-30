@@ -73,7 +73,15 @@ struct Graph_Base {
 				push(Edge(i, j, ajacency_matrix[i][j]));
 		}
 	}
-	
+	Graph_Base(const Graph_Base& g) : nodeSize(g.nodeSize), out_edges(nodeSize), in_edges(nodeSize) {
+		this->push(g.edges);
+	}
+	Graph_Base& operator=(const Graph_Base& g) {
+		nodeSize = g.nodeSize; out_edges.resize(nodeSize); in_edges.resize(nodeSize);
+		push(g.edges);
+		return *this;
+	}
+
 	Edge& operator[](ll ind) { return this->edges[ind]; } 
 	const Edge& operator[](ll ind) const{ return this->edges[ind]; }
 	vector<Edge_Itr>& out(ll ind){ return this->out_edges[ind]; }
@@ -114,6 +122,14 @@ struct Graph_Base {
 			d[e.from][e.to] = e.cost;
 		}
 		return d;
+	}
+
+	Graph_Base reverse() const {
+		Graph_Base g(size());
+		for (const auto& e : this->edges) {
+			g.push(e.reverse());
+		}
+		return g;
 	}
 
 	vll get_topologically_sorted_nodes() const
@@ -222,6 +238,7 @@ struct Graph_Base {
 		}
 		return res;
 	}
+
 	template<class T, class S = decltype(nullAction)>
 	void dfs(ll startNode, T before_act, S after_act = nullAction) const
 	{
@@ -434,7 +451,7 @@ struct Graph_Base {
 		return acyclic(loop, dir);
 	}
 	bool acyclic(vll& loop, Dir dir) const {
-		// check whether directed graph has cycle in O(nodes + edges)
+		// check whether directed graph has cycle in O(|V| + |E|)
 		// found loop is stored to "loop"
 		auto& g = *this;
 		vll visited(size());
@@ -462,7 +479,58 @@ struct Graph_Base {
 		return true;
 	}
 
+	Graph_Base scc(vll& components) const {
+		// strongly connected components decomposition algorithm in O(|V| + |E|)
+		// @ return : contracted DAG
+		// @ in (components) : node i is in components[i]-th component in DAG
+		components.resize(size());
+		vpll time(size());
+		ll now = 0;
+		vll visited(size());
+		auto dfs = [&](auto dfs, ll node) -> void {
+			visited[node] = 1; 
+			for (auto&& e : this->out(node)) {
+				if (visited[e->to] == 0) {
+					dfs(dfs, e->to);
+				}
+			}
+			time[node] = { now++, node };
+		};
+		rep(i, 0, size()) {
+			if (!visited[i]) {
+				dfs(dfs, i);
+			}
+		}
+		fill_v(visited, 0);
+		sort(all(time));
+		ll cur_comp = 0;
+		auto dfs_rev = [&](auto dfs_rev, ll node) -> void {
+			visited[node] = 1; components[node] = cur_comp;
+			for (auto&& e : this->in(node)) {
+				if (visited[e->from] == 0) {
+					dfs_rev(dfs_rev, e->from);
+				}
+			}
+		};
+		rrep(i, 0, time.size()) {
+			ll node = time[i].second;
+			if(visited[node]== 0)
+				dfs_rev(dfs_rev, node);
+			cur_comp++;
 
+		}
+		// create contracted DAG 
+		Graph_Base res(cur_comp);
+		set<pll> check;
+		for(const Edge& e: edges) {
+			ll from = components[e.from]; ll to = components[e.to];
+			if (from != to && exist(check, {from, to})) {
+				res.push({ from, to});
+			}
+		}
+		return res;
+
+	}
 
 
 
