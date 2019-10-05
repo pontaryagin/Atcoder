@@ -220,7 +220,7 @@ TEST(Graph, Kruskal) {
 	// 0 - 1
 	// | \ |
 	// \2- \3
-	auto mst = g.kruskal();
+	auto mst = g.kruskal<GraphDir::undir>();
 	set<Edge> edgeMST, edgeRes;
 	rep(i, 0, mst.edges.size())
 		edgeMST.insert(mst[i]);

@@ -92,13 +92,13 @@ struct Graph_Base {
 
 	ll size() const { return nodeSize; }
 	ll sizeEdges() const { return edges.size(); }
-
 	void _push(const Edge& edge){
 		assert(max(edge.from, edge.to) < nodeSize);
 		edges.emplace_back(edge);
 		out_edges[edge.from].emplace_back(Edge_Itr(edges.size()-1,edges));
 		in_edges[edge.to].emplace_back(Edge_Itr(edges.size() - 1, edges));
 	}
+public:
 	template<class T = void>
 	void push(const Edge& edge, enable_if_t<dir == GraphDir::undir, T*> = nullptr) {
 		_push(edge); _push(edge.reverse());
@@ -548,16 +548,16 @@ struct Graph_Base {
 		res += "}\n";
 		return res;
 	}
-	void show(bool weighted = false) const {
+	void show(bool weighted = false, string  ext = "png") const {
 		// show graph as png file
 #ifdef _WIN64
 		srand(time(nullptr));
 		(void)_mkdir("./tmp");
 		string tmpdot = "./tmp/"; string tmppng = "./tmp/";
-		tmpdot += to_string(rand()); tmppng += to_string(rand()) + ".png";
+		tmpdot += to_string(rand()); tmppng += to_string(rand()) + "." + ext;
 		ofstream of(tmpdot);
 		of <<  dot(weighted) << endl;
-		(int)system(("dot -Tpng -o "+ tmppng + " " + tmpdot).c_str());
+		(int)system(("dot -T"+ext+ " -o "+ tmppng + " " + tmpdot).c_str());
 		(int)system(("powershell start " + tmppng).c_str());
 #endif // _WIN64
 	}
