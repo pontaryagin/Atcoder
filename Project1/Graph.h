@@ -1,6 +1,10 @@
 #pragma once
 #include "MyHeader.h"
 #include "UnionFind.h"
+#include <fstream>
+#ifdef _WIN64
+	#include <direct.h>
+#endif
 
 template<class cost_t>
 struct Edge_Base
@@ -531,7 +535,37 @@ struct Graph_Base {
 		return res;
 
 	}
-
+	string dot(Dir dir = Dir::dir) const {
+		// export graph as dot file
+		string res = (dir == Dir::dir?"digraph {" : "graph {");
+		res += "graph[charset = \"UTF-8\"; ";
+		res += (dir == Dir::dir ? "" : "splines = false;");
+		res += "];"; // header
+		rep(i, 0, size()) {
+			res += to_string(i) + ";";
+		}
+		for (auto& e : edges) {
+			res += to_string(e.from);
+			res += (dir == Dir::dir ? "->" : "--");
+			res += to_string(e.to);
+			res += ";";
+		}
+		res += "}";
+		return res;
+	}
+	void show(Dir dir = Dir::dir) const {
+		// show graph as png file
+#ifdef _WIN64
+		srand(time(nullptr));
+		(void)_mkdir("./tmp");
+		string tmpdot = "./tmp/"; string tmppng = "./tmp/";
+		tmpdot += to_string(rand()); tmppng += to_string(rand()) + ".png";
+		ofstream of(tmpdot);
+		of <<  dot(dir) << endl;
+		(int)system(("dot -Tpng -o "+ tmppng + " " + tmpdot).c_str());
+		(int)system(("powershell start " + tmppng).c_str());
+#endif // _WIN64
+	}
 
 
 };
@@ -657,7 +691,7 @@ class BipartiteMatching {
 	vector< int > used;
 	int timestamp;
 public:
-	BipartiteMatching(ll left, ll right) : n(left+right), left(left), right(right), graph(n), used(n, 0), timestamp(0){}
+	BipartiteMatching(int left, int right) : n(left+right), left(left), right(right), graph(n), used(n, 0), timestamp(0){}
 
 	void push(int u, int v) {
 		graph[u].push_back(v + left);
