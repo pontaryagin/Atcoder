@@ -18,12 +18,12 @@ int main() {
 	cout << fixed << setprecision(12);
 
 	ll n, m; cin >> n >> m;
-	Graph g(n);
+	UndirGraph g(n);
 	rep(i, 0, m) {
 		ll s, t, w; cin >> s >> t >> w;
-		g.push_undir({ s,t,w });
+		g.push({ s,t,w });
 	}
-	auto tree = g.kruskal();
+	auto tree = g.kruskal<GraphDir::dir>();
 	ll res = 0;
 	rep(i, 0, tree.edges.size()) {
 		res += tree[i].cost;

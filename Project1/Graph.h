@@ -6,6 +6,9 @@
 	#include <direct.h>
 #endif
 
+
+enum class GraphDir { dir, undir };
+
 template<class cost_t>
 struct Edge_Base
 {
@@ -19,6 +22,10 @@ struct Edge_Base
 	bool operator<  (const Edge_Base& e) const {	return cost < e.cost; }
 	bool operator>  (const Edge_Base& e) const {	return cost > e.cost; }
 	bool operator== (const Edge_Base& e) const { return cost == e.cost && from == e.from && to == e.to; }
+	string dot(GraphDir dir, bool weighted) const {
+		return to_string(from) + (dir == GraphDir::dir ? "->": "--") + to_string(to) +
+			(weighted? "[label = " + to_string(cost) + "]" :"" );
+	}
 };
 using Edge = Edge_Base<ll>;
 
@@ -36,38 +43,24 @@ struct Edge_Itr_Base {
 	EdgeContainerType* edges;
 };
 
-
-
 auto nullAction = [](const auto&) {};
 
-template<class cost_t>
+template<GraphDir dir, class cost_t>
 struct Graph_Base {
 	using Edge = Edge_Base<cost_t>;
 	using Edge_Itr = Edge_Itr_Base<Edge_Base<cost_t>, vector<Edge_Base<cost_t>>>;
 	using Edge_CItr = Edge_Itr_Base<const Edge_Base<cost_t>, const vector<Edge_Base<cost_t>>>;
-
 	ll nodeSize;
 	vector<Edge> edges;
 	vector<vector<Edge_Itr>> out_edges;
 	vector<vector<Edge_Itr>> in_edges;
-	enum Dir{dir, undir};
-	Graph_Base(ll nodeSize, const vector<Edge>& edges_ = vector<Edge>(), Dir dirct= dir)
+	Graph_Base(ll nodeSize, const vector<Edge>& edges_ = vector<Edge>(), GraphDir dirct= GraphDir::dir)
 		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize){
-		if (dirct == undir) {
-			for (const Edge& e : edges_) push_undir(e);
-		}
-		else {
-			for (const Edge& e : edges_) push(e);
-		}
+		for (const Edge& e : edges_) push(e);
 	}
-	Graph_Base(ll nodeSize, vector<pll> edges_, Dir dirct = dir)
+	Graph_Base(ll nodeSize, vector<pll> edges_)
 		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize){
-		if (dirct == undir) {
-			for (const pll& e : edges_) push_undir(Edge(e));
-		}
-		else {
-			for (const pll& e : edges_) push(Edge(e));
-		}
+		for (const pll& e : edges_) push(Edge(e));
 	}
 	Graph_Base(vvll ajacency_matrix, ll default_value) 
 		: nodeSize(ajacency_matrix.size()), out_edges(nodeSize), in_edges(nodeSize){
@@ -100,20 +93,19 @@ struct Graph_Base {
 	ll size() const { return nodeSize; }
 	ll sizeEdges() const { return edges.size(); }
 
-	void push(const Edge& edge){
+	void _push(const Edge& edge){
 		assert(max(edge.from, edge.to) < nodeSize);
 		edges.emplace_back(edge);
 		out_edges[edge.from].emplace_back(Edge_Itr(edges.size()-1,edges));
 		in_edges[edge.to].emplace_back(Edge_Itr(edges.size() - 1, edges));
 	}
-	void push(const Edge& edge, Graph_Base::Dir dir) {
-		if (dir == Dir::undir)
-			push_undir(edge);
-		else
-			push(edge);
+	template<class T = void>
+	void push(const Edge& edge, enable_if_t<dir == GraphDir::undir, T*> = nullptr) {
+		_push(edge); _push(edge.reverse());
 	}
-	void push_undir(const Edge& edge) {
-		push(edge); push(edge.reverse());
+	template<class T = void>
+	void push(const Edge& edge, enable_if_t<dir == GraphDir::dir, T*> = nullptr) {
+		_push(edge);
 	}
 	void push(vector<Edge> edges) {
 		for (const Edge& e : edges) {
@@ -360,10 +352,11 @@ struct Graph_Base {
 		return res;
 	}
 
-	Graph_Base kruskal(Graph_Base::Dir = Dir::undir) const
+	template<GraphDir out_dir>
+	Graph_Base<out_dir, cost_t> kruskal() const
 	{
 		//returns minimal spanning tree
-		Graph_Base res(nodeSize);
+		Graph_Base<out_dir, cost_t> res(nodeSize);
 		vpll sortedEdges;
 		rep(i, 0, edges.size()) {
 			sortedEdges.push_back({ edges[i].cost, i });
@@ -375,7 +368,7 @@ struct Graph_Base {
 			tie(cost, eInd) = sortedEdges[i];
 			ll from = (*this)[eInd].from; ll to = (*this)[eInd].to;
 			if (!uf.is_same(from, to)) {
-				res.push((*this)[eInd], dir);
+				res.push((*this)[eInd]);
 			}
 			uf.unite(from, to);
 		}
@@ -450,11 +443,11 @@ struct Graph_Base {
 	}
 
 
-	bool acyclic(Dir dir) const {
+	bool acyclic() const {
 		vll loop; 
-		return acyclic(loop, dir);
+		return acyclic(loop);
 	}
-	bool acyclic(vll& loop, Dir dir) const {
+	bool acyclic(vll& loop) const {
 		// check whether directed graph has cycle in O(|V| + |E|)
 		// found loop is stored to "loop"
 		auto& g = *this;
@@ -463,7 +456,7 @@ struct Graph_Base {
 		auto dfs = [&](auto dfs, ll node, ll par) -> bool {
 			visited[node] = 1; stack.push_back(node);
 			for (auto& e : g.out(node)) {
-				if ((dir == Dir::dir || par != e->to) && visited[e->to] == 1) {
+				if ((dir == GraphDir::dir || par != e->to) && visited[e->to] == 1) {
 					if (loop.empty()) {
 						auto it = find(all(stack), e->to);
 						copy(it, stack.end(), back_inserter(loop));
@@ -487,6 +480,7 @@ struct Graph_Base {
 		// strongly connected components decomposition algorithm in O(|V| + |E|)
 		// @ return : contracted DAG
 		// @ in (components) : node i is in components[i]-th component in DAG
+		static_assert(dir == GraphDir::dir, "scc is valid for directed graph");
 		components.resize(size());
 		vpll time(size());
 		ll now = 0;
@@ -535,25 +529,26 @@ struct Graph_Base {
 		return res;
 
 	}
-	string dot(Dir dir = Dir::dir) const {
+	string dot(bool weighted = false) const {
 		// export graph as dot file
-		string res = (dir == Dir::dir?"digraph {" : "graph {");
-		res += "graph[charset = \"UTF-8\"; ";
-		res += (dir == Dir::dir ? "" : "splines = false;");
-		res += "];"; // header
+		string res = (dir == GraphDir::dir?"digraph {" : "graph {");
+		//res += "graph[charset = \"UTF-8\"; ";
+		//res += "];"; // header
 		rep(i, 0, size()) {
-			res += to_string(i) + ";";
+			res += to_string(i) + ";\n";
 		}
+		set<pll> used; 
 		for (auto& e : edges) {
-			res += to_string(e.from);
-			res += (dir == Dir::dir ? "->" : "--");
-			res += to_string(e.to);
-			res += ";";
+			if (!exist(used, { e.from, e.to }) && (dir == GraphDir::dir || !exist(used, { e.to, e.from }))) {
+				used.insert({ e.from, e.to});
+				res += e.dot(dir, weighted);
+				res += ";\n";
+			}
 		}
-		res += "}";
+		res += "}\n";
 		return res;
 	}
-	void show(Dir dir = Dir::dir) const {
+	void show(bool weighted = false) const {
 		// show graph as png file
 #ifdef _WIN64
 		srand(time(nullptr));
@@ -561,16 +556,18 @@ struct Graph_Base {
 		string tmpdot = "./tmp/"; string tmppng = "./tmp/";
 		tmpdot += to_string(rand()); tmppng += to_string(rand()) + ".png";
 		ofstream of(tmpdot);
-		of <<  dot(dir) << endl;
+		of <<  dot(weighted) << endl;
 		(int)system(("dot -Tpng -o "+ tmppng + " " + tmpdot).c_str());
 		(int)system(("powershell start " + tmppng).c_str());
 #endif // _WIN64
 	}
-
-
 };
 
-using Graph = Graph_Base<ll>;
+template<GraphDir dir>
+using Graph = Graph_Base<dir, ll>;
+using DirGraph = Graph<GraphDir::dir>;
+using UndirGraph = Graph<GraphDir::undir>;
+
 
 vll shortest_path_generator(const vll& from_list, ll start, ll goal) {
 	// usage : vll path =  shortest_path(dijkstra(g,s).second, s, g);
@@ -594,8 +591,7 @@ private:
 	using Edge = Edge_Base<ll>;
 public:
 	struct RevEdge { ll from, to, cap, rev; };
-
-	FordFulkerson(Graph graph) 
+	FordFulkerson(DirGraph graph) 
 		:usedNode(graph.size()), G(vec_t<2,RevEdge>(graph.size()))
 	{
 		rep(i, 0, graph.size()) {
@@ -647,7 +643,7 @@ public:
 // Least Common Ancestor
 class LCA {
 public:
-	LCA(const Graph& graph, ll root) : max_par(ll(ceil(log2(graph.size()) + 2))), parent(graph.size(), vll(max_par,-1)),
+	LCA(const Graph<GraphDir::undir>& graph, ll root) : max_par(ll(ceil(log2(graph.size()) + 2))), parent(graph.size(), vll(max_par,-1)),
 		depth() {
 		//parent[root][0] = root;
 		graph.dfs(root, [&](const Edge & e) {
@@ -695,7 +691,7 @@ public:
 
 	void push(int u, int v) {
 		graph[u].push_back(v + left);
-		graph[v + left].push_back(u);
+		graph[size_t(v) + left].push_back(u);
 	}
 
 	bool dfs(int idx, vector<int>& match) {

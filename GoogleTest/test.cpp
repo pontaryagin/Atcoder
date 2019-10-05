@@ -99,11 +99,11 @@ TEST(SegmentTree, segment_tree) {
 }
 
 TEST(Graph, Dijkstra) {
-	Graph g(5);
-	g.push_undir({ 0,1 });
-	g.push_undir({ 0,2, 2 });
-	g.push_undir({ 2,3 , 4});
-	g.push_undir({ 2,4 });
+	Graph<GraphDir::undir> g(5);
+	g.push({ 0,1 });
+	g.push({ 0,2, 2 });
+	g.push({ 2,3 , 4});
+	g.push({ 2,4 });
 	vll shortestPathInfo;
 	auto depth = g.dijkstra(0, shortestPathInfo);
 	auto depth_res = vll{0, 1, 2, 6, 3};
@@ -117,7 +117,7 @@ TEST(Graph, Dijkstra) {
 }
 
 TEST(Graph, EdgeItr) {
-	Graph g(3);
+	DirGraph g(3);
 	g.push({ 0,1, 1});
 	g.push({ 0,2, 2 });
 	g.push({ 1,2 , 3 });
@@ -130,11 +130,11 @@ TEST(Graph, EdgeItr) {
 
 TEST(Graph, Bellman_Ford) {
 	// normal case
-	Graph g(5);
-	g.push_undir({ 0,1 });
-	g.push_undir({ 0,2, 2 });
-	g.push_undir({ 2,3 , 4 });
-	g.push_undir({ 2,4 });
+	UndirGraph g(5);
+	g.push({ 0,1 });
+	g.push({ 0,2, 2 });
+	g.push({ 2,3 , 4 });
+	g.push({ 2,4 });
 	vll shortestPathInfo;
 	auto depth = g.bellman_ford(0, shortestPathInfo);
 	auto depth_res = vll{ 0, 1, 2, 6, 3 };
@@ -146,7 +146,7 @@ TEST(Graph, Bellman_Ford) {
 	auto path2_res = vll{ 2,3 };
 	EXPECT_EQ(path2, path2_res);
 	// negative loop
-	Graph g2(5);
+	DirGraph g2(5);
 	g2.push({ 0,1, -1 });
 	g2.push({ 1,1, -100 });
 	g2.push({ 0,3,-1 });
@@ -159,11 +159,11 @@ TEST(Graph, Bellman_Ford) {
 }
 
 TEST(Graph, DFSBFS) {
-	Graph g(5);
-	g.push_undir({ 0,1 });
-	g.push_undir({ 1,2 });
-	g.push_undir({ 0,3 });
-	g.push_undir({ 3,4 });
+	UndirGraph g(5);
+	g.push({ 0,1 });
+	g.push({ 1,2 });
+	g.push({ 0,3 });
+	g.push({ 3,4 });
 	vll dfs, bfs, dfs_node;
 	g.dfs(0, [&](const Edge & e) {dfs.push_back(e.to); });
 	g.bfs(0, [&](const Edge & e) {bfs.push_back(e.to); });
@@ -177,11 +177,11 @@ TEST(Graph, DFSBFS) {
 }
 
 TEST(Graph, LCA) {
-	Graph g(5);
-	g.push_undir({ 0,1 });
-	g.push_undir({ 0,2 });
-	g.push_undir({ 2,3 });
-	g.push_undir({ 2,4 });
+	UndirGraph g(5);
+	g.push({ 0,1 });
+	g.push({ 0,2 });
+	g.push({ 2,3 });
+	g.push({ 2,4 });
 	LCA lca(g, 0);
 	EXPECT_EQ(lca(1, 4), 0);
 	EXPECT_EQ(lca(3, 4), 2);
@@ -195,11 +195,11 @@ TEST(Graph, LCA) {
 
 TEST(Graph, EulerTour) {
 
-	Graph g(5);
-	g.push_undir({ 0,1 });
-	g.push_undir({ 0,2 });
-	g.push_undir({ 2,3 });
-	g.push_undir({ 2,4 });
+	UndirGraph g(5);
+	g.push({ 0,1 });
+	g.push({ 0,2 });
+	g.push({ 2,3 });
+	g.push({ 2,4 });
 	// 0
 	// \1  \2
 	//       \3  \4
@@ -211,16 +211,16 @@ TEST(Graph, EulerTour) {
 
 TEST(Graph, Kruskal) {
 
-	Graph g(5);
-	g.push_undir({ 0,1,1 });
-	g.push_undir({ 0,2,3 });
-	g.push_undir({ 0,3,4 });
-	g.push_undir({ 1,3,2 });
-	g.push_undir({ 2,3,1 });
+	UndirGraph g(5);
+	g.push({ 0,1,1 });
+	g.push({ 0,2,3 });
+	g.push({ 0,3,4 });
+	g.push({ 1,3,2 });
+	g.push({ 2,3,1 });
 	// 0 - 1
 	// | \ |
 	// \2- \3
-	Graph mst = g.kruskal();
+	auto mst = g.kruskal();
 	set<Edge> edgeMST, edgeRes;
 	rep(i, 0, mst.edges.size())
 		edgeMST.insert(mst[i]);
@@ -234,22 +234,22 @@ TEST(Graph, Kruskal) {
 }
 
 TEST(Graph, is_bipartite) {
-	Graph g(5);
-	g.push_undir({ 0,1 });
-	g.push_undir({ 0,2 });
-	g.push_undir({ 0,3 });
-	g.push_undir({ 1,3 });
+	UndirGraph g(5);
+	g.push({ 0,1 });
+	g.push({ 0,2 });
+	g.push({ 0,3 });
+	g.push({ 1,3 });
 	EXPECT_EQ(g.is_bipartite(), false);
-	Graph g2(5);
-	g2.push_undir({ 0,1 });
-	g2.push_undir({ 1,2 });
-	g2.push_undir({ 2,3 });
-	g2.push_undir({ 3,0 });
+	UndirGraph g2(5);
+	g2.push({ 0,1 });
+	g2.push({ 1,2 });
+	g2.push({ 2,3 });
+	g2.push({ 3,0 });
 	EXPECT_EQ(g2.is_bipartite(), true);
 }
 
 TEST(Graph, max_flow){
-	Graph g(6);
+	DirGraph g(6);
 	g.push({0,1});
 	g.push({0,2});
 	g.push({1,2});
@@ -263,16 +263,16 @@ TEST(Graph, max_flow){
 }
 
 TEST(Graph, diameter) {
-	Graph_Base<double> g(5);
-	g.push_undir({ 0,1,1. });
-	g.push_undir({ 1,2,2. });
-	g.push_undir({ 2,4,2.5 });
-	g.push_undir({ 1,3, .5 });
+	Graph_Base<GraphDir::undir ,double> g(5);
+	g.push({ 0,1,1. });
+	g.push({ 1,2,2. });
+	g.push({ 2,4,2.5 });
+	g.push({ 1,3, .5 });
 	EXPECT_EQ(g.diameter(), 5.5);
 }
 
 TEST(Graph, max_length) {
-	Graph g(5);
+	DirGraph g(5);
 	g.push({ 1,0 });
 	g.push({ 1,2 });
 	g.push({ 2,3 });
@@ -281,37 +281,37 @@ TEST(Graph, max_length) {
 }
 
 TEST(Graph, acyclic) {
-	Graph g(5);
+	DirGraph g(5);
 	g.push({ 1,0 });
 	g.push({ 1,2 });
 	g.push({ 2,3 });
 	g.push({ 4,1 });
-	EXPECT_EQ(g.acyclic(Graph::dir), true);
+	EXPECT_EQ(g.acyclic(), true);
 	g.push({ 4,3 });
-	EXPECT_EQ(g.acyclic(Graph::dir), true);
+	EXPECT_EQ(g.acyclic(), true);
 	g.push({ 3,1 });
-	EXPECT_EQ(g.acyclic(Graph::dir), false);
+	EXPECT_EQ(g.acyclic(), false);
 	vll loop;
-	g.acyclic(loop, Graph::dir);
+	g.acyclic(loop);
 	vll res{ 1,2,3 };
 	EXPECT_EQ(loop, res);
 }
 
 TEST(Graph, acyclic_undir) {
-	Graph g(5);
-	g.push_undir({ 1,0 });
-	g.push_undir({ 1,2 });
-	g.push_undir({ 2,3 });
-	g.push_undir({ 4,1 });
-	EXPECT_EQ(g.acyclic(Graph::undir), true);
-	g.push_undir({ 4,3 });
-	EXPECT_EQ(g.acyclic(Graph::undir), false);
+	UndirGraph g(5);
+	g.push({ 1,0 });
+	g.push({ 1,2 });
+	g.push({ 2,3 });
+	g.push({ 4,1 });
+	EXPECT_EQ(g.acyclic(), true);
+	g.push({ 4,3 });
+	EXPECT_EQ(g.acyclic(), false);
 	vll res{ 1,2,3,4 };
 	vll loop;
-	g.acyclic(loop, Graph::undir);
+	g.acyclic(loop);
 	EXPECT_EQ(loop, res);
-	g.push_undir({ 3,1 });
-	EXPECT_EQ(g.acyclic(Graph::undir), false);
+	g.push({ 3,1 });
+	EXPECT_EQ(g.acyclic(), false);
 
 
 }
