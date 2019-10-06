@@ -113,9 +113,12 @@ public:
 		}
 	}
 	vvll adjacency_matrix() const {
-		vvll d(size(), vll(size()));
+		vvll d(size(), vll(size(), INF));
 		for (auto& e : edges) {
 			d[e.from][e.to] = e.cost;
+		}
+		rep(i, 0, size()) {
+			d[i][i] = 0;
 		}
 		return d;
 	}

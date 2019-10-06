@@ -312,8 +312,23 @@ TEST(Graph, acyclic_undir) {
 	EXPECT_EQ(loop, res);
 	g.push({ 3,1 });
 	EXPECT_EQ(g.acyclic(), false);
+}
 
-
+TEST(Graph, warshall_floyd) {
+	UndirGraph g(4);
+	g.push({ 0,1 });
+	g.push({ 0,2 });
+	auto d = g.warshall_floyd();
+	EXPECT_EQ(d[0][1], 1);
+	EXPECT_EQ(d[1][2], 2);
+	EXPECT_EQ(d[0][3], INF);
+	DirGraph g2(4);
+	g2.push({ 0,1 });
+	g2.push({ 0,2 });
+	d = g2.warshall_floyd();
+	EXPECT_EQ(d[0][1], 1);
+	EXPECT_EQ(d[1][2], INF);
+	EXPECT_EQ(d[0][3], INF);
 }
 
 TEST(UnionFind, weight) {
