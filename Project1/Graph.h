@@ -555,7 +555,9 @@ public:
 		// show graph as png file
 #ifdef _WIN64
 		srand(time(nullptr));
-		(void)_mkdir("./tmp");
+		static auto init = []() { // make dir tmp (if not exisit) and delete all files in it only once.
+			return system("mkdir .\\tmp > NUL 2>&1") && system("del /Q .\\tmp\\* > NUL 2>&1");
+		}();
 		string tmpdot = "./tmp/"; string tmppng = "./tmp/";
 		tmpdot += to_string(rand()); tmppng += to_string(rand()) + "." + ext;
 		ofstream of(tmpdot);
