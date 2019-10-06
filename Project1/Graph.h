@@ -551,7 +551,7 @@ public:
 		res += "}\n";
 		return res;
 	}
-	void show(bool weighted = false, string  ext = "png") const {
+	void show(bool weighted = false, string  ext = "pdf") const {
 		// show graph as png file
 #ifdef _WIN64
 		srand(time(nullptr));
