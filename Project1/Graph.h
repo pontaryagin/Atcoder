@@ -535,8 +535,8 @@ public:
 	string dot(bool weighted = false) const {
 		// export graph as dot file
 		string res = (dir == GraphDir::dir?"digraph {" : "graph {");
-		//res += "graph[charset = \"UTF-8\"; ";
-		//res += "];"; // header
+		res += "node [ style=filled shape=circle fontname=\"Fira Code\" fontcolor=darkslategray color=darkslategray fillcolor=lightcyan];\n";
+		res += "edge [ color=darkslategray ]";
 		rep(i, 0, size()) {
 			res += to_string(i) + ";\n";
 		}
