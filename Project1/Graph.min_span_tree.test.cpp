@@ -18,7 +18,7 @@ int main() {
 	cout << fixed << setprecision(12);
 
 	ll n, m; cin >> n >> m;
-	UndirGraph g(n);
+	Graph g(n);
 	rep(i, 0, m) {
 		ll s, t, w; cin >> s >> t >> w;
 		g.push({ s,t,w });

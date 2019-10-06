@@ -99,7 +99,7 @@ TEST(SegmentTree, segment_tree) {
 }
 
 TEST(Graph, Dijkstra) {
-	Graph<GraphDir::undir> g(5);
+	Graph g(5);
 	g.push({ 0,1 });
 	g.push({ 0,2, 2 });
 	g.push({ 2,3 , 4});
@@ -117,7 +117,7 @@ TEST(Graph, Dijkstra) {
 }
 
 TEST(Graph, EdgeItr) {
-	DirGraph g(3);
+	Digraph g(3);
 	g.push({ 0,1, 1});
 	g.push({ 0,2, 2 });
 	g.push({ 1,2 , 3 });
@@ -130,7 +130,7 @@ TEST(Graph, EdgeItr) {
 
 TEST(Graph, Bellman_Ford) {
 	// normal case
-	UndirGraph g(5);
+	Graph g(5);
 	g.push({ 0,1 });
 	g.push({ 0,2, 2 });
 	g.push({ 2,3 , 4 });
@@ -146,7 +146,7 @@ TEST(Graph, Bellman_Ford) {
 	auto path2_res = vll{ 2,3 };
 	EXPECT_EQ(path2, path2_res);
 	// negative loop
-	DirGraph g2(5);
+	Digraph g2(5);
 	g2.push({ 0,1, -1 });
 	g2.push({ 1,1, -100 });
 	g2.push({ 0,3,-1 });
@@ -159,7 +159,7 @@ TEST(Graph, Bellman_Ford) {
 }
 
 TEST(Graph, DFSBFS) {
-	UndirGraph g(5);
+	Graph g(5);
 	g.push({ 0,1 });
 	g.push({ 1,2 });
 	g.push({ 0,3 });
@@ -177,7 +177,7 @@ TEST(Graph, DFSBFS) {
 }
 
 TEST(Graph, LCA) {
-	UndirGraph g(5);
+	Graph g(5);
 	g.push({ 0,1 });
 	g.push({ 0,2 });
 	g.push({ 2,3 });
@@ -195,7 +195,7 @@ TEST(Graph, LCA) {
 
 TEST(Graph, EulerTour) {
 
-	UndirGraph g(5);
+	Graph g(5);
 	g.push({ 0,1 });
 	g.push({ 0,2 });
 	g.push({ 2,3 });
@@ -211,7 +211,7 @@ TEST(Graph, EulerTour) {
 
 TEST(Graph, Kruskal) {
 
-	UndirGraph g(5);
+	Graph g(5);
 	g.push({ 0,1,1 });
 	g.push({ 0,2,3 });
 	g.push({ 0,3,4 });
@@ -234,13 +234,13 @@ TEST(Graph, Kruskal) {
 }
 
 TEST(Graph, is_bipartite) {
-	UndirGraph g(5);
+	Graph g(5);
 	g.push({ 0,1 });
 	g.push({ 0,2 });
 	g.push({ 0,3 });
 	g.push({ 1,3 });
 	EXPECT_EQ(g.is_bipartite(), false);
-	UndirGraph g2(5);
+	Graph g2(5);
 	g2.push({ 0,1 });
 	g2.push({ 1,2 });
 	g2.push({ 2,3 });
@@ -249,7 +249,7 @@ TEST(Graph, is_bipartite) {
 }
 
 TEST(Graph, max_flow){
-	DirGraph g(6);
+	Digraph g(6);
 	g.push({0,1});
 	g.push({0,2});
 	g.push({1,2});
@@ -272,7 +272,7 @@ TEST(Graph, diameter) {
 }
 
 TEST(Graph, max_length) {
-	DirGraph g(5);
+	Digraph g(5);
 	g.push({ 1,0 });
 	g.push({ 1,2 });
 	g.push({ 2,3 });
@@ -281,7 +281,7 @@ TEST(Graph, max_length) {
 }
 
 TEST(Graph, acyclic) {
-	DirGraph g(5);
+	Digraph g(5);
 	g.push({ 1,0 });
 	g.push({ 1,2 });
 	g.push({ 2,3 });
@@ -298,7 +298,7 @@ TEST(Graph, acyclic) {
 }
 
 TEST(Graph, acyclic_undir) {
-	UndirGraph g(5);
+	Graph g(5);
 	g.push({ 1,0 });
 	g.push({ 1,2 });
 	g.push({ 2,3 });
@@ -315,14 +315,14 @@ TEST(Graph, acyclic_undir) {
 }
 
 TEST(Graph, warshall_floyd) {
-	UndirGraph g(4);
+	Graph g(4);
 	g.push({ 0,1 });
 	g.push({ 0,2 });
 	auto d = g.warshall_floyd();
 	EXPECT_EQ(d[0][1], 1);
 	EXPECT_EQ(d[1][2], 2);
 	EXPECT_EQ(d[0][3], INF);
-	DirGraph g2(4);
+	Digraph g2(4);
 	g2.push({ 0,1 });
 	g2.push({ 0,2 });
 	d = g2.warshall_floyd();

@@ -3,13 +3,13 @@
 
 int main() {
 	ll n, m; cin >> n >> m;
-	DirGraph g(n);
+	Digraph g(n);
 	rep(i, 0, m) {
 		ll s, t; cin >> s >> t;
 		g.push({ s,t });
 	}
 	vll par(n);
-	DirGraph dag = g.scc(par);
+	Digraph dag = g.scc(par);
 
 	ll q; cin >> q;
 	rep(i, 0, q) {

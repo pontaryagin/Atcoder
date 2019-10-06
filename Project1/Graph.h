@@ -566,10 +566,8 @@ public:
 	}
 };
 
-template<GraphDir dir>
-using Graph = Graph_Base<dir, ll>;
-using DirGraph = Graph<GraphDir::dir>;
-using UndirGraph = Graph<GraphDir::undir>;
+using Graph = Graph_Base<GraphDir::undir, ll>;
+using Digraph = Graph_Base<GraphDir::dir, ll>;
 
 
 vll shortest_path_generator(const vll& from_list, ll start, ll goal) {
@@ -594,7 +592,7 @@ private:
 	using Edge = Edge_Base<ll>;
 public:
 	struct RevEdge { ll from, to, cap, rev; };
-	FordFulkerson(DirGraph graph) 
+	FordFulkerson(Digraph graph) 
 		:usedNode(graph.size()), G(vec_t<2,RevEdge>(graph.size()))
 	{
 		rep(i, 0, graph.size()) {
@@ -646,7 +644,7 @@ public:
 // Least Common Ancestor
 class LCA {
 public:
-	LCA(const Graph<GraphDir::undir>& graph, ll root) : max_par(ll(ceil(log2(graph.size()) + 2))), parent(graph.size(), vll(max_par,-1)),
+	LCA(const Graph& graph, ll root) : max_par(ll(ceil(log2(graph.size()) + 2))), parent(graph.size(), vll(max_par,-1)),
 		depth() {
 		//parent[root][0] = root;
 		graph.dfs(root, [&](const Edge & e) {

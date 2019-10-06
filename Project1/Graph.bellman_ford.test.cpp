@@ -18,7 +18,7 @@ int main() {
 	cout << fixed << setprecision(12);
 
 	ll n, m, st; cin >> n >> m >> st;
-	DirGraph g(n);
+	Digraph g(n);
 	rep(i, 0, m) {
 		Edge e;
 		cin >> e.from >> e.to >> e.cost;
