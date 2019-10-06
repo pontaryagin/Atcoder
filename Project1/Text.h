@@ -7,15 +7,15 @@ ll kmp_search(const string& text, const string& word) {
 
 	vector<int> pi(word.size(), 0);
 	for (int i = 1, k = 0; i < (int)word.size(); ++i) {
-		while (k && word[k] != word[i]) k = pi[k - 1];
+		while (k && word[k] != word[i]) k = pi[size_t(k) - 1];
 		if (word[k] == word[i]) ++k;
 		pi[i] = k;
 	}
 
 	for (int i = 0, k = 0; i < (int)text.size(); ++i) {
-		while (k && word[k] != text[i]) k = pi[k - 1];
+		while (k && word[k] != text[i]) k = pi[size_t(k) - 1];
 		if (word[k] == text[i]) ++k;
-		if (k == (int)word.size()) return i - k + 1;
+		if (k == (int)word.size()) return size_t(i) - k + 1;
 	}
 	return text.size();
 }
@@ -35,7 +35,24 @@ struct RollingHash {
 		return hash[r] - hash[l] * p[r - l];
 	}
 };
-using RollingHash1 = RollingHash<MOD>;
-using RollingHash2 = RollingHash<(1LL << 61) - 1>; 
+using RollingHash1 = RollingHash<(1LL<<61)-1, 10007>;
+using RollingHash2 = RollingHash<(1LL<<61) - 1, 9973>; 
 using RollingHash3 = RollingHash<999999937>;
+
+vector<pair<char, ll>> run_length(const string& s) {
+	// returns run length encoding of string in O(|s|)
+	vector<pair<char,ll>> res;
+	ll cnt = 0;
+	rep(i, 0, s.size()) {
+		if (res.size()>0 && res.back().first == s[i]) {
+			++res.back().second;
+		}
+		else {
+			res.emplace_back(s[i], 1LL);
+		}
+	}
+	return res;
+}
+
+
 

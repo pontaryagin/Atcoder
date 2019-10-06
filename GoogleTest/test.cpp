@@ -356,6 +356,12 @@ TEST(Text, kmp_search) {
 	EXPECT_EQ(kmp_search("aaa", "aaaa"),3);
 }
 
+TEST(Text, run_length) {
+	auto compressed = run_length("aaabcdde");
+	vector<pair<char,ll>> res = { {'a',3}, {'b',1}, {'c',1},{'d',2},{'e',1} };
+	EXPECT_EQ(compressed, res);
+}
+
 int main(int argc, char** argv)
 {
 	::testing::InitGoogleTest(&argc, argv);
