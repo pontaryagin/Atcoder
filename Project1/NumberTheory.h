@@ -218,39 +218,37 @@ ll gcd(ll val, ll b) {
 
 
 
-vll getDivisors(ll n) {
+vll divisor(ll n) {
+	// returns common divisors in O(sqrt(min(n,m)))
 	vll res;
-	ll i = 1;
-
-	for (; i*i < n; i++) {
+	for (ll i = 1; i*i <= n; i++) {
 		if (n%i == 0) {
 			res.push_back(i);
 			res.push_back(n / i);
 		}
+		if (i * i == n)res.push_back(i);
 	}
-	if (i*i == n)res.push_back(i);
 	sort(res.begin(), res.end());
 	return res;
 }
 
-vll getDivisors(ll n, ll m) {
-	// O(sqrt(min(n,m)))
+vll divisor(ll n, ll m) {
+	// returns common divisors in O(sqrt(min(n,m)))
 	if (n > m) swap(n, m);
 	vll res;
-	ll i = 1;
-
-	for (; i*i < n; i++) {
+	for (ll i = 1; i*i <= n; i++) {
 		if (n%i == 0) {
 			if (m%i == 0) res.push_back(i);
 			if (m % (n / i) == 0) res.push_back(n / i);
 		}
+		if (i * i == n && m % i == 0) res.push_back(i);
 	}
-	if (i*i == n) if (m%i == 0) res.push_back(i);
 	sort(res.begin(), res.end());
 	return res;
 }
 
-vector<pll >prime_factorize(ll n) {
+vpll prime_factorize(ll n) {
+	// returns prime factorization of n in O(sprt(n))
 	vector<pll> res;
 	for (ll p = 2; p*p <= n; ++p) {
 		if (n%p != 0)continue;
