@@ -84,6 +84,11 @@ TEST(NumberTheory, prime_factorize) {
 	EXPECT_EQ(primes, res);
 }
 
+TEST(NumberTheory, eulears_phi) {
+	EXPECT_EQ(eulers_phi(6), 2);
+	EXPECT_EQ(eulers_phi(1000000), 400000);
+}
+
 TEST(SegmentTree, LazySegmentTree) {
 
 	LazySegmentTree<M::min_indexed_t<>> seg(10);

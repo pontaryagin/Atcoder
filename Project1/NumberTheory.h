@@ -260,6 +260,25 @@ vpll prime_factorize(ll n) {
 	return res;
 }
 
+ll eulers_phi(ll n) {
+	// returns the number of coprime integers in O(sqrt(n) + n^(1.4/log log n)) [ the number of prime divisors <= O(log(n^(1.4/log log n) ) ] 
+	ll res = 0;
+	auto primes = prime_factorize(n);
+	ll psize = primes.size();
+	rep(bit, 1, 1LL << psize) {
+		ll bitsize = popcnt(bit);
+		ll arg = (bitsize % 2 ? 1 : -1);
+		ll base = 1;
+		rep(i, 0, primes.size()) {
+			ll p = primes[i].first;
+			if(bit &(1LL << i)) 
+				base *= p;
+		}
+		res += arg * (n / base);
+	}
+	return n - res;
+}
+
 
 
 
