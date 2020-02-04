@@ -99,6 +99,8 @@
       </AdditionalOptions>
       <AdditionalIncludeDirectories>C:\lib\boost_1_66_0\;C:\lib\Sprout\;</AdditionalIncludeDirectories>
       <EnablePREfast>false</EnablePREfast>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\lib\boost_1_66_0\stage\x86\lib</AdditionalLibraryDirectories>
@@ -130,6 +132,7 @@
       </AdditionalOptions>
       <AdditionalIncludeDirectories>C:\lib\boost_1_66_0\;C:\lib\Sprout\;</AdditionalIncludeDirectories>
       <EnablePREfast>false</EnablePREfast>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -150,6 +153,7 @@
     <ClInclude Include="SegmentTree.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="type_name.h" />
     <ClInclude Include="UnionFind.h" />
   </ItemGroup>
   <ItemGroup>

@@ -46,6 +46,7 @@ constexpr ll INF = 1LL << 60;
 #define rep(i, N, M) for(ll i=N, i##_len=(M); i<i##_len; ++i)
 #define rep_skip(i, N, M, ...) for(ll i=N, i##_len=(M); i<i##_len; i+=(skip))
 #define rrep(i, N, M)  for(ll i=(M)-1, i##_len=(N-1); i>i##_len; --i)
+#define repbit(bit, N, DIG) rep(bit, (N), (1LL<< (DIG)))
 #define pb push_back
 #define fir first
 #define sec second

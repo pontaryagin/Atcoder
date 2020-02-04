@@ -14,6 +14,7 @@
     <ClInclude Include="LagrangeInterpolation.h" />
     <ClInclude Include="Annealing.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="type_name.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
