@@ -9,8 +9,8 @@ struct UnionFind {
 	UnionFind(ll size) : data(size, -1), querySize_(size, 0), diff_weight(size, 0) {
 		rep(i, 0, size) roots.insert(i);
 	}
-
-	ll unite(ll x, ll y, ll w = 0) {
+	// return : pair {new root, old root}
+	pll unite(ll x, ll y, ll w = 0) {
 		// return: root
 		w += weight(x); w -= weight(y);
 		x = get_root(x); y = get_root(y);
@@ -20,11 +20,11 @@ struct UnionFind {
 			data[x] += data[y]; data[y] = x;
 			querySize_[x] += querySize_[y] + 1;
 			roots.erase(y);
-			return x;
+			return { x, y };
 		}
 		else {
 			querySize_[x]++;
-			return x;
+			return { x, y };
 		}
 	}
 	bool is_same(ll x, ll y) {
