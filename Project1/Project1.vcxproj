@@ -95,15 +95,15 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalOptions>
-      </AdditionalOptions>
-      <AdditionalIncludeDirectories>C:\lib\boost_1_66_0\;C:\lib\Sprout\;</AdditionalIncludeDirectories>
+      <AdditionalOptions>/openmp:experimental /Qvec-report:2</AdditionalOptions>
+      <AdditionalIncludeDirectories>C:\lib\boost\include\boost-1_72;C:\lib\boost_1_66_0\;C:\lib\Sprout\;C:\lib\tbb\include;C:\lib\tbb\bin\intel64\vc14;</AdditionalIncludeDirectories>
       <EnablePREfast>false</EnablePREfast>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <OpenMPSupport>true</OpenMPSupport>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\lib\boost_1_66_0\stage\x86\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\lib\boost\lib;C:\lib\boost_1_66_0\stage\x86\lib;C:\lib\tbb\lib\intel64\vc14</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -128,16 +128,16 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalOptions>
-      </AdditionalOptions>
-      <AdditionalIncludeDirectories>C:\lib\boost_1_66_0\;C:\lib\Sprout\;</AdditionalIncludeDirectories>
+      <AdditionalOptions>/openmp:experimental /Qvec-report:2</AdditionalOptions>
+      <AdditionalIncludeDirectories>C:\lib\boost\include\boost-1_72;C:\lib\boost_1_66_0\;C:\lib\Sprout\;C:\lib\tbb\include;C:\lib\tbb\bin\intel64\vc14;</AdditionalIncludeDirectories>
       <EnablePREfast>false</EnablePREfast>
       <OpenMPSupport>true</OpenMPSupport>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\lib\boost_1_66_0\stage\x86\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\lib\boost\lib;C:\lib\boost_1_66_0\stage\x86\lib;C:\lib\tbb\lib\intel64\vc14</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
