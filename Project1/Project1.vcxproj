@@ -145,6 +145,7 @@
     <ClInclude Include="Algorithm.h" />
     <ClInclude Include="Annealing.h" />
     <ClInclude Include="Bit.h" />
+    <ClInclude Include="Convolution.h" />
     <ClInclude Include="FFT.h" />
     <ClInclude Include="Graph.h" />
     <ClInclude Include="LagrangeInterpolation.h" />

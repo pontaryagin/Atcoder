@@ -39,19 +39,22 @@ using RollingHash1 = RollingHash<(1LL<<61)-1, 10007>;
 using RollingHash2 = RollingHash<(1LL<<61) - 1, 9973>; 
 using RollingHash3 = RollingHash<999999937>;
 
-vector<pair<char, ll>> run_length(const string& s) {
+template<class T>
+pair<vector<typename T::value_type>, vll> run_length(const T& s) {
 	// returns run length encoding of string in O(|s|)
-	vector<pair<char,ll>> res;
+	vector<typename T::value_type> res;
+	vll length;
 	ll cnt = 0;
 	rep(i, 0, s.size()) {
-		if (res.size()>0 && res.back().first == s[i]) {
-			++res.back().second;
+		if (res.size()>0 && res.back() == s[i]) {
+			++length.back();
 		}
 		else {
-			res.emplace_back(s[i], 1LL);
+			res.emplace_back(s[i]);
+			length.emplace_back(1LL);
 		}
 	}
-	return res;
+	return { res, length };
 }
 
 
