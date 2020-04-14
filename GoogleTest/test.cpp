@@ -376,7 +376,7 @@ TEST(Text, kmp_search) {
 
 TEST(Text, run_length) {
 	auto compressed = run_length(string("aaabcdde"));
-	vector<pair<char,ll>> res = { {'a',3}, {'b',1}, {'c',1},{'d',2},{'e',1} };
+	pair<vector<char>, vector<ll>> res = { { 'a', 'b','c','d','e'}, {3, 1, 1, 2, 1} };
 	EXPECT_EQ(compressed, res);
 }
 
