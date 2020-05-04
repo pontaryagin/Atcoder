@@ -35,26 +35,26 @@ struct RollingHash {
 		return hash[r] - hash[l] * p[r - l];
 	}
 };
-using RollingHash1 = RollingHash<(1LL<<61)-1, 10007>;
+using RollingHash1 = RollingHash<(1LL<<61) - 1, 10007>;
 using RollingHash2 = RollingHash<(1LL<<61) - 1, 9973>; 
 using RollingHash3 = RollingHash<999999937>;
 
-template<class T>
-pair<vector<typename T::value_type>, vll> run_length(const T& s) {
+
+using T= string ; //template<class T>
+vector<pair<typename T::value_type, ll>> run_length(const T& s) {
 	// returns run length encoding of string in O(|s|)
-	vector<typename T::value_type> res;
+	vector<pair<typename T::value_type, ll>> res;
 	vll length;
 	ll cnt = 0;
 	rep(i, 0, s.size()) {
-		if (res.size()>0 && res.back() == s[i]) {
-			++length.back();
+		if (res.size()>0 && res.back().first == s[i]) {
+			++res.back().second;
 		}
 		else {
-			res.emplace_back(s[i]);
-			length.emplace_back(1LL);
+			res.emplace_back(s[i], 1LL);
 		}
 	}
-	return { res, length };
+	return res;
 }
 
 
