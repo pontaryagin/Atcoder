@@ -12,6 +12,12 @@ TEST(MyHeader, inv_map) {
 	vector<double> y = { 0.1, 10., 100., 1000. };
 	auto mp2 = inv_map(y);
 	EXPECT_EQ(mp2[100.], 2);
+	map<ll, ll> mp_o;
+	mp_o[2] = 100; mp_o[3] = 121;
+	auto mp_i = inv_map(mp_o);
+	EXPECT_EQ(mp_i[100], 2);
+	EXPECT_EQ(mp_i[121], 3);
+
 }
 
 TEST(MyHeader, complex) {
@@ -104,40 +110,19 @@ TEST(SegmentTree, LazySegmentTree) {
 	EXPECT_EQ(seg.query(0, 0).first, numeric_limits<ll>::max());
 
 }
-
 TEST(SegmentTree, segment_tree) {
-
-	segment_tree<M::min_indexed_t<>> seg(10);
-	seg.update(0, pll{ 20,0 });
-	seg.update(1, pll{ 11,1 });
-	seg.update(3, pll{ 3,0 });
-	EXPECT_EQ(seg.query(0, 1).first, 20);
-	EXPECT_EQ(seg.query(1, 4).first, 3);
-	EXPECT_EQ(seg.query(0, 2).first, 11);
-	EXPECT_EQ(seg.query(0, 0).first, numeric_limits<ll>::max());
-	EXPECT_EQ(seg.query(3).first, 3);
-
-}
-
-TEST(SegmentTree, persistent_segment_tree) {
-	segment_tree<M::min_t<>, true> seg(10);
-	seg.update(0, 20); // ver 1
-	seg.update(1, 11); // ver 2
-	seg.update(3, 3);  // ver 3
+	segment_tree < M::min_t<>> seg(10);
+	seg.update(0, 20);
+	seg.update(1, 11);
+	seg.update(3, 3);
 	EXPECT_EQ(seg.query(0, 1), 20);
 	EXPECT_EQ(seg.query(1, 4), 3);
-	seg.revert(2);
-	EXPECT_EQ(seg.query(1, 4), 11); 
-	seg.revert(1);
-	EXPECT_EQ(seg.query(1, 4), numeric_limits<ll>::max()); 
-	EXPECT_EQ(seg.query(0, 4), 20);
-	seg.update(1, 11); // ver2
-	seg.update(3, 3);  // ver3
-	EXPECT_EQ(seg.query(0, 1), 20); 
-	EXPECT_EQ(seg.query(1, 4), 3);
-	seg.revert();
-	EXPECT_EQ(seg.query(1, 4), 11);
+	EXPECT_EQ(seg.query(0, 2), 11);
+	EXPECT_EQ(seg.query(0, 0), numeric_limits<ll>::max());
+	EXPECT_EQ(seg.query(3), 3);
+
 }
+
 
 TEST(Graph, Dijkstra) {
 	Graph g(5);

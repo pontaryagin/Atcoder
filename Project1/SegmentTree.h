@@ -27,55 +27,33 @@ struct has_append<T, typename conditional<false, decltype(T::append(T::underlyin
 
 
 
-template <typename Monoid, bool persistent = false>
+template <typename Monoid>
 struct segment_tree
 {
 
 	using underlying_type = typename  Monoid::underlying_type;
 
-	segment_tree(ll a_n) : size_original(a_n)
+	segment_tree(ll a_n, underlying_type unit = Monoid::unit()) : size_original(a_n), unit(unit)
 	{
-		vector<underlying_type> initial_value = vector<underlying_type>(a_n, Monoid::unit());
+		vector<underlying_type> initial_value = vector<underlying_type>(a_n, unit);
 		segment_tree_impl(a_n, initial_value);
 	}
 
-	segment_tree(ll a_n, vector<underlying_type>& initial_value) : size_original(a_n)
+	segment_tree(ll a_n, vector<underlying_type>& initial_value, underlying_type unit = Monoid::unit()) : size_original(a_n), unit(unit)
 	{
 		segment_tree_impl(a_n, initial_value);
 	}
 
 	void update(int i, underlying_type z) { // 0-based
 		assert(0 <= i && i < 2 * n - 1);
-		if(persistent) {
-			versions.resize(versions.size() + 1);
-			versions.back().push_back({ i + n - 1, a[i + n - 1] });
-			for (int j = (i + n) / 2; j > 0; j /= 2) { // 1-based
-				versions.back().push_back({ j - 1,a[j - 1] });
-			}
-		}
 		a[i + n - 1] = z;
-		for (int j = (i + n) / 2; j > 0; j /= 2) { // 1-based
-			a[j - 1] = Monoid::append(a[2 * j - 1], a[2 * j]);
-		}
-	}
-	// 1-base num of queries. original version = 0 (when it was constructed)
-	void revert(int version) { 
-		assert(0 <= version && version < versions.size() && persistent);
-		while (versions.size() > version) {
-			auto& ver = versions.back();
-			rep(i, 0, ver.size()) {
-				a[ver.at(i).first] = ver.at(i).second;
-			}
-			versions.pop_back();
+		for (i = (i + n) / 2; i > 0; i /= 2) { // 1-based
+			a[i - 1] = Monoid::append(a[2 * i - 1], a[2 * i]);
 		}
 	}
 
-	void revert() {
-		revert(versions.size() - 1);
-	}
-
-	underlying_type query(ll l, ll r) const { // 0-based, [l, r)
-		underlying_type lacc = Monoid::unit(), racc = Monoid::unit();
+	underlying_type query(ll l, ll r) { // 0-based, [l, r)
+		underlying_type lacc = unit, racc = unit;
 		assert(l <= r && r <= n);
 		l += n; r += n;
 		for (; l < r; l /= 2, r /= 2) { // 1-based loop, 2x faster than recursion
@@ -85,7 +63,7 @@ struct segment_tree
 		return Monoid::append(lacc, racc);
 	}
 
-	underlying_type query(ll i) const { // return value at i
+	underlying_type query(ll i) { // return value at i
 		assert(0 <= i && i < size_original);
 		return a[i + n - 1];
 	}
@@ -96,15 +74,12 @@ private:
 	ll size_original;
 	ll n;
 	vector<underlying_type> a;
-	// for persistent structure
-	vector<vector<pair<int, underlying_type>>> versions;
-	ll height;
-
+	underlying_type unit;
 	void segment_tree_impl(ll a_n, vector<underlying_type>& initial_value)
 	{
 		assert(a_n == initial_value.size());
-		n = 1; height = 1; while (n < a_n) { n *= 2; height++; }
-		a.resize(2 * n - 1, Monoid::unit());
+		n = 1; while (n < a_n) n *= 2;
+		a.resize(2 * n - 1, unit);
 		rep(i, 0, initial_value.size()) {
 			a[i + (n - 1)] = initial_value[i];
 		}
