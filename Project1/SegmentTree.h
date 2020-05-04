@@ -26,7 +26,8 @@ struct has_append<T, typename conditional<false, decltype(T::append(T::underlyin
 };
 
 
-template <typename Monoid>
+
+template <typename Monoid, bool persistent = false>
 struct segment_tree
 {
 
@@ -45,13 +46,35 @@ struct segment_tree
 
 	void update(int i, underlying_type z) { // 0-based
 		assert(0 <= i && i < 2 * n - 1);
+		if constexpr(persistent) {
+			versions.resize(versions.size() + 1);
+			versions.back().push_back({ i + n - 1, a[i + n - 1] });
+			for (int j = (i + n) / 2; j > 0; j /= 2) { // 1-based
+				versions.back().push_back({ j - 1,a[j - 1] });
+			}
+		}
 		a[i + n - 1] = z;
-		for (i = (i + n) / 2; i > 0; i /= 2) { // 1-based
-			a[i - 1] = Monoid::append(a[2 * i - 1], a[2 * i]);
+		for (int j = (i + n) / 2; j > 0; j /= 2) { // 1-based
+			a[j - 1] = Monoid::append(a[2 * j - 1], a[2 * j]);
+		}
+	}
+	// 1-base num of queries. original version = 0 (when it was constructed)
+	void revert(int version) { 
+		assert(0 <= version && version < versions.size() && persistent);
+		while (versions.size() > version) {
+			auto& ver = versions.back();
+			rep(i, 0, ver.size()) {
+				a[ver.at(i).first] = ver.at(i).second;
+			}
+			versions.pop_back();
 		}
 	}
 
-	underlying_type query(ll l, ll r) { // 0-based, [l, r)
+	void revert() {
+		revert(versions.size() - 1);
+	}
+
+	underlying_type query(ll l, ll r) const { // 0-based, [l, r)
 		underlying_type lacc = Monoid::unit(), racc = Monoid::unit();
 		assert(l <= r && r <= n);
 		l += n; r += n;
@@ -62,7 +85,7 @@ struct segment_tree
 		return Monoid::append(lacc, racc);
 	}
 
-	underlying_type query(ll i) { // return value at i
+	underlying_type query(ll i) const { // return value at i
 		assert(0 <= i && i < size_original);
 		return a[i + n - 1];
 	}
@@ -73,10 +96,14 @@ private:
 	ll size_original;
 	ll n;
 	vector<underlying_type> a;
+	// for persistent structure
+	vector<vector<pair<int, underlying_type>>> versions;
+	ll height;
+
 	void segment_tree_impl(ll a_n, vector<underlying_type>& initial_value)
 	{
 		assert(a_n == initial_value.size());
-		n = 1; while (n < a_n) n *= 2;
+		n = 1; height = 1; while (n < a_n) { n *= 2; height++; }
 		a.resize(2 * n - 1, Monoid::unit());
 		rep(i, 0, initial_value.size()) {
 			a[i + (n - 1)] = initial_value[i];
@@ -103,7 +130,7 @@ namespace M {
 		typedef pair<typename S::underlying_type, typename T::underlying_type> underlying_type;
 		static underlying_type unit() { return make_pair(S::unit(), T::unit()); }
 		static underlying_type append(underlying_type a, underlying_type b) { return make_pair(S::append(a.first, b.first), T::append(a.second, b.second)); }
-		static underlying_type iterate(underlying_type a, int n) { return make_pair(S::iterate(a.first,n), T::iterate(a.second,n)); }
+		static underlying_type iterate(underlying_type a, int n) { return make_pair(S::iterate(a.first, n), T::iterate(a.second, n)); }
 	};
 
 	template <typename T = ll>

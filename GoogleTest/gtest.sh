@@ -1,4 +1,5 @@
 #! /bin/bash
+cd $(dirname $0)
 echo "Compiling unit tests..."
 g++  -std=c++14  -g -Wall -Wextra -o unit_test test.cpp  -lgtest -pthread
 if [  $? -gt 1  ]; then
