@@ -46,7 +46,7 @@ struct segment_tree
 
 	void update(int i, underlying_type z) { // 0-based
 		assert(0 <= i && i < 2 * n - 1);
-		if constexpr(persistent) {
+		if(persistent) {
 			versions.resize(versions.size() + 1);
 			versions.back().push_back({ i + n - 1, a[i + n - 1] });
 			for (int j = (i + n) / 2; j > 0; j /= 2) { // 1-based
