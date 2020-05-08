@@ -26,19 +26,20 @@ struct has_append<T, typename conditional<false, decltype(T::append(T::underlyin
 };
 
 
+
 template <typename Monoid>
 struct segment_tree
 {
 
 	using underlying_type = typename  Monoid::underlying_type;
 
-	segment_tree(ll a_n) : size_original(a_n)
+	segment_tree(ll a_n, underlying_type unit = Monoid::unit()) : size_original(a_n), unit(unit)
 	{
-		vector<underlying_type> initial_value = vector<underlying_type>(a_n, Monoid::unit());
+		vector<underlying_type> initial_value = vector<underlying_type>(a_n, unit);
 		segment_tree_impl(a_n, initial_value);
 	}
 
-	segment_tree(ll a_n, vector<underlying_type>& initial_value) : size_original(a_n)
+	segment_tree(ll a_n, vector<underlying_type>& initial_value, underlying_type unit = Monoid::unit()) : size_original(a_n), unit(unit)
 	{
 		segment_tree_impl(a_n, initial_value);
 	}
@@ -52,7 +53,7 @@ struct segment_tree
 	}
 
 	underlying_type query(ll l, ll r) { // 0-based, [l, r)
-		underlying_type lacc = Monoid::unit(), racc = Monoid::unit();
+		underlying_type lacc = unit, racc = unit;
 		assert(l <= r && r <= n);
 		l += n; r += n;
 		for (; l < r; l /= 2, r /= 2) { // 1-based loop, 2x faster than recursion
@@ -73,11 +74,12 @@ private:
 	ll size_original;
 	ll n;
 	vector<underlying_type> a;
+	underlying_type unit;
 	void segment_tree_impl(ll a_n, vector<underlying_type>& initial_value)
 	{
 		assert(a_n == initial_value.size());
 		n = 1; while (n < a_n) n *= 2;
-		a.resize(2 * n - 1, Monoid::unit());
+		a.resize(2 * n - 1, unit);
 		rep(i, 0, initial_value.size()) {
 			a[i + (n - 1)] = initial_value[i];
 		}
@@ -103,7 +105,7 @@ namespace M {
 		typedef pair<typename S::underlying_type, typename T::underlying_type> underlying_type;
 		static underlying_type unit() { return make_pair(S::unit(), T::unit()); }
 		static underlying_type append(underlying_type a, underlying_type b) { return make_pair(S::append(a.first, b.first), T::append(a.second, b.second)); }
-		static underlying_type iterate(underlying_type a, int n) { return make_pair(S::iterate(a.first,n), T::iterate(a.second,n)); }
+		static underlying_type iterate(underlying_type a, int n) { return make_pair(S::iterate(a.first, n), T::iterate(a.second, n)); }
 	};
 
 	template <typename T = ll>

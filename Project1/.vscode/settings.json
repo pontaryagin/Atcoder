@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "*.cls": "vb",
-        "ios": "cpp",
-        "iomanip": "cpp",
-        "terminal.integrated.shell.windows": "C:\\Windows\\sysnative\\bash.exe",
-        "files.eol": "\n"
-    }
-}

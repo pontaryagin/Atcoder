@@ -12,6 +12,12 @@ TEST(MyHeader, inv_map) {
 	vector<double> y = { 0.1, 10., 100., 1000. };
 	auto mp2 = inv_map(y);
 	EXPECT_EQ(mp2[100.], 2);
+	map<ll, ll> mp_o;
+	mp_o[2] = 100; mp_o[3] = 121;
+	auto mp_i = inv_map(mp_o);
+	EXPECT_EQ(mp_i[100], 2);
+	EXPECT_EQ(mp_i[121], 3);
+
 }
 
 TEST(MyHeader, complex) {
@@ -96,25 +102,27 @@ TEST(SegmentTree, LazySegmentTree) {
 	seg.update(1, pll{ 11,1 });
 	seg.update(3, 4, pll{ 3,0 });
 	EXPECT_EQ(seg.query(0, 1).first, 20);
+	EXPECT_EQ(seg.query(0, 1).second, 0);
 	EXPECT_EQ(seg.query(1, 4).first, 3);
+	EXPECT_EQ(seg.query(1, 4).second, 0);
 	EXPECT_EQ(seg.query(0, 2).first, 11);
+	EXPECT_EQ(seg.query(0, 2).second, 1);
 	EXPECT_EQ(seg.query(0, 0).first, numeric_limits<ll>::max());
 
 }
-
 TEST(SegmentTree, segment_tree) {
-
-	segment_tree<M::min_indexed_t<>> seg(10);
-	seg.update(0, pll{ 20,0 });
-	seg.update(1, pll{ 11,1 });
-	seg.update(3, pll{ 3,0 });
-	EXPECT_EQ(seg.query(0, 1).first, 20);
-	EXPECT_EQ(seg.query(1, 4).first, 3);
-	EXPECT_EQ(seg.query(0, 2).first, 11);
-	EXPECT_EQ(seg.query(0, 0).first, numeric_limits<ll>::max());
-	EXPECT_EQ(seg.query(3).first, 3);
+	segment_tree < M::min_t<>> seg(10);
+	seg.update(0, 20);
+	seg.update(1, 11);
+	seg.update(3, 3);
+	EXPECT_EQ(seg.query(0, 1), 20);
+	EXPECT_EQ(seg.query(1, 4), 3);
+	EXPECT_EQ(seg.query(0, 2), 11);
+	EXPECT_EQ(seg.query(0, 0), numeric_limits<ll>::max());
+	EXPECT_EQ(seg.query(3), 3);
 
 }
+
 
 TEST(Graph, Dijkstra) {
 	Graph g(5);
@@ -375,7 +383,7 @@ TEST(Text, kmp_search) {
 }
 
 TEST(Text, run_length) {
-	auto compressed = run_length("aaabcdde");
+	auto compressed = run_length(string("aaabcdde"));
 	vector<pair<char,ll>> res = { {'a',3}, {'b',1}, {'c',1},{'d',2},{'e',1} };
 	EXPECT_EQ(compressed, res);
 }

@@ -77,7 +77,7 @@ elsif($problemName =~ /http.*/){
     if(system("oj test")) {die("test failed\n");}
     if($what eq 'submit'){
         if(system("oj login $problemName") || 
-            system("oj submit $problemName main.cpp")){
+            system("oj submit -y --no-open $problemName main.cpp")){
             print "submittion failed\n";
         }
     }

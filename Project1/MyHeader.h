@@ -40,7 +40,7 @@
 using namespace std;
 
 typedef long long ll;
-constexpr ll MOD = 1000000007;
+constexpr ll MOD = 1000000007LL;
 constexpr ll INF = 1LL << 60;
 
 #define rep(i, N, M) for(ll i=N, i##_len=(M); i<i##_len; ++i)
@@ -211,10 +211,16 @@ vector<string> split(const string& s, char delim) {
 	vector<string> elems;
 	stringstream ss(s);
 	string item;
+	if (s.size() > 0 && s.front() == delim) {
+		elems.push_back("");
+	}
 	while (getline(ss, item, delim)) {
 		if (!item.empty()) {
 			elems.push_back(item);
 		}
+	}
+	if (s.size() > 0 && s.back() == delim) {
+		elems.push_back("");
 	}
 	return elems;
 }
@@ -224,6 +230,14 @@ map<T,ll> inv_map(vector<T>& x) {
 	map<T, ll> res;
 	rep(i, 0, x.size()) {
 		res[x[i]] = i;
+	}
+	return res;
+}
+template<class K, class V>
+map<V, K> inv_map(map<K, V>& m) {
+	map<V, K> res;
+	for(const auto& x: m) {
+		res[x.second] = x.first;
 	}
 	return res;
 }
