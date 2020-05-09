@@ -29,7 +29,7 @@ int main() {
 	rep(i, 0, n) {
 		a[i] = a_ind[a[i]];
 	}
-	segment_tree<M::max_t<ll, 0LL>> seg(n);
+	segment_tree<M::max_t<ll>> seg(n, 0LL);
 	ll res = 0;
 	rep(i, 0, n) {
 		ll v = seg.query(0, a[i]);
