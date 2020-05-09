@@ -48,7 +48,7 @@ if(@ARGV == 0){exit(0);}
 elsif($what eq 'build'){gpp; print "\nbuild success!\n"; exit(0);}
 elsif($what eq 'open'){gpp; print "\nbuild success!\n"; `notepad.exe ./$out`; exit(0);}
 elsif($what eq 'code'){`code $out`; exit(0);}
-elsif($what eq 'test-man'){
+elsif($what eq 'test'){
     gpp;
     print colored("build success!\n",'cyan');
     print colored("Input EOF\n",'cyan');

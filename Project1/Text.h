@@ -40,7 +40,7 @@ using RollingHash2 = RollingHash<(1LL<<61) - 1, 9973>;
 using RollingHash3 = RollingHash<999999937>;
 
 
-using T= string ; //template<class T>
+template<class T>
 vector<pair<typename T::value_type, ll>> run_length(const T& s) {
 	// returns run length encoding of string in O(|s|)
 	vector<pair<typename T::value_type, ll>> res;
