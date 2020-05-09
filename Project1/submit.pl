@@ -76,8 +76,9 @@ elsif($problemName =~ /http.*/){
     gpp;
     if(system("oj test")) {die("test failed\n");}
     if($what eq 'submit'){
+	$ENV{"BROWSER"} = "/mnt/c/Program Files (x86)/Google/Chrome/Application/chrome.exe";
         if(system("oj login $problemName") || 
-            system("oj submit -y --no-open $problemName main.cpp")){
+            system(" oj submit -y $problemName main.cpp")){
             print "submittion failed\n";
         }
     }
