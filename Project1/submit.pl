@@ -11,7 +11,7 @@ my $res="";
 my ($what, $problemName, $problemNumber) = @ARGV; 
 # $what = build, test, submit, submit-f, gen
 sub gpp{
-    #system("g++ -std=c++14 main.cpp -fsanitize=address");
+    #system("g++ -std=c++17 main.cpp -fsanitize=address");
     if(system("g++ -std=c++17 -O2 main.cpp")) {die("compile error\n");}
 }
 sub expand{
@@ -76,8 +76,9 @@ elsif($problemName =~ /http.*/){
     gpp;
     if(system("oj test")) {die("test failed\n");}
     if($what eq 'submit'){
+	$ENV{"BROWSER"} = "/mnt/c/Program Files (x86)/Google/Chrome/Application/chrome.exe";
         if(system("oj login $problemName") || 
-            system("oj submit -y --no-open $problemName main.cpp")){
+            system(" oj submit -y $problemName main.cpp")){
             print "submittion failed\n";
         }
     }
