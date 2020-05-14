@@ -193,6 +193,15 @@ template<
 }
 
 template<
+	int pos,
+	typename Inputs,
+	typename T = typename Inputs::value_type>
+	void sort_by(Inputs& inputs) {
+	std::sort(std::begin(inputs), std::end(inputs),
+		[](const T& lhs, const T& rhs) { return get<pos>(lhs) < get<pos>(rhs); });
+}
+
+template<
 	typename Inputs,
 	typename Functor,
 	typename T = typename Inputs::value_type>
