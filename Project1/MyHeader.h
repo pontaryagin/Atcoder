@@ -53,6 +53,8 @@ constexpr ll INF = 1LL << 60;
 #define all(a)  (a).begin(),(a).end()
 #define rall(a) (a).rbegin(), (a).rend()
 #define perm(c) sort(all(c));for(bool c##perm=1;c##perm;c##perm=next_permutation(all(c))) //perm(c){write(c)} writes all permutation of c 
+constexpr ll dceil(ll x, ll y) { if (y < 0) { x *= -1; y *= -1; }; return x > 0 ? (x + y - 1) / y : x / y; } // ceil for x/y
+constexpr ll dfloor(ll x, ll y) { if (y < 0) { x *= -1; y *= -1; };  return x > 0 ? x / y : -dceil((-x), y); } // floor for x/y
 
 typedef pair<double, double> pd;
 typedef pair<ll, ll> pll;
