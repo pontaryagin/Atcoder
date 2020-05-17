@@ -211,6 +211,9 @@ ll choose(int n, int r) { // O(r) for small n
 }
 
 ll gcd(ll val, ll b) {
+	if (val < 0) val *= -1;
+	if (b < 0) b *= -1;
+	if (val == 0) return b == 0 ? 0 : b;
 	if (val%b == 0) return b;
 	else return gcd(b, val%b);
 }
