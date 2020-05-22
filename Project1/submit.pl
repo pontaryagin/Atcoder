@@ -74,19 +74,29 @@ elsif($problemName =~ /http.*/){
     print "oj dl $problemName";
     if(system("oj dl $problemName")){die("downloading test case failed\n");}
     gpp;
-    if(system("oj test")) {die("test failed\n");}
-    if($what eq 'submit'){
-	$ENV{"BROWSER"} = "/mnt/c/Program Files (x86)/Google/Chrome/Application/chrome.exe";
-        if(system("oj login $problemName") || 
-            system(" oj submit -y $problemName main.cpp")){
-            print "submittion failed\n";
-        }
+    $ENV{"BROWSER"} = "/mnt/c/Program Files (x86)/Google/Chrome/Application/chrome.exe";
+    if($what eq "submit-f"){
+    	print colored("submit without check. ok? (y/n):", "red");
+	    my $ok = <STDIN>; chomp($ok);
+	    if($ok ne "y"){
+	    	exit 1;
+	    }
+        system(" oj submit -y $problemName main.cpp");
     }
-    elsif($what eq 'test-sys'){
-        if(system("oj dl $problemName --system")){die("downloading test case failed\n");}
+    else{
         if(system("oj test")) {die("test failed\n");}
+        if($what eq 'submit'){
+            if(system("oj login $problemName") || 
+                system(" oj submit -y $problemName main.cpp")){
+                print "submittion failed\n";
+            }
+        }
+        elsif($what eq 'test-sys'){
+            if(system("oj dl $problemName --system")){die("downloading test case failed\n");}
+            if(system("oj test")) {die("test failed\n");}
+        }
+        exit(0);
     }
-    exit(0);
 }
 else{
     #create testcase if not exist
@@ -101,10 +111,10 @@ else{
     print "starting test\n\n";
     if($what eq "submit-f"){
     	print colored("submit without check. ok? (y/n):", "red");
-	my $ok = <STDIN>; chomp($ok);
-	if($ok ne "y"){
-		exit 1;
-	}
+	    my $ok = <STDIN>; chomp($ok);
+	    if($ok ne "y"){
+	    	exit 1;
+	    }
     }
     $what=~s/^submit$/submit -u/;
     $what=~s/^submit-f$/submit -u -f/;
