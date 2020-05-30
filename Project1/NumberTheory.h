@@ -151,54 +151,47 @@ modint<MOD> operator"" _mod(unsigned long long x) {
 	return modint<MOD>(x);
 }
 
+template<class T = modint<>>
 class Combination {
 	// this calculates combination (nCk).
 	// Constructor runs in O(MAX).
 	// get(n,k) returns nCk in O(1).
-
-	ll mod, N_MAX;
-	vll fac;
-	vll finv;
-	vll inv;
+	ll N_MAX;
+	vector<T> fac, finv;
 public:
-	Combination(ll mod = MOD, ll N_MAX = 210000)
-		:mod(mod), N_MAX(max(N_MAX, (ll)2)), fac(vll(N_MAX + 1)), finv(vll(N_MAX + 1)), inv(vll(N_MAX + 1)) {
+	Combination(ll N_MAX = 210000)
+		: N_MAX(N_MAX), fac(N_MAX), finv(N_MAX){
 		fac[0] = fac[1] = 1;
 		finv[0] = finv[1] = 1;
-		inv[1] = 1;
-		pre_process(2LL, N_MAX + 1);
+		pre_process(2, N_MAX);
 	}
-
-	ll operator()(ll n, ll k) {
+	T operator()(ll n, ll k) {
 		// choose k from n
-		if (N_MAX < n)
-			pre_process(N_MAX + 1, n + 1);
-
+		if (N_MAX < n)	pre_process(N_MAX, n);
 		if (0<= n && n < k) return 0;
 		if (k == 0) return 1;
 		if (n < 0) return operator()(-n+k-1, k)* (k%2?-1:0);
-		return fac[n] * (finv[k] * finv[n - k] % mod) % mod;
+		return fac[n] * (finv[k] * finv[n - k]);
 	}
-	ll H(ll n, ll k) {
+	T H(ll n, ll k) {
 		// 1) 区間[0, k) を（空を許して）n個に分割する場合の数
 		// 2) n個の中からk個を重複を許して選ぶ
 		return operator()(n + k - 1, k);
 	}
-	ll P(ll n, ll k) {
-		// n (n-1) ... (n-k+1)
-		return (n<k|| n<0 )? 0 : fac[n] * finv[n - k];
+	T P(ll n, ll k) {// n (n-1) ... (n-k+1)
+		if (N_MAX < n) pre_process(N_MAX, n);
+		return (n<k|| n<0 )? T(0) : fac[n] * finv[n - k];
 	}
-	ll Fac(ll n) { return P(n,n); }
-	ll FacInv(ll n) { return n<0? 0: finv[n]; }
+	T Fac(ll n) { return P(n,n); }
+	T FacInv(ll n) { if (N_MAX < n) pre_process(N_MAX, n);  return n < 0 ? T(0) : finv[n]; }
 private:
 	void pre_process(ll m, ll n) {
 		if (N_MAX < n) {
-			fac.resize(n); inv.resize(n); finv.resize(n);
+			fac.resize(n); finv.resize(n);
 		}
 		rep(i, m, n) {
-			fac[i] = fac[i - 1] * i % mod;
-			inv[i] = mod - inv[mod%i] * (mod / i) % mod;
-			finv[i] = finv[i - 1] * inv[i] % mod;
+			fac[i] = fac[i - 1] * i;
+			finv[i] = finv[i - 1] / i;
 		}
 	}
 };

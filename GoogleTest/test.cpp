@@ -71,8 +71,15 @@ TEST(NumberTheory, runtime_modint) {
 
 TEST(NumberTheory, Combination){
 
-	Combination cmb;
+	Combination<> cmb;
 	EXPECT_EQ(cmb(4, 2), 6);
+	EXPECT_EQ(cmb.Fac(3), 6);
+	EXPECT_EQ(cmb.FacInv(3), 1_mod / 6);
+	EXPECT_EQ(cmb.P(3, 3), 6);
+	EXPECT_EQ(cmb.H(3, 2), cmb(3 + 2 - 1, 2));
+
+	Combination<double> cmb2;
+	EXPECT_EQ(cmb2.Fac(4), 4. * 3. * 2. * 1.);
 }
 
 TEST(NumberTheory, divisors) {
