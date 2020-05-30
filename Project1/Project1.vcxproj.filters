@@ -16,6 +16,7 @@
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Convolution.h" />
     <ClInclude Include="type_name.h" />
+    <ClInclude Include="D2.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
