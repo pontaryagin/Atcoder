@@ -3,6 +3,7 @@
 #include "../Project1/SegmentTree.h"
 #include "../Project1/Graph.h"
 #include "../Project1/Text.h"
+#include "../Project1/Polynomial.h"
 
 TEST(MyHeader, inv_map) {
 	vll x = { 4, 5, 10 };
@@ -387,6 +388,19 @@ TEST(Text, run_length) {
 	vector<pair<char,ll>> res = { {'a',3}, {'b',1}, {'c',1},{'d',2},{'e',1} };
 	EXPECT_EQ(compressed, res);
 }
+
+TEST(Polynomial, SparsePolunomial) {
+	SparsePolynomial<> p({ {1,2}, {0, 1} }); // 1 + 2 * x
+	SparsePolynomial<> q({ {2,3}, {1,1}, {0, 2} }); // 2 + x + 3*x^2
+	auto prod = p * q; // 2 + 5 * x + 5 * x^2 + 6 * x^3
+	auto prod_res = SparsePolynomial<>({ {0,1}, {1,3}, {2,3} });
+	EXPECT_EQ(prod, prod_res);
+	auto sum = p + q; // 1 + 3 * x + 3 * x^2
+	auto sum_res = SparsePolynomial<>({ {0,2}, {1,5},{2,5}, {3,6} });
+	EXPECT_EQ(sum, sum_res);
+
+}
+
 
 int main(int argc, char** argv)
 {

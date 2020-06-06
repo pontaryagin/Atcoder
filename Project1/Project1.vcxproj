@@ -151,6 +151,7 @@
     <ClInclude Include="LagrangeInterpolation.h" />
     <ClInclude Include="MyHeader.h" />
     <ClInclude Include="NumberTheory.h" />
+    <ClInclude Include="Polynomial.h" />
     <ClInclude Include="SegmentTree.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Timer.h" />
