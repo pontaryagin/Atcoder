@@ -400,14 +400,25 @@ TEST(Polynomial, SparsePolunomial) {
 	SparsePolynomial<> p({ {1,2}, {0, 1} }); // 1 + 2 * x
 	SparsePolynomial<> q({ {2,3}, {1,1}, {0, 2} }); // 2 + x + 3*x^2
 	auto prod = p * q; // 2 + 5 * x + 5 * x^2 + 6 * x^3
-	auto prod_res = SparsePolynomial<>({ {0,1}, {1,3}, {2,3} });
+	auto prod_res = SparsePolynomial<>({ {0,2}, {1,5},{2,5}, {3,6} });
 	EXPECT_EQ(prod, prod_res);
 	auto sum = p + q; // 1 + 3 * x + 3 * x^2
-	auto sum_res = SparsePolynomial<>({ {0,2}, {1,5},{2,5}, {3,6} });
+	auto sum_res = SparsePolynomial<>({ {0,3}, {1,3}, {2,3} });
 	EXPECT_EQ(sum, sum_res);
 
 }
 
+TEST(Polynomial, SparsePolunomialWithDim) {
+	SparsePolynomial<1> p({ {1,2}, {0, 1} }); // 1 + 2 * x
+	SparsePolynomial<1> q({ {1,1}, {0, 2} }); // 2 + x + 3*x^2
+	auto prod = p * q; // 2 + 5 * x + 5 * x^2 + 6 * x^3
+	auto prod_res = SparsePolynomial<1>({ {0,2}, {1,5}});
+	EXPECT_EQ(prod, prod_res);
+	auto sum = p + q; // 1 + 3 * x + 3 * x^2
+	auto sum_res = SparsePolynomial<1>({ {0,3}, {1,3}});
+	EXPECT_EQ(sum, sum_res);
+	EXPECT_EQ(q << 1, SparsePolynomial<1>({ {1,2} }));
+}
 
 int main(int argc, char** argv)
 {

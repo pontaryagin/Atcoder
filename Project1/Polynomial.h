@@ -7,7 +7,7 @@ class SparsePolynomial
 public:
 	SparsePolynomial() : coeff() {}
 	SparsePolynomial(int x) : coeff(1, { 0, x }) {}
-	SparsePolynomial(const vpll& coeff) : coeff(coeff) { sort(all(coeff)); }
+	SparsePolynomial(const vpll& coeff_) : coeff(coeff_) { sort(all(coeff)); }
 	SparsePolynomial& operator<<=(ll d) {
 		rrep(i, 0, coeff.size()) {
 			if (d + coeff[i].first > dim) {
@@ -58,7 +58,7 @@ public:
 				++cur;
 			}
 			if (cur >= org_size) {
-				coeff.insert(coeff.end(), all(rhs.coeff));
+				coeff.insert(coeff.end(), rhs.coeff.begin()+i, rhs.coeff.end());
 				break;
 			}
 			else {
