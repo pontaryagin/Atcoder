@@ -1,13 +1,14 @@
 #include "MyHeader.h"
 
-template<ll dim = INF>
+template<class underlying_t = ll, ll dim = INF>
 class SparsePolynomial
 {
-	vpll coeff;
+	using coeff_t = vector<pair<ll, underlying_t>>;
+	coeff_t coeff;
 public:
 	SparsePolynomial() : coeff() {}
 	SparsePolynomial(int x) : coeff(1, { 0, x }) {}
-	SparsePolynomial(const vpll& coeff_) : coeff(coeff_) { sort(all(coeff)); }
+	SparsePolynomial(const coeff_t& coeff_) : coeff(coeff_) { sort(all(coeff)); }
 	SparsePolynomial& operator<<=(ll d) {
 		rrep(i, 0, coeff.size()) {
 			if (d + coeff[i].first > dim) {
