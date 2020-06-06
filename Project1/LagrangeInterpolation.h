@@ -5,7 +5,7 @@
 //vector<modt> a(p); read(a);
 //
 //vector<vector<modt>> l(p, vector<modt>(p + 1)); // Lagrange Polynomial
-//Combination cmb(p);
+//Combination<> cmb(p);
 //vector<vector<modt>> m(p + 1, vector<modt>(p + 1));
 //// m[i] = x * (x-1) * (x-2) * ... * (x-i);
 //m[0][0] = 1;
