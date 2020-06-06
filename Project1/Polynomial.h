@@ -23,22 +23,23 @@ public:
 	friend SparsePolynomial operator<<(SparsePolynomial lhs, int rhs) {
 		return lhs <<= rhs;
 	}
-	SparsePolynomial& operator*=(const SparsePolynomial& rhs) {
+	SparsePolynomial& operator*=(SparsePolynomial rhs) {
+		// O(max(coeff.size() * (rhs.coeff.size())^2)
 		SparsePolynomial res;
-		rep(i, 0, coeff.size()) {
+		rep(i, 0, rhs.coeff.size()) {
 			ll cur = 0;
 			ll res_org_size = res.coeff.size();
-			rep(j, 0, rhs.coeff.size()) {
-				ll out_d = coeff[i].first + rhs.coeff[j].first;
+			rep(j, 0, coeff.size()) {
+				ll out_d = rhs.coeff[i].first + coeff[j].first;
 				if (out_d <= dim) {
 					while (cur < res_org_size && res.coeff[cur].first < out_d) {
 						++cur;
 					}
 					if(cur < res_org_size && res.coeff[cur].first == out_d){
-						res.coeff[cur].second += coeff[i].second * rhs.coeff[j].second;
+						res.coeff[cur].second += rhs.coeff[i].second * coeff[j].second;
 					}
 					else {
-						res.coeff.push_back({ out_d, coeff[i].second * rhs.coeff[j].second });
+						res.coeff.push_back({ out_d, rhs.coeff[i].second * coeff[j].second });
 					}
 				}
 			}
@@ -54,20 +55,20 @@ public:
 		ll cur = 0;
 		ll org_size = coeff.size();
 		bool need_sort = false;
-		rep(i, 0, rhs.coeff.size()) {
-			while (cur < org_size && coeff[cur].first < rhs.coeff[i].first) {
+		rep(i, 0, coeff.size()) {
+			while (cur < org_size && coeff[cur].first < coeff[i].first) {
 				++cur;
 			}
 			if (cur >= org_size) {
-				coeff.insert(coeff.end(), rhs.coeff.begin()+i, rhs.coeff.end());
+				coeff.insert(coeff.end(), coeff.begin()+i, coeff.end());
 				break;
 			}
 			else {
-				if (coeff[cur].first == rhs.coeff[i].first) {
-					coeff[cur].second += rhs.coeff[i].second;
+				if (coeff[cur].first == coeff[i].first) {
+					coeff[cur].second += coeff[i].second;
 				}
 				else {
-					coeff.push_back(rhs.coeff[i]);
+					coeff.push_back(coeff[i]);
 				}
 			}
 		}
@@ -81,6 +82,16 @@ public:
 	}
 	bool operator==(const SparsePolynomial& rhs) const {
 		return coeff == rhs.coeff;
+	}
+	underlying_t operator[](ll d) const {
+		auto it = lower_bound(all(coeff), pair<ll, underlying_t>{ d, 0 },
+			[](const pair<ll, underlying_t>& l, const pair<ll, underlying_t>& r) {return l.first < r.first; });
+		if (it != coeff.end() && it->first == d) {
+			return it->second;
+		}
+		else {
+			return 0;
+		}
 	}
 };
 
