@@ -1,18 +1,31 @@
 #include "MyHeader.h"
 
 struct D2 {
-	D2(ll h, ll w) : h(h), w(w), Dir{1, -1, w, -w} {};
-	bool in(ll n, ll d) {
-		if (n % w == 0 && d == -1)
+	enum Dir {U, D, L, R};
+	D2(ll h, ll w) : h(h), w(w) {};
+	bool in(ll n, D2::Dir d, ll k = 1) {
+		if ((W(n) <= k-1) && d == L)
 			return false;
-		if (n % w == w - 1 && d == 1)
+		if ((W(n) >= w - 1 - (k-1)) && d == R)
 			return false;
-		if (n / w == 0 && d == -w)
+		if ((H(n) <= k-1) && d == D)
 			return false;
-		if (n / w == h - 1 && d == w)
+		if ((H(n) >= h - 1 - (k - 1)) && d == U)
 			return false;
 		return true;
 	};
+	ll next(Dir d, ll k = 1) {
+		switch (d)
+		{
+		case U: return w;
+		case D: return -w;
+		case L: return -1;
+		case R: return 1;
+		default: throw invalid_argument("not direction");
+		}
+	}
+	ll H(ll n) { return n / w; }
+	ll W(ll n) { return n % w; }
+
 	ll h, w;
-	vll Dir;
 };
