@@ -403,7 +403,7 @@ TEST(Polynomial, SparsePolunomial) {
 	auto prod = p * q; // 2 + 5 * x + 5 * x^2 + 6 * x^3
 	auto prod_res = Pol({ {0,2}, {1,5},{2,5}, {3,6} });
 	EXPECT_EQ(prod, prod_res);
-	auto sum = p + q; // 1 + 3 * x + 3 * x^2
+	auto sum = p + q; // 3 + 3 * x + 3 * x^2
 	auto sum_res = Pol({ {0,3}, {1,3}, {2,3} });
 	EXPECT_EQ(sum, sum_res);
 
