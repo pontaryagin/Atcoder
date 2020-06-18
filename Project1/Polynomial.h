@@ -55,20 +55,20 @@ public:
 		ll cur = 0;
 		ll org_size = coeff.size();
 		bool need_sort = false;
-		rep(i, 0, coeff.size()) {
-			while (cur < org_size && coeff[cur].first < coeff[i].first) {
+		rep(i, 0, rhs.coeff.size()) {
+			while (cur < org_size && coeff[cur].first < rhs.coeff[i].first) {
 				++cur;
 			}
 			if (cur >= org_size) {
-				coeff.insert(coeff.end(), coeff.begin()+i, coeff.end());
+				coeff.insert(coeff.end(), rhs.coeff.begin() + i, rhs.coeff.end());
 				break;
 			}
 			else {
-				if (coeff[cur].first == coeff[i].first) {
-					coeff[cur].second += coeff[i].second;
+				if (coeff[cur].first == rhs.coeff[i].first) {
+					coeff[cur].second += rhs.coeff[i].second;
 				}
 				else {
-					coeff.push_back(coeff[i]);
+					coeff.push_back(rhs.coeff[i]);
 				}
 			}
 		}
