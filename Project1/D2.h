@@ -18,10 +18,10 @@ struct D2 {
 	ll next(Dir d, ll k = 1) {
 		switch (d)
 		{
-		case U: return w;
-		case D: return -w;
-		case L: return -1;
-		case R: return 1;
+		case U: return w * k;
+		case D: return -w * k;
+		case L: return -k;
+		case R: return k;
 		default: throw invalid_argument("not direction");
 		}
 	}
