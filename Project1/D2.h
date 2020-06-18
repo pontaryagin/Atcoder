@@ -2,6 +2,7 @@
 
 struct D2 {
 	enum Dir {U, D, L, R};
+	static inline const Dir Dirs[] = { U, D, L, R };
 	D2(ll h, ll w) : h(h), w(w) {};
 	bool in(ll n, D2::Dir d, ll k = 1) {
 		if ((W(n) <= k-1) && d == L)
@@ -29,3 +30,5 @@ struct D2 {
 
 	ll h, w;
 };
+
+
