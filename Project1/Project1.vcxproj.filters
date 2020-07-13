@@ -18,6 +18,7 @@
     <ClInclude Include="type_name.h" />
     <ClInclude Include="D2.h" />
     <ClInclude Include="Polynomial.h" />
+    <ClInclude Include="Matrix.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

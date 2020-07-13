@@ -4,6 +4,7 @@
 #include "../Project1/Graph.h"
 #include "../Project1/Text.h"
 #include "../Project1/Polynomial.h"
+#include "../Project1/Matrix.h"
 
 TEST(MyHeader, inv_map) {
 	vll x = { 4, 5, 10 };
@@ -421,6 +422,23 @@ TEST(Polynomial, SparsePolunomialWithDim) {
 	auto sum_res = Pol({ {0,1}, {1,1}});
 	EXPECT_EQ(sum, sum_res);
 	EXPECT_EQ(p << 1, Pol({ {1,1} }));
+}
+
+TEST(Matrix, POW) {
+	Matrix<ll> m{ 3 }, n{ 3 };
+	rep(i, 0, 3) {
+		rep(j, 0, 3) {
+			m[i][j] = i + j;
+			n[i][j] = i * j;
+		}
+	}
+	EXPECT_EQ(m.POW(3), m* m* m);
+	EXPECT_EQ(m.POW(4), m* m* m* m);
+	EXPECT_EQ(n.POW(3), n* n* n);
+	EXPECT_EQ(n.POW(8), n* n* n* n * n* n* n* n);
+	EXPECT_EQ(m.POW(1), m);
+	EXPECT_EQ(m.POW(0), Matrix<ll>::I(3));
+
 }
 
 int main(int argc, char** argv)
