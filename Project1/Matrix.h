@@ -134,7 +134,7 @@ struct Matrix {
         }
         return (ret);
     }
-    Matrix<T> POW(ll n) const {
+    Matrix POW(ll n) const {
         if (n == 0)return I(A.size());
         if (n == 1)return *this;
         if (n == 2)return (*this) * (*this);
