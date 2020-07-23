@@ -1,4 +1,7 @@
+#pragma once
+
 #include "MyHeader.h"
+#include "RecurrenceRelation.h"
 
 template<class underlying_t = ll, ll dim = INF>
 class SparsePolynomial
@@ -94,4 +97,101 @@ public:
 		}
 	}
 };
+
+template<class T = ll>
+struct Polynomial {
+	vector<T> a; // coefficients
+	Polynomial() = default;
+	Polynomial(const vector<T>& coeff): a(coeff) {}
+	Polynomial& operator<<=(ll d) {
+		auto n = a.size();
+		a.resize(a.size() + d);
+		rrep(i, 0, n) {
+			a[i + d] = a[i];
+		}
+		rep(i, 0, d) {
+			a[i] = 0;
+		}
+		return *this;
+	}
+	friend Polynomial operator<<(Polynomial lhs, int rhs) {
+		return lhs <<= rhs;
+	}
+	Polynomial& operator>>=(ll d) {
+		rep(i, 0, a.size() - d) {
+			a[i] = a[i+d];
+		}
+		a.resize(a.size() - d);
+		return *this;
+	}
+	friend Polynomial operator>>(Polynomial lhs, int rhs) {
+		return lhs >>= rhs;
+	}
+	Polynomial& operator*=(Polynomial rhs) {
+		auto res = vector<T>(a.size() + rhs.a.size()-1);
+		rep(i, 0, a.size()) {
+			rep(j, 0, rhs.a.size()) {
+				res[i + j] += a[i] * rhs.a[j];
+			}
+		}
+		a = res;
+		return *this;
+	}
+	friend Polynomial operator*(Polynomial lhs, const Polynomial& rhs) {
+		return lhs *= rhs;
+	}
+	Polynomial& operator+=(const Polynomial& rhs) {
+		a.resize(max(a.size(), rhs.a.size()));
+		rep(i, 0, rhs.a.size()) {
+			a[i] += rhs.a[i];
+		}
+		return *this;
+	}
+	friend Polynomial operator+(Polynomial lhs, const Polynomial& rhs) {
+		return lhs += rhs;
+	}
+	bool operator==(const Polynomial& rhs) const {
+		return a == rhs.a;
+	}
+	function<T(ll)> div(const Polynomial& Q) const {
+		// return generating function of rational function q(x)/p(x).
+		// O((a.size())^2)
+		
+		auto q = a;
+		auto p = Q.a;
+		vector<T> tail;
+		auto p0 = p[0];
+		p.erase(p.begin());
+		if (q.size() <= p.size()) {
+			q.resize(p.size());
+		}
+
+
+		rep(i, 0, p.size()) {
+			p[i] /= p0;
+			p[i] *= -1;
+		}
+		rep(i, 0, q.size()) {
+			q[i] /= p0;
+		}
+		auto& init = q;
+		rep(i, 1, init.size()) {
+			rep(j, 1, min(i,SZ(p))+1) {
+				init[i] += p[j-1]* init[i-j];
+			}
+		}
+		if (q.size() > p.size()) {
+			tail.insert(tail.begin(), q.begin(), q.begin() + q.size() - p.size());
+			q.erase(q.begin(), q.begin() + q.size() - p.size());
+		}
+		reverse(all(p));
+		return [tail, init, p](ll n) {
+			if (n < tail.size())
+				return tail[n];
+			else
+				return solve_recurrence_relation(init, p, n - tail.size());
+		};
+	}
+};
+
 

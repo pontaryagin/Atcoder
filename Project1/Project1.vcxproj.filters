@@ -19,6 +19,7 @@
     <ClInclude Include="D2.h" />
     <ClInclude Include="Polynomial.h" />
     <ClInclude Include="Matrix.h" />
+    <ClInclude Include="RecurrenceRelation.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

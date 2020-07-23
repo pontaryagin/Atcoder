@@ -5,6 +5,7 @@
 #include "../Project1/Text.h"
 #include "../Project1/Polynomial.h"
 #include "../Project1/Matrix.h"
+#include "../Project1/RecurrenceRelation.h"
 
 TEST(MyHeader, inv_map) {
 	vll x = { 4, 5, 10 };
@@ -440,6 +441,57 @@ TEST(Matrix, POW) {
 	EXPECT_EQ(m.POW(0), Matrix<ll>::I(3));
 
 }
+
+TEST(RecurrenceRelation, solve_recurrence_relation) {
+	vll p = { 3,2 };
+	vll a = { 1, 0 };
+	vll a_ans = { 1, 0 };
+	a_ans.resize(100);
+	rep(i, 2, 100) {
+		a_ans[i] = p[0] * a_ans[i - 2] + p[1] * a_ans[i - 1];
+	}
+	vll b(100);
+	rep(i, 0, 100) {
+		b[i] = solve_recurrence_relation(a, p, i);
+	}
+	EXPECT_EQ(a_ans, b);
+}
+
+TEST(Polynomial, base_operation) {
+	Polynomial<ll> p({1,2});
+	Polynomial<ll> q({3,2,1});
+	EXPECT_EQ(p * q, Polynomial<ll>({3,8,5,2}));
+	EXPECT_EQ(p + q, Polynomial<ll>({ 4,4,1 }));
+	EXPECT_EQ((p >> 1).a, Polynomial<ll>({ 2 }).a);
+	EXPECT_EQ((p << 1).a, Polynomial<ll>({ 0,1,2 }).a);
+
+}
+
+TEST(Polynomial, div) {
+	Polynomial<ll> p({ 1 });
+	Polynomial<ll> q({ 1,-1 });
+	auto d = p.div(q);
+	rep(i, 0, 100) {
+		EXPECT_EQ(d(i), 1);
+	}
+}
+
+
+TEST(Polynomial, div2) {
+	Polynomial<double> p({ 1,2 });
+	Polynomial<double> q({ 3,2,1 });
+	auto d1 = p.div(q);
+	auto d2 = q.div(p);
+	vector<double> ans1 = { 1. / 3., 4. / 9., -11. / 27., 10./ 81., 13./243., -56. / 729. };
+	vector<double> ans2 = { 3., -4., 9., -18., 36., -72. };
+	rep(i, 0, ans1.size()) {
+		EXPECT_NEAR(d1(i), ans1[i], 1e-10);
+	}
+	rep(i, 0, ans2.size()) {
+		EXPECT_DOUBLE_EQ(d2(i), ans2[i], 1e-10);
+	}
+}
+
 
 int main(int argc, char** argv)
 {
