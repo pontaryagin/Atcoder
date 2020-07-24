@@ -98,11 +98,19 @@ public:
 	}
 };
 
-template<class T = ll>
+template<class T = ll, ll max_dim = INF>
 struct Polynomial {
 	vector<T> a; // coefficients
 	Polynomial() = default;
-	Polynomial(const vector<T>& coeff): a(coeff) {}
+	Polynomial(const vector<T>& coeff) : a(coeff) {}
+	Polynomial(ll c) : a{c} {}
+	Polynomial(const vector<pair<ll, T>>& coeff) {
+		//sort_by<0>(coeff);
+		a.resize(coeff.back().first+1);
+		rep(i, 0, coeff.size()) {
+			a[coeff[i].first] = coeff[i].second;
+		}
+	}
 	Polynomial& operator<<=(ll d) {
 		auto n = a.size();
 		a.resize(a.size() + d);
@@ -128,10 +136,13 @@ struct Polynomial {
 		return lhs >>= rhs;
 	}
 	Polynomial& operator*=(Polynomial rhs) {
-		auto res = vector<T>(a.size() + rhs.a.size()-1);
+		auto res = vector<T>(min(SZ(a) + SZ(rhs.a)-1, max_dim+1));
 		rep(i, 0, a.size()) {
+			if (a[i] == 0)
+				continue;
 			rep(j, 0, rhs.a.size()) {
-				res[i + j] += a[i] * rhs.a[j];
+				if(i+j <= max_dim)
+					res[i + j] += a[i] * rhs.a[j];
 			}
 		}
 		a = res;

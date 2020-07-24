@@ -419,9 +419,11 @@ TEST(Polynomial, SparsePolunomialWithDim) {
 	auto prod = p * q; // 2 + 5 * x + 5 * x^2 + 6 * x^3
 	auto prod_res = Pol({ {0,0}, {1,1}});
 	EXPECT_EQ(prod, prod_res);
+	EXPECT_EQ(q*p, prod_res);
 	auto sum = p + q; // 1 + 3 * x + 3 * x^2
 	auto sum_res = Pol({ {0,1}, {1,1}});
 	EXPECT_EQ(sum, sum_res);
+	EXPECT_EQ(q+p, sum_res);
 	EXPECT_EQ(p << 1, Pol({ {1,1} }));
 }
 
