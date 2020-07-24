@@ -488,7 +488,7 @@ TEST(Polynomial, div2) {
 		EXPECT_NEAR(d1(i), ans1[i], 1e-10);
 	}
 	rep(i, 0, ans2.size()) {
-		EXPECT_DOUBLE_EQ(d2(i), ans2[i], 1e-10);
+		EXPECT_EQ(d2(i), ans2[i]);
 	}
 }
 
