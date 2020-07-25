@@ -398,32 +398,38 @@ TEST(Text, run_length) {
 	EXPECT_EQ(compressed, res);
 }
 
-TEST(Polynomial, SparsePolunomial) {
+TEST(Polynomial, SparsePolinomial) {
 	using Pol = SparsePolynomial<>;
 	Pol p({ {1,2}, {0, 1} }); // 1 + 2 * x
 	Pol q({ {2,3}, {1,1}, {0, 2} }); // 2 + x + 3*x^2
 	auto prod = p * q; // 2 + 5 * x + 5 * x^2 + 6 * x^3
-	auto prod_res = Pol({ {0,2}, {1,5},{2,5}, {3,6} });
-	EXPECT_EQ(prod, prod_res);
+	auto prod_res = Pol({ {0,2}, {1,5}, {2,5}, {3,6} });
+	EXPECT_EQ(prod.coeff, prod_res.coeff);
+	EXPECT_EQ((q * p).coeff, prod_res.coeff);
+	vll prod_each = { prod[0],  prod[1], prod[2], prod[3] };
+	vll prod_each_res = vll{ 2, 5, 5, 6 };
+	EXPECT_EQ(prod_each, prod_each_res);
+
 	auto sum = p + q; // 3 + 3 * x + 3 * x^2
 	auto sum_res = Pol({ {0,3}, {1,3}, {2,3} });
-	EXPECT_EQ(sum, sum_res);
+	EXPECT_EQ(sum.coeff, sum_res.coeff);
+	EXPECT_EQ((q + p).coeff, sum_res.coeff);
 
 }
 
 TEST(Polynomial, SparsePolunomialWithDim) {
 	using Mod = modint<2>;
 	using Pol = SparsePolynomial<Mod, 1>;
-	Pol p({ {1,2}, {0, 1} }); // 1 + 2 * x
-	Pol q({ {1,1}, {0, 2} }); // 2 + x + 3*x^2
+	Pol p({ {0, 1}, {1,2} }); // 1 + 2 * x
+	Pol q({ {0, 2}, {1,1}  }); // 2 + x + 3*x^2
 	auto prod = p * q; // 2 + 5 * x + 5 * x^2 + 6 * x^3
-	auto prod_res = Pol({ {0,0}, {1,1}});
-	EXPECT_EQ(prod, prod_res);
-	EXPECT_EQ(q*p, prod_res);
+	auto prod_res = Pol({ {1,1} });
+	EXPECT_EQ(prod.coeff, prod_res.coeff);
+	EXPECT_EQ((q*p).coeff, prod_res.coeff);
 	auto sum = p + q; // 1 + 3 * x + 3 * x^2
 	auto sum_res = Pol({ {0,1}, {1,1}});
-	EXPECT_EQ(sum, sum_res);
-	EXPECT_EQ(q+p, sum_res);
+	EXPECT_EQ(sum.coeff, sum_res.coeff);
+	EXPECT_EQ((q+p).coeff, sum_res.coeff);
 	EXPECT_EQ(p << 1, Pol({ {1,1} }));
 }
 

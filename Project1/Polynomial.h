@@ -3,24 +3,53 @@
 #include "MyHeader.h"
 #include "RecurrenceRelation.h"
 
-template<class underlying_t = ll, ll dim = INF>
+template<class underlying_t = ll, ll max_dim = INF>
 class SparsePolynomial
 {
+public:
 	using coeff_t = vector<pair<ll, underlying_t>>;
 	coeff_t coeff;
-public:
-	SparsePolynomial() : coeff() {}
-	SparsePolynomial(int x) : coeff(1, { 0, x }) {}
-	SparsePolynomial(const coeff_t& coeff_) : coeff(coeff_) { sort(all(coeff)); }
-	SparsePolynomial& operator<<=(ll d) {
-		rrep(i, 0, coeff.size()) {
-			if (d + coeff[i].first > dim) {
-				coeff.pop_back();
+
+	static void contract(coeff_t& coeff) {
+		if (coeff.empty()) return;
+		sort_by<0>(coeff);
+		auto cur = 0;
+		rep(i,1,coeff.size()) {
+			if (coeff[cur].first == coeff[i].first) {
+				coeff[cur].second += coeff[i].second;
 			}
 			else {
-				coeff[i].first += d;
+				++cur;
+				coeff[cur] = coeff[i];
 			}
 		}
+		coeff.erase(coeff.begin() + cur + 1, coeff.end());
+		reduce(coeff);
+	}
+
+	static void reduce(coeff_t& coeff) {
+		if (coeff.empty()) return;
+		auto cur = 0;
+		rep(i, 0, coeff.size()) {
+			if (coeff[i].second != 0) {
+				coeff[cur] = coeff[i];
+				++cur;
+			}
+		}
+		coeff.erase(coeff.begin() + cur, coeff.end());
+	}
+
+	SparsePolynomial() : coeff() {}
+	SparsePolynomial(int x) : coeff({ { 0, x } }) {}
+	explicit SparsePolynomial(const coeff_t& coeff_) : coeff(coeff_) { sort_by<0>(coeff); }
+	SparsePolynomial& operator<<=(ll d) {
+		coeff_t res;
+		for (auto it = coeff.rbegin(); it != coeff.rend(); ++it) {
+			if (it->first + d <= max_dim) {
+				res.push_back({ it->first + d, it->second });
+			}
+		}
+		coeff = res;
 		return *this;
 	}
 	friend SparsePolynomial operator<<(SparsePolynomial lhs, int rhs) {
@@ -28,56 +57,23 @@ public:
 	}
 	SparsePolynomial& operator*=(SparsePolynomial rhs) {
 		// O(max(coeff.size() * (rhs.coeff.size())^2)
-		SparsePolynomial res;
-		rep(i, 0, rhs.coeff.size()) {
-			ll cur = 0;
-			ll res_org_size = res.coeff.size();
-			rep(j, 0, coeff.size()) {
-				ll out_d = rhs.coeff[i].first + coeff[j].first;
-				if (out_d <= dim) {
-					while (cur < res_org_size && res.coeff[cur].first < out_d) {
-						++cur;
-					}
-					if(cur < res_org_size && res.coeff[cur].first == out_d){
-						res.coeff[cur].second += rhs.coeff[i].second * coeff[j].second;
-					}
-					else {
-						res.coeff.push_back({ out_d, rhs.coeff[i].second * coeff[j].second });
-					}
-				}
+		coeff_t res;
+		for(auto& i: coeff) {
+			for(auto& j: rhs.coeff) {
+				if (i.first + j.first <= max_dim)
+					res.emplace_back(i.first + j.first, i.second * j.second);
 			}
-			sort(all(res.coeff));
 		}
-		swap(res, *this);
+		swap(coeff, res);
+		contract(coeff);
 		return *this;
 	}
 	friend SparsePolynomial operator*(SparsePolynomial lhs, const SparsePolynomial& rhs) {
 		return lhs *= rhs;
 	}
 	SparsePolynomial& operator+=(const SparsePolynomial& rhs) {
-		ll cur = 0;
-		ll org_size = coeff.size();
-		bool need_sort = false;
-		rep(i, 0, rhs.coeff.size()) {
-			while (cur < org_size && coeff[cur].first < rhs.coeff[i].first) {
-				++cur;
-			}
-			if (cur >= org_size) {
-				coeff.insert(coeff.end(), rhs.coeff.begin() + i, rhs.coeff.end());
-				break;
-			}
-			else {
-				if (coeff[cur].first == rhs.coeff[i].first) {
-					coeff[cur].second += rhs.coeff[i].second;
-				}
-				else {
-					coeff.push_back(rhs.coeff[i]);
-				}
-			}
-		}
-		if (need_sort) {
-			sort(all(coeff));
-		}
+		coeff.insert(coeff.end(), rhs.coeff.begin(), rhs.coeff.end());
+		contract(coeff);
 		return *this;
 	}
 	friend SparsePolynomial operator+(SparsePolynomial lhs, const SparsePolynomial& rhs) {
@@ -87,8 +83,7 @@ public:
 		return coeff == rhs.coeff;
 	}
 	underlying_t operator[](ll d) const {
-		auto it = lower_bound(all(coeff), pair<ll, underlying_t>{ d, 0 },
-			[](const pair<ll, underlying_t>& l, const pair<ll, underlying_t>& r) {return l.first < r.first; });
+		auto it = lower_bound(all(coeff), pair<ll, underlying_t>({ d, 0 }), [](auto&& l, auto&& r) { return l.first < r.first; });
 		if (it != coeff.end() && it->first == d) {
 			return it->second;
 		}
