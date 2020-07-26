@@ -160,14 +160,12 @@ class Combination {
 	vector<T> fac, finv;
 public:
 	Combination(ll N_MAX = 210000)
-		: N_MAX(N_MAX), fac(N_MAX), finv(N_MAX){
-		fac[0] = fac[1] = 1;
-		finv[0] = finv[1] = 1;
-		pre_process(2, N_MAX);
+		: N_MAX(2), fac(2,1), finv(2,1){
+		pre_process(N_MAX);
 	}
 	T operator()(ll n, ll k) {
 		// choose k from n
-		if (N_MAX < n)	pre_process(N_MAX, n);
+		pre_process(n);
 		if (0<= n && n < k) return 0;
 		if (k == 0) return 1;
 		if (n < 0) return operator()(-n+k-1, k)* (k%2?-1:0);
@@ -179,20 +177,22 @@ public:
 		return operator()(n + k - 1, k);
 	}
 	T P(ll n, ll k) {// n (n-1) ... (n-k+1)
-		if (N_MAX < n) pre_process(N_MAX, n);
+		pre_process(n);
 		return (n<k|| n<0 )? T(0) : fac[n] * finv[n - k];
 	}
 	T Fac(ll n) { return P(n,n); }
-	T FacInv(ll n) { if (N_MAX < n) pre_process(N_MAX, n);  return n < 0 ? T(0) : finv[n]; }
+	T FacInv(ll n) { pre_process(n);  return n < 0 ? T(0) : finv[n]; }
 private:
-	void pre_process(ll m, ll n) {
-		if (N_MAX < n) {
-			fac.resize(n); finv.resize(n);
-		}
-		rep(i, m, n) {
+	void pre_process(ll n) {
+		if (n <= N_MAX) return;
+		ll next = N_MAX;
+		while (next <= n) next <<= 1;
+		fac.resize(next); finv.resize(next);
+		rep(i, N_MAX, next) {
 			fac[i] = fac[i - 1] * i;
 			finv[i] = finv[i - 1] / i;
 		}
+		N_MAX = next;
 	}
 };
 
