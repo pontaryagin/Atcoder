@@ -589,27 +589,15 @@ vll shortest_path_generator(const vll& from_list, ll start, ll goal) {
 }
 
 class FordFulkerson {
-private:
 	vb usedNode;
 	using Edge = Edge_Base<ll>;
-public:
 	struct RevEdge { ll from, to, cap, rev; };
-	FordFulkerson(Digraph graph) 
-		:usedNode(graph.size()), G(vec_t<2,RevEdge>(graph.size()))
-	{
-		rep(i, 0, graph.size()) {
-			for (auto& e : graph.out(i)) {
-				add_revedge(*e);
-			}
-		}
-
-	}
 	vec_t<2, RevEdge> G;
 	void add_revedge(const Edge& e) {
 		G[e.from].push_back(RevEdge{ e.from, e.to ,e.cost, SZ(G[e.to]) });
 		G[e.to].push_back(RevEdge{ e.to, e.from, 0 , SZ(G[e.from]) - 1 });
 	}
-	
+
 	ll single_flow(ll from, ll to, ll flow) {
 		// make a single flow
 		if (from == to)
@@ -629,6 +617,17 @@ public:
 		}
 		// if we already visited all edges or cap = 0 flow = 0;
 		return 0;
+	}
+public:
+	template<GraphDir dir, class cost_t>
+	FordFulkerson(const Graph_Base<dir, cost_t>& graph)
+		:usedNode(graph.size()), G(vec_t<2,RevEdge>(graph.size()))
+	{
+		rep(i, 0, graph.size()) {
+			for (auto& e : graph.out(i)) {
+				add_revedge(*e);
+			}
+		}
 	}
 	ll max_flow(ll from, ll to) {
 		ll flow = 0;
