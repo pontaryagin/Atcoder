@@ -96,7 +96,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/openmp:experimental /Qvec-report:2</AdditionalOptions>
-      <AdditionalIncludeDirectories>C:\lib\boost\include\boost-1_72;C:\lib\boost_1_66_0\;C:\lib\Sprout\;C:\lib\tbb\include;C:\lib\tbb\bin\intel64\vc14;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\lib\boost_1_74_0\build\include\boost-1_74\;C:\lib\Sprout\;C:\lib\tbb\include;C:\lib\tbb\bin\intel64\vc14;</AdditionalIncludeDirectories>
       <EnablePREfast>false</EnablePREfast>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <OpenMPSupport>true</OpenMPSupport>
@@ -129,7 +129,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/openmp:experimental /Qvec-report:2</AdditionalOptions>
-      <AdditionalIncludeDirectories>C:\lib\boost\include\boost-1_72;C:\lib\boost_1_66_0\;C:\lib\Sprout\;C:\lib\tbb\include;C:\lib\tbb\bin\intel64\vc14;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\lib\boost_1_74_0\build\include\boost-1_74\;C:\lib\Sprout\;C:\lib\tbb\include;C:\lib\tbb\bin\intel64\vc14;</AdditionalIncludeDirectories>
       <EnablePREfast>false</EnablePREfast>
       <OpenMPSupport>true</OpenMPSupport>
       <LanguageStandard>stdcpp17</LanguageStandard>
