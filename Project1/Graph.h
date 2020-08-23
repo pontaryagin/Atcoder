@@ -53,28 +53,28 @@ struct Graph_Base {
 	ll nodeSize;
 	vector<Edge> edges;
 	vector<vector<Edge_Itr>> out_edges;
-	vector<vector<Edge_Itr>> in_edges;
+	//vector<vector<Edge_Itr>> in_edges;
 	Graph_Base(ll nodeSize, const vector<Edge>& edges_ = vector<Edge>(), GraphDir dirct= GraphDir::dir)
-		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize){
+		: nodeSize(nodeSize), out_edges(nodeSize){
 		for (const Edge& e : edges_) push(e);
 	}
 	Graph_Base(ll nodeSize, vector<pll> edges_)
-		: nodeSize(nodeSize), out_edges(nodeSize), in_edges(nodeSize){
+		: nodeSize(nodeSize), out_edges(nodeSize){
 		for (const pll& e : edges_) push(Edge(e));
 	}
 	Graph_Base(vvll ajacency_matrix, ll default_value) 
-		: nodeSize(ajacency_matrix.size()), out_edges(nodeSize), in_edges(nodeSize){
+		: nodeSize(ajacency_matrix.size()), out_edges(nodeSize){
 		ll n = ajacency_matrix.size();
 		rep(i, 0, n)rep(j, 0, n) {
 			if (ajacency_matrix[i][j] != default_value)
 				push(Edge(i, j, ajacency_matrix[i][j]));
 		}
 	}
-	Graph_Base(const Graph_Base& g) : nodeSize(g.nodeSize), out_edges(nodeSize), in_edges(nodeSize) {
+	Graph_Base(const Graph_Base& g) : nodeSize(g.nodeSize), out_edges(nodeSize) {
 		this->push(g.edges);
 	}
 	Graph_Base& operator=(const Graph_Base& g) {
-		nodeSize = g.nodeSize; out_edges.resize(nodeSize); in_edges.resize(nodeSize);
+		nodeSize = g.nodeSize; out_edges.resize(nodeSize);
 		push(g.edges);
 		return *this;
 	}
@@ -83,8 +83,8 @@ struct Graph_Base {
 	const Edge& operator[](ll ind) const{ return this->edges[ind]; }
 	vector<Edge_Itr>& out(ll ind){ return this->out_edges[ind]; }
 	const vector<Edge_Itr>& out(ll ind) const { return this->out_edges[ind]; }
-	vector<Edge_Itr>& in(ll ind){ return this->in_edges[ind]; }
-	const vector<Edge_Itr>& in(ll ind) const{ return this->in_edges[ind]; }
+	//vector<Edge_Itr>& in(ll ind){ return this->in_edges[ind]; }
+	//const vector<Edge_Itr>& in(ll ind) const{ return this->in_edges[ind]; }
 	Edge_Itr begin() { return Edge_Itr(0, edges); }
 	Edge_Itr end() { return Edge_Itr(edges.size(), edges); }
 	Edge_CItr begin() const { return Edge_CItr(0, edges); }
@@ -96,7 +96,7 @@ struct Graph_Base {
 		assert(max(edge.from, edge.to) < nodeSize);
 		edges.emplace_back(edge);
 		out_edges[edge.from].emplace_back(Edge_Itr(edges.size()-1,edges));
-		in_edges[edge.to].emplace_back(Edge_Itr(edges.size() - 1, edges));
+		//in_edges[edge.to].emplace_back(Edge_Itr(edges.size() - 1, edges));
 	}
 public:
 	template<class T = void>
