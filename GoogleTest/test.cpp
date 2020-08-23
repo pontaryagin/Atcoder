@@ -31,6 +31,14 @@ TEST(MyHeader, complex) {
 	c2.imag(4);
 	EXPECT_EQ(c2, complex<ll>(2, 4));
 }
+TEST(MyHeader, exist) {
+	vector<ll> v{ 0,1,2 };
+	set<ll> s{ 0,1,2 };
+	map<ll, ll> m{ {0,10},{1,10},{2,20} };
+	EXPECT_EQ(exist(v, 2ll), true);
+	EXPECT_EQ(exist(s, 2ll), true);
+	EXPECT_EQ(exist(m, 2ll), true);
+}
 
 TEST(NumberTheory,modint) {
 

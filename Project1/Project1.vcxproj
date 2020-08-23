@@ -85,6 +85,7 @@
       <SDLCheck>true</SDLCheck>
       <LanguageStandard>stdcpp14</LanguageStandard>
       <AdditionalIncludeDirectories>C:\lib\boost_1_66_0</AdditionalIncludeDirectories>
+      <AdditionalOptions>/openmp:experimental /Qvec-report:2 /Zc:__cplusplus</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\lib\boost_1_66_0\libs</AdditionalLibraryDirectories>
@@ -95,7 +96,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalOptions>/openmp:experimental /Qvec-report:2</AdditionalOptions>
+      <AdditionalOptions>/openmp:experimental /Qvec-report:2 /Zc:__cplusplus</AdditionalOptions>
       <AdditionalIncludeDirectories>C:\lib\boost_1_74_0\build\include\boost-1_74\;C:\lib\Sprout\;C:\lib\tbb\include;C:\lib\tbb\bin\intel64\vc14;</AdditionalIncludeDirectories>
       <EnablePREfast>false</EnablePREfast>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -114,6 +115,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>C:\lib\boost_1_66_0</AdditionalIncludeDirectories>
+      <AdditionalOptions>/openmp:experimental /Qvec-report:2 /Zc:__cplusplus</AdditionalOptions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -128,7 +130,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalOptions>/openmp:experimental /Qvec-report:2</AdditionalOptions>
+      <AdditionalOptions>/openmp:experimental /Qvec-report:2 /Zc:__cplusplus</AdditionalOptions>
       <AdditionalIncludeDirectories>C:\lib\boost_1_74_0\build\include\boost-1_74\;C:\lib\Sprout\;C:\lib\tbb\include;C:\lib\tbb\bin\intel64\vc14;</AdditionalIncludeDirectories>
       <EnablePREfast>false</EnablePREfast>
       <OpenMPSupport>true</OpenMPSupport>

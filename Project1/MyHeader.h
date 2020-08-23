@@ -256,10 +256,12 @@ map<V, K> inv_map(map<K, V>& m) {
 	}
 	return res;
 }
-template<class T, class val_t = typename T::value_type, enable_if_t<!is_same<T, set<val_t>>::value >* = nullptr >
-constexpr bool exist(const T& container, val_t val) { return find(all(container), val) != container.end(); }
-template<class T, class val_t = typename T::value_type,  enable_if_t<is_same<T, set<val_t>>::value >* = nullptr >
-constexpr bool exist(const T& container, val_t val) { return container.find(val) != container.end(); }
+template<class T>
+constexpr bool exist(const vector<T>& container, const T& val) { return find(all(container), val) != container.end(); }
+template<class T>
+constexpr bool exist(const set<T>& container, const T& val) { return container.find(val) != container.end(); }
+template<class T, class S>
+constexpr bool exist(const map<T,S>& container, const T& val) { return container.find(val) != container.end(); }
 
 // inner prod: |a||b|cos(theta)
 template<class T> T dot(complex<T> a, complex<T> b) {	return a.real() * b.real() + a.imag() * b.imag(); }
