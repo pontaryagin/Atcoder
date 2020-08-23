@@ -85,6 +85,13 @@ struct Graph_Base {
 	const vector<Edge_Itr>& out(ll ind) const { return this->out_edges[ind]; }
 	//vector<Edge_Itr>& in(ll ind){ return this->in_edges[ind]; }
 	//const vector<Edge_Itr>& in(ll ind) const{ return this->in_edges[ind]; }
+	vector<vector<Edge_CItr>> in_edges() const {
+		vector<vector<Edge_CItr>> res(nodeSize);
+		rep (i, 0, edges.size()) {
+			res[edges[i].to].emplace_back(i, edges );
+		}
+		return res;
+	}
 	Edge_Itr begin() { return Edge_Itr(0, edges); }
 	Edge_Itr end() { return Edge_Itr(edges.size(), edges); }
 	Edge_CItr begin() const { return Edge_CItr(0, edges); }
@@ -92,10 +99,10 @@ struct Graph_Base {
 
 	ll size() const { return nodeSize; }
 	ll sizeEdges() const { return edges.size(); }
-	void _push(const Edge& edge){
+	void _push(const Edge& edge) {
 		assert(max(edge.from, edge.to) < nodeSize);
 		edges.emplace_back(edge);
-		out_edges[edge.from].emplace_back(Edge_Itr(edges.size()-1,edges));
+		out_edges[edge.from].emplace_back(Edge_Itr(edges.size()-1, edges));
 		//in_edges[edge.to].emplace_back(Edge_Itr(edges.size() - 1, edges));
 	}
 public:
@@ -505,9 +512,10 @@ public:
 		fill_v(visited, 0);
 		sort(all(time));
 		ll cur_comp = 0;
+		auto in_edges = this->in_edges();
 		auto dfs_rev = [&](auto dfs_rev, ll node) -> void {
 			visited[node] = 1; components[node] = cur_comp;
-			for (auto&& e : this->in(node)) {
+			for (auto&& e : in_edges[node]) {
 				if (visited[e->from] == 0) {
 					dfs_rev(dfs_rev, e->from);
 				}
