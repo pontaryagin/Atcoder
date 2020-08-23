@@ -1,5 +1,5 @@
 #pragma once
-//#pragma GCC optimize ("-O3")
+#pragma GCC optimize ("-O3")
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -43,10 +43,9 @@
 
 using namespace std;
 
-typedef long long ll;
+using ll = long long;
 constexpr ll MOD = 1000000007ll;
 constexpr ll INF = 1LL << 60;
-
 #define rep(i, N, M) for(ll i=N, i##_len=(M); i<i##_len; ++i)
 #define rep_skip(i, N, M, ...) for(ll i=N, i##_len=(M); i<i##_len; i+=(skip))
 #define rrep(i, N, M)  for(ll i=(M)-1, i##_len=(N-1); i>i##_len; --i)
