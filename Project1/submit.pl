@@ -12,7 +12,7 @@ my ($what, $problemName, $problemNumber) = @ARGV;
 # $what = build, test, submit, submit-f, gen
 sub gpp{
     #system("g++ -g3 -std=c++17 main.cpp -fsanitize=undefined,address");
-    if(system("g++ -std=c++17 -O2 main.cpp")) {die("compile error\n");}
+    if(system("g++ -std=c++17 -g3 -O2 main.cpp")) {die("compile error\n");}
 }
 sub expand{
     $_ = `g++ -std=c++14 -MM $_[0]`;
