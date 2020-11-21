@@ -81,11 +81,11 @@ TEST(NumberTheory, runtime_modint) {
 }
 
 TEST(NumberTheory, Combination){
-
-	Combination<> cmb;
+	using mod = modint<7>;
+	Combination<mod> cmb;
 	EXPECT_EQ(cmb(4, 2), 6);
 	EXPECT_EQ(cmb.Fac(3), 6);
-	EXPECT_EQ(cmb.FacInv(3), 1_mod / 6);
+	EXPECT_EQ(cmb.FacInv(3), mod(1) / 6);
 	EXPECT_EQ(cmb.P(3, 3), 6);
 	EXPECT_EQ(cmb.H(3, 2), cmb(3 + 2 - 1, 2));
 
@@ -97,6 +97,7 @@ TEST(NumberTheory, divisors) {
 	auto divs = divisor(12);
 	vll res{ 1,2,3,4,6,12 };
 	EXPECT_EQ(divs, res);
+	EXPECT_EQ(divisor(4), (vll{ 1,2,4 }));
 	auto divs2 = divisor(12, 15);
 	vll res2{ 1,3 };
 	EXPECT_EQ(divs2, res2);

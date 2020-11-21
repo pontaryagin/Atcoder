@@ -9,7 +9,7 @@ ll div_ferm(ll val, ll  b, ll mod) {
 // === Modint ===
 //static uint_fast64_t runtime_modulus = MOD;
 
-template <ll modulus = MOD> 
+template <ll modulus> 
 class modint 
 {
 public:
@@ -146,12 +146,8 @@ public:
 
 
 };
-// user defined literal
-modint<MOD> operator"" _mod(unsigned long long x) {
-	return modint<MOD>(x);
-}
 
-template<class T = modint<>>
+template<class T>
 class Combination {
 	// this calculates combination (nCk).
 	// Constructor runs in O(MAX).
@@ -219,11 +215,11 @@ vll divisor(ll n) {
 	// returns common divisors in O(sqrt(min(n,m)))
 	vll res;
 	for (ll i = 1; i*i <= n; i++) {
-		if (n%i == 0) {
+		if (i * i == n) res.push_back(i);
+		else if (n%i == 0) {
 			res.push_back(i);
 			res.push_back(n / i);
 		}
-		if (i * i == n)res.push_back(i);
 	}
 	sort(res.begin(), res.end());
 	return res;

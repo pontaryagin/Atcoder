@@ -20,7 +20,7 @@ ll kmp_search(const string& text, const string& word) {
 	return text.size();
 }
 
-template<ll MOD = MOD, ll B = 9973>
+template<ll MOD = POW(10,9), ll B = 9973>
 struct RollingHash {
 	vector<modint<MOD>> hash, p;
 	RollingHash() {}
