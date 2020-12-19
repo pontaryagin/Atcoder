@@ -99,6 +99,12 @@ namespace M {
 		static underlying_type append(underlying_type a, underlying_type b) { return a + b; }
 		static underlying_type iterate(underlying_type a, int n) { return a * n; }
 	};
+	template <typename T = ll>
+	struct xor_t {
+		typedef T underlying_type;
+		static underlying_type unit() { return 0; }
+		static underlying_type append(underlying_type a, underlying_type b) { return a ^ b; }
+	};
 
 	template<typename S, typename T>
 	struct pair_t {
