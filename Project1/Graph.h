@@ -350,18 +350,36 @@ public:
 		return dist;
 	}
 
-	vll euler_tour(ll start) const
+	vll euler_tour_edge(ll start) const
 	{
 		vll res;
 		res.push_back(start);
-		dfs(start, [&](const Edge& e) {
-			res.push_back(e.to);
+		dfs(start, 
+			[&](const Edge& e) {
+				res.push_back(e.to);
 			}, [&](const Edge& e) {
 				res.push_back(e.from);
 			});
 		return res;
 	}
 
+	vvll euler_tour_node(ll start) const
+	{
+		// pos[i] = { first visit time, last visit time } 
+		// on edge (i, j) : it stays during [max0-1, max0] and [min1, min1+1], where max0 = max(pos[i][0], pos[j][0]) and min1 = min(pos[i][1], pos[j][1]) 
+		vvll pos(nodeSize, vll(2, -1)); 
+		vll tour;
+		ll curr = 0;
+		dfs_node(0, 
+			[&](ll node) {
+				if (pos[node][0] == -1)
+					pos[node][0] = curr++;
+			}, [&](ll node) {
+				pos[node][1] = curr++;
+			});
+		return pos;
+	}
+	
 	template<GraphDir out_dir>
 	Graph_Base<out_dir, cost_t> kruskal() const
 	{

@@ -238,7 +238,7 @@ TEST(Graph, LCA) {
 
 }
 
-TEST(Graph, EulerTour) {
+TEST(Graph, EulerTourEdge) {
 
 	Graph g(5);
 	g.push({ 0,1 });
@@ -248,8 +248,21 @@ TEST(Graph, EulerTour) {
 	// 0
 	// \1  \2
 	//       \3  \4
-	auto tour = g.euler_tour(0);
+	auto tour = g.euler_tour_edge(0);
 	auto res = vll{ 0,1,0,2,3,2,4,2,0 };
+	EXPECT_EQ(tour, res);
+
+}
+
+TEST(Graph, EulerTourNode) {
+
+	Graph g(5);
+	g.push({ 0,1 });
+	g.push({ 0,2 });
+	g.push({ 2,3 });
+	g.push({ 2,4 });
+	auto tour = g.euler_tour_node(0);
+	auto res = vvll{ {0, 9}, {1, 2}, {3, 8}, {4, 5}, {6, 7} };
 	EXPECT_EQ(tour, res);
 
 }
