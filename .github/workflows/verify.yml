@@ -21,16 +21,3 @@ jobs:
         YUKICODER_TOKEN: ${{ secrets.YUKICODER_TOKEN }}
         GH_PAT: ${{ secrets.GH_PAT }}
       run: oj-verify all
-
-    - name: Install GoogleTest
-      run: |
-        cd /usr/src/gtest
-        sudo cmake . 
-        sudo cmake --build . 
-        sudo mv libg* /usr/local/lib/ 
-
-    - name: Run GoogleTest
-      run: |
-        cd ./GoogleTest
-        ./gtest.sh
-
