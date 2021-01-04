@@ -1,4 +1,4 @@
-#define PROBLEM http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DPL_1_D
+#define PROBLEM "http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DPL_1_D"
 
 #include "MyHeader.h"
 //#include "NumberTheory.h"
