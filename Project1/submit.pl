@@ -12,7 +12,7 @@ my ($what, $problemName, $problemNumber) = @ARGV;
 # $what = build, test, submit, submit-f, gen
 sub gpp{
     #system("g++ -g3 -std=c++17 main.cpp -fsanitize=undefined,address");
-    if(system("g++ -std=c++17 -g3 -O2 main.cpp -I.")) {die("compile error\n");}
+    if(system("g++ -std=c++17 -g3 -O2 main.cpp -I. -I/mnt/c/lib/boost_1_74_0/build/include/boost-1_74")) {die("compile error\n");}
 }
 sub expand{
     $_ = `g++ -std=c++14 -MM $_[0] -I.`;
@@ -35,7 +35,7 @@ sub expand{
 }
 expand($source);
 # removing ,  #include "file name " except for boost
-$res =~ s/.*#include\s+"(?!boost).*"//g ;
+$res =~ s/.*#include\s+"(?!boost)(?!atcoder).*"//g ;
 # removing pragma once
 $res =~ s/.*#pragma once.*//g;
 open(OUT, "> $out") or die;
