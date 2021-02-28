@@ -15,14 +15,14 @@ sub gpp{
     if(system("g++ -std=c++17 -g3 -O2 main.cpp -I.")) {die("compile error\n");}
 }
 sub expand{
-    $_ = `g++ -std=c++14 -MM $_[0]`;
+    $_ = `g++ -std=c++14 -MM $_[0] -I.`;
     $_ =~ s/\\//;
     my @files = split(" ", $_);
     my @includes = @files[2..$#files];
     print  "analysing: $_";
     my $num =0;
     for my $file (@includes){
-        if($used{$file}==0){
+        if(! ($file =~ /.*atcoder.*/) && $used{$file}==0){
             print "expanding: $file\n";
             expand($file);
         }
