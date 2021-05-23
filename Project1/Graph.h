@@ -504,11 +504,10 @@ public:
 		return true;
 	}
 
+	// strongly connected components decomposition algorithm in O(|V| + |E|)
+	// @ return : contracted DAG
+	// @ in (components) : node i is in components[i]-th component in DAG
 	Graph_Base scc(vll& components) const {
-		// strongly connected components decomposition algorithm in O(|V| + |E|)
-		// @ return : contracted DAG
-		// @ in (components) : node i is in components[i]-th component in DAG
-		static_assert(dir == GraphDir::dir, "scc is valid for directed graph");
 		components.resize(size());
 		vpll time(size());
 		ll now = 0;

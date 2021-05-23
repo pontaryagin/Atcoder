@@ -106,6 +106,12 @@ namespace M {
 		static underlying_type append(underlying_type a, underlying_type b) { return a ^ b; }
 	};
 	template <typename T = ll>
+	struct or_t {
+		typedef T underlying_type;
+		static underlying_type unit() { return 0; }
+		static underlying_type append(underlying_type a, underlying_type b) { return a | b; }
+	};
+	template <typename T = ll>
 	struct gcd_t {
 		typedef T underlying_type;
 		static underlying_type unit() { return INF; }
