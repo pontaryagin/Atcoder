@@ -49,9 +49,6 @@ constexpr ll INF = 1LL << 60;
 #define rep_skip(i, N, M, ...) for(ll i=N, i##_len=(M); i<i##_len; i+=(skip))
 #define rrep(i, N, M)  for(ll i=(M)-1, i##_len=(N-1); i>i##_len; --i)
 #define repbit(bit, N, DIG) rep(bit, (N), (1LL<< (DIG)))
-#define pb push_back
-#define fir first
-#define sec second
 #define all(a)  (a).begin(),(a).end()
 #define rall(a) (a).rbegin(), (a).rend()
 #define perm(c) sort(all(c));for(bool c##perm=1;c##perm;c##perm=next_permutation(all(c))) //perm(c){write(c)} writes all permutation of c 

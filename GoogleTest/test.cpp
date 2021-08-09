@@ -6,6 +6,7 @@
 #include "../Project1/Polynomial.h"
 #include "../Project1/Matrix.h"
 #include "../Project1/RecurrenceRelation.h"
+#include "../Project1/D2.h"
 
 TEST(MyHeader, inv_map) {
 	vll x = { 4, 5, 10 };
@@ -520,6 +521,18 @@ TEST(Polynomial, div2) {
 	rep(i, 0, ans2.size()) {
 		EXPECT_EQ(d2(i), ans2[i]);
 	}
+}
+
+TEST(D2, main) {
+
+	ll h = 2, w = 3;
+	D2 d2(h, w);
+	EXPECT_EQ(d2.next(0, D2::L), nullopt);
+	EXPECT_EQ(d2.next(0, D2::D), nullopt);
+	EXPECT_EQ(d2.next(0, D2::U), 3);
+	EXPECT_EQ(d2.next(0, D2::R), 1);
+	EXPECT_EQ(d2(5), pll(1,2));
+	EXPECT_EQ(d2(1,2), 5);
 }
 
 
