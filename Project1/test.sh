@@ -1,14 +1,14 @@
 #!/bin/bash
-set -e
+set -xe
 which oj > /dev/null
 
 CXX=${CXX:-g++}
-CXXFLAGS="${CXXFLAGS:--std=c++14 -O2 -Wall -g}"
+CXXFLAGS="${CXXFLAGS:--std=c++17 -O2 -Wall -g}"
 # ulimit -s unlimited
 
 run() {
     file="$1"
-    url="$(grep -o '^# *define \+PROBLEM \+\(https\?://.*\)' < "$file" | sed 's/\r$//' | sed 's/.* http/http/')"
+    url="$(grep -o '^# *define \+PROBLEM \+"*\(https\?://.*\)"*' < "$file" | sed 's/\r$//' | sed 's/.* http/http/')"
     dir=test/$(echo -n "$url" | md5sum | sed 's/ .*//')
     mkdir -p ${dir}
     $CXX $CXXFLAGS -I . -o ${dir}/a.out "$file"
@@ -17,7 +17,7 @@ run() {
             sleep 2
             oj download --system "$url" -d ${dir}/test
         fi
-        oj test --tle 10 --c ${dir}/a.out -d ${dir}/test
+        oj test --tle 10 --command ${dir}/a.out -d ${dir}/test
     else
         ${dir}/a.out
     fi

@@ -20,6 +20,7 @@
     <ClInclude Include="Polynomial.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="RecurrenceRelation.h" />
+    <ClInclude Include="WaveletMatrix.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

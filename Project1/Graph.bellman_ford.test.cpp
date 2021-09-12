@@ -10,7 +10,7 @@
 
 // ============================ Header  =================================
 
-#define PROBLEM "http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_1_B"
+#define PROBLEM http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_1_B
 
 int main() {
 	cin.tie(0);

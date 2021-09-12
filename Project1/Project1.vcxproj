@@ -83,7 +83,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>C:\lib\boost_1_66_0</AdditionalIncludeDirectories>
       <AdditionalOptions>/openmp:experimental /Qvec-report:2 /Zc:__cplusplus</AdditionalOptions>
     </ClCompile>
@@ -101,7 +101,7 @@
       <EnablePREfast>false</EnablePREfast>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <OpenMPSupport>true</OpenMPSupport>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\lib\boost\lib;C:\lib\boost_1_66_0\stage\x86\lib;C:\lib\tbb\lib\intel64\vc14</AdditionalLibraryDirectories>
@@ -116,6 +116,8 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>C:\lib\boost_1_66_0</AdditionalIncludeDirectories>
       <AdditionalOptions>/openmp:experimental /Qvec-report:2 /Zc:__cplusplus</AdditionalOptions>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -134,7 +136,7 @@
       <AdditionalIncludeDirectories>C:\lib\boost_1_74_0\build\include\boost-1_74\;C:\lib\Sprout\;C:\lib\tbb\include;C:\lib\tbb\bin\intel64\vc14;</AdditionalIncludeDirectories>
       <EnablePREfast>false</EnablePREfast>
       <OpenMPSupport>true</OpenMPSupport>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -162,6 +164,7 @@
     <ClInclude Include="Timer.h" />
     <ClInclude Include="type_name.h" />
     <ClInclude Include="UnionFind.h" />
+    <ClInclude Include="WaveletMatrix.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
