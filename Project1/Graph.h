@@ -598,12 +598,15 @@ using Digraph = Graph_Base<GraphDir::dir, ll>;
 
 
 vll shortest_path_generator(const vll& from_list, ll start, ll goal) {
-	// usage : vll path =  shortest_path(dijkstra(g,s).second, s, g);
+	// usage : vll from; =  g.dijkstra(s, from);
+	//  vll path =  shortest_path(from, s, g);
 	vll path;
 	path.emplace_back(goal);
 	while (true) {
 		ll from = from_list[goal];
-		path.emplace_back(from);
+		if (from != goal) {
+			path.emplace_back(from);
+		}
 		if (from == start) {
 			break;
 		}

@@ -160,6 +160,9 @@ TEST(Graph, Dijkstra) {
 	vll path2 = shortest_path_generator(shortestPathInfo, 2, 3);
 	auto path2_res = vll{ 2,3 };
 	EXPECT_EQ(path2, path2_res);
+	vll path3 = shortest_path_generator(shortestPathInfo, 0, 0);
+	auto path3_res = vll{ 0 };
+	EXPECT_EQ(path3, path3_res);
 }
 
 TEST(Graph, EdgeItr) {
