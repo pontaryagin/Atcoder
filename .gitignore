@@ -267,3 +267,10 @@ Project1/Source2
 Project1/main.cpp
 Project1/Source2.cpp
 Project1/tmp
+
+# Executables
+*.exe
+*.out
+
+## Local 
+build/**/*
