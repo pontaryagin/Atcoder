@@ -1,8 +1,9 @@
 .PHONY: build bundle run
 
+BUILD_CONFIG := RelWithDebInfo
 TEST_DIR := oj-test/$(shell basename $(URL))
 TARGET := Project1/main.out
-BIN_PATH := ./build/$(TARGET)
+BIN_PATH := ./build/$(BUILD_CONFIG)/$(TARGET)
 
 bundle:
 	cd ./Project1 && oj-bundle ./main.cpp  > main.bundle.cpp
@@ -23,8 +24,8 @@ submit:
 	oj submit
 
 build:
-	cmake -B build -G Ninja
-	cmake --build build --target $(TARGET) --verbose
+	cmake -B build/$(BUILD_CONFIG) -G Ninja
+	cmake --build build/$(BUILD_CONFIG) --config $(BUILD_CONFIG) --target $(TARGET) --verbose
 
 run: build
 	$(BIN_PATH)
