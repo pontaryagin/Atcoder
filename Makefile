@@ -24,7 +24,7 @@ submit:
 
 build:
 	cmake -B build -G Ninja
-	cmake --build build --target $(TARGET)
+	cmake --build build --target $(TARGET) --verbose
 
 run: build
 	$(BIN_PATH)
