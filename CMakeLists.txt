@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(AtCoder CXX)
 # サブディレクトリを登録
-add_subdirectory(Project1)
+add_subdirectory(src)
 add_subdirectory(GoogleTest)
 add_subdirectory(AOJ_TEST)
 

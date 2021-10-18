@@ -45,7 +45,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Project1\Project1.vcxproj">
+    <ProjectReference Include="..\src\src.vcxproj">
       <Project>{29ae9fa8-9e03-45cf-8652-057a3f7fb564}</Project>
     </ProjectReference>
   </ItemGroup>

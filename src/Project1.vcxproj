@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{29AE9FA8-9E03-45CF-8652-057A3F7FB564}</ProjectGuid>
-    <RootNamespace>Project1</RootNamespace>
+    <RootNamespace>src</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>AtCoder</ProjectName>
   </PropertyGroup>

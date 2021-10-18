@@ -1,12 +1,12 @@
-#include "pch.h"
-#include "../Project1/NumberTheory.h"
-#include "../Project1/SegmentTree.h"
-#include "../Project1/Graph.h"
-#include "../Project1/Text.h"
-#include "../Project1/Polynomial.h"
-#include "../Project1/Matrix.h"
-#include "../Project1/RecurrenceRelation.h"
-#include "../Project1/D2.h"
+#include "gtest/gtest.h"
+#include "NumberTheory.h"
+#include "SegmentTree.h"
+#include "Graph.h"
+#include "Text.h"
+#include "Polynomial.h"
+#include "Matrix.h"
+#include "RecurrenceRelation.h"
+#include "D2.h"
 
 TEST(MyHeader, inv_map) {
     vll x = { 4, 5, 10 };

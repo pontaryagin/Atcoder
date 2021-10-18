@@ -260,13 +260,13 @@ paket-files/
 __pycache__/
 *.pyc
 TestCases
-Project1/main.out
-Project1/test
-Project1/a.out
-Project1/Source2
-Project1/main.cpp
-Project1/Source2.cpp
-Project1/tmp
+src/main.out
+src/test
+src/a.out
+src/Source2
+src/main.cpp
+src/Source2.cpp
+src/tmp
 /oj-test
 
 # Executables

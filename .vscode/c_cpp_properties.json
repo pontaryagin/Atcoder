@@ -4,7 +4,8 @@
             "name": "Linux",
             "includePath": [
                 "${default}",
-                "${workspaceFolder}/Project1/ac-library"
+                "${workspaceFolder}/ac-library",
+                "${workspaceFolder}/src"
             ],
             "compilerPath": "/usr/bin/gcc",
             "cppStandard": "c++17",
