@@ -3,6 +3,7 @@ project(AtCoder CXX)
 # サブディレクトリを登録
 add_subdirectory(Project1)
 add_subdirectory(GoogleTest)
+add_subdirectory(AOJ_TEST)
 
 # set(CMAKE_SOURCE_DIR ${CMAKE_HOME_DIRECTORY})
 # set(CMAKE_BINARY_DIR ${CMAKE_HOME_DIRECTORY}/build)
