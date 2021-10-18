@@ -262,3 +262,10 @@ constexpr bool exist(const map<T,S>& container, const T& val) { return container
 template<class T> T dot(complex<T> a, complex<T> b) {	return a.real() * b.real() + a.imag() * b.imag(); }
 // outer prod |a||b|sin(theta)
 template<class T> T cross(complex<T> a, complex<T> b) { return a.real() * b.imag() - a.imag() * b.real(); }
+
+// find the solusion of a*x + b*y = gcd(a,b)
+template<class T> T extgcd(T a, T b, T& x, T& y) { for (T u = y = 1, v = x = 0; a;) { T q = b / a; swap(x -= q * u, u); swap(y -= q * v, v); swap(b -= q * a, a); } return b; }
+using ld = long double;
+constexpr ld PI = 3.1415926535897932384626433832795028841971;
+void SayYes(){ cout << "Yes" << endl; }
+void SayNo(){ cout << "No" << endl; }

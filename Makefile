@@ -28,3 +28,7 @@ build:
 
 run: build
 	$(BIN_PATH)
+
+clean:
+	rm -rf ./build
+	cp -i ./Project1/main.template.cpp ./Project1/main.cpp
