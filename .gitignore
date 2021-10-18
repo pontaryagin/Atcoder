@@ -274,5 +274,5 @@ Project1/tmp
 *.out
 *.bundle.cpp
 
-## Local 
+## Local
 build/**/*

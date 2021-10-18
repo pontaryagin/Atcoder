@@ -14,4 +14,3 @@ indent_style = tab
 [*.{c,h,cpp,hpp}]
 indent_size = 4
 indent_style = space
-

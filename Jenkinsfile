@@ -4,6 +4,6 @@ node {
 	}
 	stages{
 		echo 'My first Jenkinsfile'
-		
+
 	}
 }
