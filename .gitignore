@@ -267,10 +267,12 @@ Project1/Source2
 Project1/main.cpp
 Project1/Source2.cpp
 Project1/tmp
+/oj-test
 
 # Executables
 *.exe
 *.out
+*.bundle.cpp
 
 ## Local 
 build/**/*
