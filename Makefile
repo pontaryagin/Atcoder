@@ -1,9 +1,10 @@
-.PHONY: build bundle run
+.PHONY: build bundle run test gtest
 
 BUILD_CONFIG := RelWithDebInfo
-TEST_DIR := oj-test/$(shell basename $(URL))
+TEST_DIR := oj-test/$(shell test ! -z $(URL) && basename $(URL))
 TARGET := Project1/main.out
-BIN_PATH := ./build/$(BUILD_CONFIG)/$(TARGET)
+BUILD_DIR := build/$(BUILD_CONFIG)
+BIN_PATH := ./$(BUILD_DIR)/$(TARGET)
 
 bundle:
 	cd ./Project1 && oj-bundle ./main.cpp  > main.bundle.cpp
@@ -23,13 +24,25 @@ oj-d:
 submit:
 	oj submit
 
+configure:
+	cmake -B $(BUILD_DIR) -G Ninja
+
 build:
-	cmake -B build/$(BUILD_CONFIG) -G Ninja
-	cmake --build build/$(BUILD_CONFIG) --config $(BUILD_CONFIG) --target $(TARGET) --verbose
+	make configure
+	cmake --build $(BUILD_DIR) --config $(BUILD_CONFIG) --target $(TARGET) --verbose
 
 run: build
 	$(BIN_PATH)
 
+oj-verify:
+	oj-verify run
+
+gtest:
+	make configure
+	cmake --build $(BUILD_DIR) --config $(BUILD_CONFIG) --verbose
+	./$(BUILD_DIR)/GoogleTest/unit_test
+
+test: oj-verify
 clean:
 	rm -rf ./build
 	cp -i ./Project1/main.template.cpp ./Project1/main.cpp
