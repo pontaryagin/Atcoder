@@ -11,8 +11,8 @@ oj-s-f: bundle
 oj-s: oj-t bundle
 	oj s $(URL) ./Project1/main.bundle.cpp -y
 
-oj-t:
-	oj t -d $(TEST_DIR)
+oj-t: build
+	oj t -d $(TEST_DIR) -c ./Project1/main.out
 
 oj-d:
 	oj d $(URL) -d $(TEST_DIR)
@@ -21,8 +21,8 @@ submit:
 	oj submit
 
 build:
-	cmake -B build
-	cmake --build build
+	cmake -B build -G Ninja
+	cmake --build build --target Project1/main.out
 
 run: build
 	./build/Project1/main.out
