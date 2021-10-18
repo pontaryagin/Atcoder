@@ -1,5 +1,5 @@
 #pragma once
-#pragma GCC optimize ("-O3")
+// #pragma GCC optimize ("-O3")
 #include <iostream>
 #include <cmath>
 #include <vector>
