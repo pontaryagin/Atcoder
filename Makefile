@@ -46,6 +46,10 @@ gtest:
 	./$(BUILD_DIR)/GoogleTest/unit_test
 
 test: oj-verify
+
+init-main:
+	cp -i ./src/main.template.cpp ./src/main.cpp
+
 clean:
 	rm -rf ./build
-	cp -i ./src/main.template.cpp ./src/main.cpp
+	make init-main
