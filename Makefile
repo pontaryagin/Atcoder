@@ -27,7 +27,7 @@ submit:
 GENERATOR := $(shell ninja --version > /dev/null 2>&1 && echo "Ninja" || echo "Unix Makefiles")
 
 configure:
-	cmake -B $(BUILD_DIR) -G $(GENERATOR)
+	cmake -B $(BUILD_DIR) -G "$(GENERATOR)"
 
 build:
 	make configure
