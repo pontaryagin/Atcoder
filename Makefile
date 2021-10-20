@@ -3,6 +3,7 @@
 BUILD_CONFIG := RelWithDebInfo
 TEST_DIR := oj-test/$(shell test ! -z $(URL) && basename $(URL))
 TARGET := src/main.out
+TARGET_UNIT_TEST := GoogleTest/unit_test
 BUILD_DIR := build/$(BUILD_CONFIG)
 BIN_PATH := ./$(BUILD_DIR)/$(TARGET)
 
@@ -41,7 +42,7 @@ oj-verify:
 
 gtest:
 	make configure
-	cmake --build $(BUILD_DIR) --config $(BUILD_CONFIG) --verbose
+	cmake --build $(BUILD_DIR) --config $(BUILD_CONFIG) --target $(TARGET_UNIT_TEST) --verbose
 	./$(BUILD_DIR)/GoogleTest/unit_test
 
 test: oj-verify
