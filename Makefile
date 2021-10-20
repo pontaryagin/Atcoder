@@ -32,7 +32,7 @@ configure:
 
 build:
 	make configure
-	cmake --build $(BUILD_DIR) --config $(BUILD_CONFIG) --target $(TARGET) --verbose
+	cmake --build $(BUILD_DIR) --config $(BUILD_CONFIG) --target main.out --verbose
 
 run: build
 	$(BIN_PATH)
@@ -42,7 +42,7 @@ oj-verify:
 
 gtest:
 	make configure
-	cmake --build $(BUILD_DIR) --config $(BUILD_CONFIG) --target $(TARGET_UNIT_TEST) --verbose
+	cmake --build $(BUILD_DIR) --config $(BUILD_CONFIG) --target unit_test --verbose
 	./$(BUILD_DIR)/GoogleTest/unit_test
 
 test: oj-verify
