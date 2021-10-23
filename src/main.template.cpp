@@ -21,14 +21,12 @@
 //namespace mp = boost::multiprecision;
 
 using namespace std;
- 
+
 int main() {
-	cin.tie(0);
-	cout.tie(0);
-	std::cout << std::setprecision(10);
-	ios::sync_with_stdio(false);
- 
-	return 0;
+    cin.tie(0);
+    cout.tie(0);
+    std::cout << std::setprecision(10);
+    ios::sync_with_stdio(false);
+
+    return 0;
 }
- 
- 

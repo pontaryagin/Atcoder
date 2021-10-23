@@ -145,4 +145,3 @@ struct Matrix {
         return this->POW(n / 2).POW(2) * (*this);
     }
 };
-
