@@ -16,11 +16,14 @@ oj-s-f: bundle
 oj-s: oj-t bundle
 	oj submit $(URL) ./src/main.bundle.cpp -y
 
-oj-t: build
+oj-t: build oj-d
 	oj test -d $(TEST_DIR) -c $(BIN_PATH)
 
 oj-d:
-	oj download $(URL) -d $(TEST_DIR)
+	oj download $(URL) -d $(TEST_DIR) || true
+
+oj-d-f:
+	oj download $(URL) -d $(TEST_DIR) -f
 
 submit:
 	oj submit
