@@ -1,7 +1,7 @@
 .PHONY: build bundle run test gtest
 
 BUILD_CONFIG := RelWithDebInfo
-TEST_DIR := oj-test/$(shell test ! -z $(URL) && basename $(URL))
+TEST_DIR := oj-test/$(shell [ ! -z $(URL) ] && basename $(URL))
 TARGET := src/main.out
 TARGET_UNIT_TEST := GoogleTest/unit_test
 BUILD_DIR := build/$(BUILD_CONFIG)
@@ -10,11 +10,14 @@ BIN_PATH := ./$(BUILD_DIR)/$(TARGET)
 bundle:
 	cd ./src && oj-bundle ./main.cpp  > main.bundle.cpp
 
-oj-s-f: bundle
-	oj submit $(URL) ./src/main.bundle.cpp -y
-
+ifdef FORCE
+oj-s: bundle
+	make oj-t || true
+	oj submit $(URL) ./src/main.bundle.cpp
+else
 oj-s: oj-t bundle
 	oj submit $(URL) ./src/main.bundle.cpp -y
+endif
 
 oj-t: build oj-d
 	oj test -d $(TEST_DIR) -c $(BIN_PATH)
@@ -24,9 +27,6 @@ oj-d:
 
 oj-d-f:
 	oj download $(URL) -d $(TEST_DIR) -f
-
-submit:
-	oj submit
 
 GENERATOR := $(shell ninja --version > /dev/null 2>&1 && echo "Ninja" || echo "Unix Makefiles")
 
