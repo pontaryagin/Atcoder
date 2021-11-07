@@ -17,8 +17,11 @@
 //#include "RecurrenceRelation.h"
 //#include "Polynomial.h"
 // #include <atcoder/math>
-//#include <boost/multiprecision/cpp_int.hpp>
-//namespace mp = boost::multiprecision;
+// #include <boost/multiprecision/cpp_int.hpp>
+// #include <boost/multiprecision/cpp_dec_float.hpp>
+// namespace mp = boost::multiprecision;
+// using BFloat = mp::number<mp::cpp_dec_float<20>>;
+// namespace mp = boost::multiprecision;
 
 using namespace std;
 
