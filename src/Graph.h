@@ -504,6 +504,20 @@ public:
         return true;
     }
 
+    ll count_loops(ll node) const {
+        // count loops in connected components of given node.
+        // O(size of connected components)
+        static_assert(dir == GraphDir::undir);
+        ll node_num = 0;
+        ll edge_num=0;
+        dfs_node(node, [&](ll x){
+            edge_num += out(x).size();
+            node_num++;
+        });
+        edge_num /= 2;
+        return edge_num - node_num + 1;
+    }
+
     // strongly connected components decomposition algorithm in O(|V| + |E|)
     // @ return : contracted DAG
     // @ in (components) : node i is in components[i]-th component in DAG

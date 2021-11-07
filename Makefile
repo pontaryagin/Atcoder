@@ -48,7 +48,7 @@ gtest:
 	cmake --build $(BUILD_DIR) --config $(BUILD_CONFIG) --target unit_test --verbose
 	./$(BUILD_DIR)/GoogleTest/unit_test
 
-test: oj-verify
+test: oj-verify gtest
 
 init-main:
 	cp -i ./src/main.template.cpp ./src/main.cpp

@@ -393,6 +393,37 @@ TEST(Graph, warshall_floyd) {
     EXPECT_EQ(d[0][3], INF);
 }
 
+
+TEST(Graph, count_loops) {
+    Graph g(20);
+    g.push({ 0,1 });
+    g.push({ 0,2 });
+    g.push({ 1,2 });
+
+    g.push({ 4,5 });
+
+    g.push({ 6, 7 });
+    g.push({ 6, 8 });
+    g.push({ 7, 8 });
+    g.push({ 8, 9 });
+    g.push({ 9, 10 });
+    g.push({ 9, 11 });
+    g.push({ 10, 11 });
+    
+    EXPECT_EQ(g.count_loops(0), 1);
+    EXPECT_EQ(g.count_loops(1), 1);
+
+    EXPECT_EQ(g.count_loops(3), 0);
+
+    EXPECT_EQ(g.count_loops(4), 0);
+
+    EXPECT_EQ(g.count_loops(6), 2);
+    EXPECT_EQ(g.count_loops(8), 2);
+    EXPECT_EQ(g.count_loops(9), 2);
+    EXPECT_EQ(g.count_loops(11), 2);
+}
+
+
 TEST(UnionFind, weight) {
     UnionFind uf(4);
     uf.unite(0, 3, 2);
