@@ -16,7 +16,7 @@
 //#include "Matrix.h"
 //#include "RecurrenceRelation.h"
 //#include "Polynomial.h"
-// #include <atcoder/math>
+// #include <atcoder/all>
 // #include <boost/multiprecision/cpp_int.hpp>
 // #include <boost/multiprecision/cpp_dec_float.hpp>
 // namespace mp = boost::multiprecision;
