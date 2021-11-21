@@ -90,6 +90,120 @@ private:
 };
 
 
+// template <typename Monoid>
+using Monoid = M::max_t<ll>;
+struct segment_tree_2d
+{
+
+    using underlying_type = typename  Monoid::underlying_type;
+    using data_type = vector<vector<underlying_type>>;
+
+    segment_tree_2d(ll h, ll w, underlying_type unit = Monoid::unit()) 
+        : unit(unit)
+    {
+        auto initial_value = data_type(h, vector(w, unit));
+        segment_tree_impl(move(initial_value));
+    }
+
+    segment_tree_2d(data_type initial_value, underlying_type unit = Monoid::unit())
+        : unit(unit)
+    {
+        segment_tree_impl(move(initial_value));
+    }
+
+    void update(int hh, int ww, underlying_type z) { // 0-based
+        assert(0 <= hh && hh < h_org && 0<= ww && ww < w_org);
+        a[_base_pos1(hh)][_base_pos2(ww)] = z;
+        // rep (i = (i + n) / 2; i > 0; i /= 2) { // 1-based
+        auto base_h = _base_pos1(hh);
+        auto base_w = _base_pos2(ww);
+        // {base_h} * [0, 2*w-1) is updated
+        for (auto _w = _par(base_w); _w >= 0; _w = _par(_w)){
+            a[base_h][_w] = Monoid::append(a[base_h][_l(_w)], a[base_h][_r(_w)]);            
+        }
+        for (auto _w = base_w; _w >= 0; _w = _par(_w)){
+            for (auto _h = _par(base_h); _h >= 0; _h = _par(_h)){
+                a[_h][_w] = Monoid::append(a[_l(_h)][_w], a[_r(_h)][_w]);            
+            }
+        }
+    }
+
+    underlying_type query(ll hh1, ll ww1, ll hh2, ll ww2) { // 0-based, [l, r)
+        underlying_type lacc = unit, racc = unit;
+        assert(l <= r && r <= n);
+        l += n; r += n;
+        for (; l < r; l /= 2, r /= 2) { // 1-based loop, 2x faster than recursion
+            if (l % 2 == 1) lacc = Monoid::append(lacc, a[(l++) - 1]);
+            if (r % 2 == 1) racc = Monoid::append(a[(--r) - 1], racc);
+        }
+        return Monoid::append(lacc, racc);
+    }
+
+    underlying_type query_h(ll hh, ll ww1, ll ww2) { // 0-based, [l, r)
+        underlying_type lacc = unit, racc = unit;
+        assert(l <= r && r <= n);
+        l += n; r += n;
+        for (; l < r; l /= 2, r /= 2) { // 1-based loop, 2x faster than recursion
+            if (l % 2 == 1) lacc = Monoid::append(lacc, a[(l++) - 1]);
+            if (r % 2 == 1) racc = Monoid::append(a[(--r) - 1], racc);
+        }
+        return Monoid::append(lacc, racc);
+    }
+
+    underlying_type query(ll hh, ll ww) { // return value at i
+        assert(0 <= hh && hh < h_org && 0<= ww && ww < w_org);
+        return a[_base_pos1(hh)][_base_pos2(ww)];
+    }
+
+    pll size() { return {h_org, w_org}; }
+
+private:
+    ll h_org, w_org;
+    ll h, w;
+    data_type a;
+    underlying_type unit;
+    int _base_pos1(int i) { return i + h-1; }
+    int _base_pos2(int i) { return i + w-1; }
+    int _l(int i) { return 2*i+1; }
+    int _r(int i) { return 2*i+2; }
+    int _par(int i) { return (i-1)/2; }
+
+    void segment_tree_impl(data_type initial_value)
+    {
+        h_org = initial_value.size();
+        w_org = initial_value.at(0).size();
+        h = 1; while (h < h_org) h *= 2;
+        w = 1; while (w < w_org) w *= 2;
+        a = move(initial_value);
+        a.resize(2 * h - 1, vector<underlying_type>(2*w-1, unit));
+        // [h-1, 2*h-1) * [w-1, 2*w-1) is initialized here
+        rep(i, 0, initial_value.size()) {
+            rep(j,0,initial_value[i].size()){
+                a[_base_pos1(i)][_base_pos2(j)] = initial_value[i][j];
+            }
+        }
+        // propagate w.r.t ww for fixed hh
+        // [h-1, 2*h-1) * [0, 2*w-1) is initialized here
+        rrep(hh, 0, h) {
+            rrep(ww,0, w-1){
+                auto base_h = _base_pos1(hh);
+                a[base_h][ww] = Monoid::append(a[base_h][_l(ww)], a[base_h][_r(ww)]);
+            }
+        }
+        // propagate w.r.t hh for fixed ww
+        // [0, 2*h-1) * [0, 2*w-1) is initialized here
+        rrep(ww,0, 2*w-1){
+            rrep(hh, 0, h-1) {
+                a[hh][ww] = Monoid::append(a[_l(hh)][ww], a[_r(hh)][ww]);
+            }
+        }
+    }
+
+
+};
+
+
+
 namespace M {
 
     template <typename T = ll>
@@ -187,85 +301,3 @@ struct AddAct :T {
     }
 };
 
-// 1) E is acting on T and 2) both should be monoid and 3) the action preserving monoid structure.
-// requires
-template <typename Monoid, typename ActionMonoid = AddAct<Monoid>>
-struct LazySegmentTree {
-    int n;
-    using M = typename Monoid::underlying_type;
-    using E = typename ActionMonoid::underlying_type;
-    function<M(M, M)> f = Monoid::append;
-    function<M(M, E)> act = ActionMonoid::act;
-
-    function<E(E, E)> h = ActionMonoid::append;
-    function<E(E, int)> iterate = ActionMonoid::iterate;
-    M m0 = Monoid::unit();
-    E e0 = ActionMonoid::unit();
-    vector<M> dat;
-    vector<E> laz;
-
-    // Monoid has append, unit, iterate functions.
-    //template<typename Monoid>
-    LazySegmentTree(int n_, vector<M> v = vector<M>())
-    {
-        init(n_);
-        if (n_ == (int)v.size()) build(n_, v);
-    }
-
-    LazySegmentTree(int n_, function<M(M, M)> f, function<M(M, E)> act, function<E(E, E)> h,
-        M m0, E e0, vector<M> v = vector<M>(), function<E(E, int)> iterate = [](E a, int) {return a; })
-        :f(f), act(act), h(h), m0(m0), e0(e0), iterate(iterate)
-    {
-        init(n_);
-        if (n_ == (int)v.size()) build(n_, v);
-    }
-    void init(int n_) {
-        n = 1;
-        while (n < n_) n *= 2;
-        dat.clear();
-        dat.resize(2 * n - 1, m0);
-        laz.clear();
-        laz.resize(2 * n - 1, e0);
-    }
-    void build(int n_, vector<M> v) {
-        for (int i = 0; i < n_; i++) dat[i + n - 1] = v[i];
-        for (int i = n - 2; i >= 0; i--)
-            dat[i] = f(dat[i * 2 + 1], dat[i * 2 + 2]);
-    }
-    inline void eval(int len, int k) {
-        if (laz[k] == e0) return;
-        if (k * 2 + 1 < n * 2 - 1) {
-            laz[k * 2 + 1] = h(laz[k * 2 + 1], laz[k]);
-            laz[k * 2 + 2] = h(laz[k * 2 + 2], laz[k]);
-        }
-        dat[k] = act(dat[k], iterate(laz[k], len));
-        laz[k] = e0;
-    }
-    M update(int a, int b, E x, int k, int l, int r) {
-        eval(r - l, k);
-        if (r <= a || b <= l) return dat[k];
-        if (a <= l && r <= b) {
-            laz[k] = h(laz[k], x);
-            return act(dat[k], iterate(laz[k], r - l));
-        }
-        return dat[k] = f(update(a, b, x, k * 2 + 1, l, (l + r) / 2),
-            update(a, b, x, k * 2 + 2, (l + r) / 2, r));
-    }
-    M update(int a, int b, E x) {
-        return update(a, b, x, 0, 0, n);
-    }
-    M update(int a,  E x) {
-        return update(a, a + 1, x);
-    }
-    M query(int a, int b, int k, int l, int r) {
-        eval(r - l, k);
-        if (r <= a || b <= l) return m0;
-        if (a <= l && r <= b) return dat[k];
-        M vl = query(a, b, k * 2 + 1, l, (l + r) / 2);
-        M vr = query(a, b, k * 2 + 2, (l + r) / 2, r);
-        return f(vl, vr);
-    }
-    M query(int a, int b) {
-        return query(a, b, 0, 0, n);
-    }
-};
