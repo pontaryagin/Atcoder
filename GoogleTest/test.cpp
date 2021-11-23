@@ -7,6 +7,7 @@
 #include "Matrix.h"
 #include "RecurrenceRelation.h"
 #include "D2.h"
+#include "IO.h"
 
 TEST(MyHeader, inv_map) {
     vll x = { 4, 5, 10 };
@@ -569,6 +570,47 @@ TEST(D2, main) {
     EXPECT_EQ(d2(1,2), 5);
 }
 
+TEST(IO, reader_vec){
+    stringstream input("1 2 3 4");
+    pSTDIN = &input;
+    auto out = read<vll>(4);
+    EXPECT_EQ(out, (vll{1,2,3,4}));
+}
+
+TEST(IO, reader_vec2){
+    stringstream input("1 2 3\n4 5 6");
+    pSTDIN = &input;
+    auto out = read<vvll>(2,3);
+    EXPECT_EQ(out, (vvll{vll{1,2,3},vll{4,5,6}}));
+}
+
+TEST(IO, reader_pair){
+    stringstream input("1 2");
+    pSTDIN = &input;
+    auto out = read<pair<ll, ll>>();
+    EXPECT_EQ(out, make_pair(1ll,2ll));
+}
+
+TEST(IO, reader_pair_vector){
+    stringstream input("1 2 3 4");
+    pSTDIN = &input;
+    auto out = read<pair<vll, vll>>(1,3);
+    EXPECT_EQ(out, (make_pair(vll{1},vll{2,3,4})) );
+}
+
+TEST(IO, reader_pair_vector2){
+    stringstream input("1 2 3 4");
+    pSTDIN = &input;
+    auto out = read<pair<vll, vll>>(tuple{1},tuple{3});
+    EXPECT_EQ(out, (make_pair(vll{1},vll{2,3,4})) );
+}
+
+TEST(IO, reader_vector_of_pair){
+    stringstream input("1 2\n3 4\n5 6");
+    pSTDIN = &input;
+    auto out = read<vpll>(3);
+    EXPECT_EQ(out, (vpll{{1,2}, {3,4}, {5,6}}) );
+}
 
 int main(int argc, char** argv)
 {
