@@ -602,13 +602,13 @@ TEST(IO, reader_vec){
     {
         stringstream strout;
         pSTDOUT = &strout;
-        writer(out);
+        write(out);
         EXPECT_EQ(strout.str(), "1 2 3 4\n");
     }
     {
         stringstream strout;
         pSTDOUT = &strout;
-        writer(out, ",");
+        write(out, ",");
         EXPECT_EQ(strout.str(), "1,2,3,4\n");
     }
 }
@@ -621,13 +621,13 @@ TEST(IO, reader_vec2){
     {
         stringstream strout;
         pSTDOUT = &strout;
-        writer(out);
+        write(out);
         EXPECT_EQ(strout.str(), "1 2 3 4 5 6\n");
     }
     {
         stringstream strout;
         pSTDOUT = &strout;
-        writer(out, "\n", " ");
+        write(out, "\n", " ");
         EXPECT_EQ(strout.str(), "1 2 3\n4 5 6\n");
     }
 }
@@ -640,13 +640,13 @@ TEST(IO, reader_pair){
     {
         stringstream strout;
         pSTDOUT = &strout;
-        writer(out);
+        write(out);
         EXPECT_EQ(strout.str(), "1\n2\n");
     }
     {
         stringstream strout;
         pSTDOUT = &strout;
-        writer(out, " ");
+        write(out, " ");
         EXPECT_EQ(strout.str(), "1 2\n");
     }
 }
@@ -659,25 +659,25 @@ TEST(IO, reader_pair_vector){
     {
         stringstream strout;
         pSTDOUT = &strout;
-        writer(out);
+        write(out);
         EXPECT_EQ(strout.str(), "1 2\n3 4 5\n");
     }
     {
         stringstream strout;
         pSTDOUT = &strout;
-        writer(out, ",");
+        write(out, ",");
         EXPECT_EQ(strout.str(), "1 2,3 4 5\n");
     }
     {
         stringstream strout;
         pSTDOUT = &strout;
-        writer(out, ",", tuple{"-"}, tuple{"#"});
+        write(out, ",", tuple{"-"}, tuple{"#"});
         EXPECT_EQ(strout.str(), "1-2,3#4#5\n");
     }
     {
         stringstream strout;
         pSTDOUT = &strout;
-        writer(out, ",", "-", "#");
+        write(out, ",", "-", "#");
         EXPECT_EQ(strout.str(), "1-2,3#4#5\n");
     }
 }
@@ -697,13 +697,13 @@ TEST(IO, reader_vector_of_pair){
     {
         stringstream strout;
         pSTDOUT = &strout;
-        writer(out);
+        write(out);
         EXPECT_EQ(strout.str(), "1\n2 3\n4 5\n6\n");
     }
     {
         stringstream strout;
         pSTDOUT = &strout;
-        writer(out, "\n", " ");
+        write(out, "\n", " ");
         EXPECT_EQ(strout.str(), "1 2\n3 4\n5 6\n");
     }
 }

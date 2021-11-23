@@ -82,7 +82,7 @@ struct Writer<pair<T, U>>
 };
 
 template<class T, class... Del>
-void writer(const T& arg, const Del&... del){
+void write(const T& arg, const Del&... del){
     Writer<T>::_write(arg, del...);
     (*pSTDOUT) << "\n";
 }

@@ -148,11 +148,6 @@ template<typename T, typename S> istream& operator>>(istream& istr, pair<T, S>& 
 template<typename T> istream& operator>>(istream& istr, vector<T>& x) {	rep(i, 0, x.size()) istr >> x[i]; return istr; }
 template<typename T> istream& operator>>(istream& istr, complex<T>& x) { T r, i; istr >> r >> i; x.real(r); x.imag(i); return istr; }
 
-template<typename T, typename Delim_t = string, typename enable_if<!is_vector<T>::value, nullptr_t>::type = nullptr>
-void write(T& x, Delim_t delim = " ") { cout << x << delim; }
-template<typename T, typename Delim_t = string, typename enable_if<is_vector<T>::value, nullptr_t>::type = nullptr>
-void write(T& x, Delim_t delim = " ") { rep(i, 0, x.size()) write(x[i], (i == (x.size() - 1) ? "" : delim)); cout << '\n'; }
-
 template<typename T> void chmin(T &a, T b) {
     if (a > b) a = b;
 }
