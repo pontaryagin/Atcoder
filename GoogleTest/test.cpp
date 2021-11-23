@@ -599,6 +599,18 @@ TEST(IO, reader_vec){
     pSTDIN = &input;
     auto out = read<vll>(4);
     EXPECT_EQ(out, (vll{1,2,3,4}));
+    {
+        stringstream strout;
+        pSTDOUT = &strout;
+        writer(out);
+        EXPECT_EQ(strout.str(), "1 2 3 4\n");
+    }
+    {
+        stringstream strout;
+        pSTDOUT = &strout;
+        writer(out, ",");
+        EXPECT_EQ(strout.str(), "1,2,3,4\n");
+    }
 }
 
 TEST(IO, reader_vec2){
@@ -606,6 +618,18 @@ TEST(IO, reader_vec2){
     pSTDIN = &input;
     auto out = read<vvll>(2,3);
     EXPECT_EQ(out, (vvll{vll{1,2,3},vll{4,5,6}}));
+    {
+        stringstream strout;
+        pSTDOUT = &strout;
+        writer(out);
+        EXPECT_EQ(strout.str(), "1 2 3 4 5 6\n");
+    }
+    {
+        stringstream strout;
+        pSTDOUT = &strout;
+        writer(out, "\n", " ");
+        EXPECT_EQ(strout.str(), "1 2 3\n4 5 6\n");
+    }
 }
 
 TEST(IO, reader_pair){
@@ -613,13 +637,49 @@ TEST(IO, reader_pair){
     pSTDIN = &input;
     auto out = read<pair<ll, ll>>();
     EXPECT_EQ(out, make_pair(1ll,2ll));
+    {
+        stringstream strout;
+        pSTDOUT = &strout;
+        writer(out);
+        EXPECT_EQ(strout.str(), "1\n2\n");
+    }
+    {
+        stringstream strout;
+        pSTDOUT = &strout;
+        writer(out, " ");
+        EXPECT_EQ(strout.str(), "1 2\n");
+    }
 }
 
 TEST(IO, reader_pair_vector){
-    stringstream input("1 2 3 4");
+    stringstream input("1 2 3 4 5");
     pSTDIN = &input;
-    auto out = read<pair<vll, vll>>(1,3);
-    EXPECT_EQ(out, (make_pair(vll{1},vll{2,3,4})) );
+    auto out = read<pair<vll, vll>>(2,3);
+    EXPECT_EQ(out, (make_pair(vll{1,2},vll{3,4,5})) );
+    {
+        stringstream strout;
+        pSTDOUT = &strout;
+        writer(out);
+        EXPECT_EQ(strout.str(), "1 2\n3 4 5\n");
+    }
+    {
+        stringstream strout;
+        pSTDOUT = &strout;
+        writer(out, ",");
+        EXPECT_EQ(strout.str(), "1 2,3 4 5\n");
+    }
+    {
+        stringstream strout;
+        pSTDOUT = &strout;
+        writer(out, ",", tuple{"-"}, tuple{"#"});
+        EXPECT_EQ(strout.str(), "1-2,3#4#5\n");
+    }
+    {
+        stringstream strout;
+        pSTDOUT = &strout;
+        writer(out, ",", "-", "#");
+        EXPECT_EQ(strout.str(), "1-2,3#4#5\n");
+    }
 }
 
 TEST(IO, reader_pair_vector2){
@@ -634,7 +694,21 @@ TEST(IO, reader_vector_of_pair){
     pSTDIN = &input;
     auto out = read<vpll>(3);
     EXPECT_EQ(out, (vpll{{1,2}, {3,4}, {5,6}}) );
+    {
+        stringstream strout;
+        pSTDOUT = &strout;
+        writer(out);
+        EXPECT_EQ(strout.str(), "1\n2 3\n4 5\n6\n");
+    }
+    {
+        stringstream strout;
+        pSTDOUT = &strout;
+        writer(out, "\n", " ");
+        EXPECT_EQ(strout.str(), "1 2\n3 4\n5 6\n");
+    }
 }
+
+
 
 int main(int argc, char** argv)
 {
