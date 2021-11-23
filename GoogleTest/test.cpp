@@ -116,6 +116,30 @@ TEST(NumberTheory, eulears_phi) {
     EXPECT_EQ(eulers_phi(1000000), 400000);
 }
 
+TEST(NumberTheory, floor_div) {
+    EXPECT_EQ(floor_div(5,4), 1);
+    EXPECT_EQ(floor_div(-5,4), -2);
+    EXPECT_EQ(floor_div(5,-4), -2);
+    EXPECT_EQ(floor_div(-5,-4), 1);
+
+    EXPECT_EQ(floor_div(8,4), 2);
+    EXPECT_EQ(floor_div(-8,4), -2);
+    EXPECT_EQ(floor_div(8,-4), -2);
+    EXPECT_EQ(floor_div(-8,-4), 2);
+}
+
+TEST(NumberTheory, ceil_div) {
+    EXPECT_EQ(ceil_div(5,4), 2);
+    EXPECT_EQ(ceil_div(-5,4), -1);
+    EXPECT_EQ(ceil_div(5,-4), -1);
+    EXPECT_EQ(ceil_div(-5,-4), 2);
+
+    EXPECT_EQ(ceil_div(8,4), 2);
+    EXPECT_EQ(ceil_div(-8,4), -2);
+    EXPECT_EQ(ceil_div(8,-4), -2);
+    EXPECT_EQ(ceil_div(-8,-4), 2);
+}
+
 TEST(SegmentTree, LazySegmentTree) {
 
     LazySegmentTree<M::min_indexed_t<>> seg(10);

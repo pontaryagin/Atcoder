@@ -1,11 +1,6 @@
 #pragma once
 #include "MyHeader.h"
 
-ll div_ferm(ll val, ll  b, ll mod) {
-    return (val* POW(b, mod - 2, mod)) % mod;
-}
-
-
 // === Modint ===
 //static uint_fast64_t runtime_modulus = MOD;
 
@@ -272,4 +267,16 @@ ll eulers_phi(ll n) {
         res += arg * (n / base);
     }
     return n - res;
+}
+
+ll floor_div(ll a, ll b){
+    int d = a / b;
+    int r = a % b;
+    return r ? (d - ((a < 0) ^ (b < 0))) : d;
+}
+
+ll ceil_div(ll a, ll b){
+    int d = a / b;
+    int r = a % b;
+    return r ? (d + ((a < 0) ^ (b > 0))) : d;
 }
