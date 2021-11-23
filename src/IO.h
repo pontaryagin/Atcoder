@@ -2,8 +2,15 @@
 
 istream* pSTDIN = &cin;
 
-template<class T, class Enabler = void>
-struct Reader{};
+template<class T>
+struct Reader
+{
+    static T _read(){
+        T res;
+        (*pSTDIN) >> res;
+        return res;
+    }
+};
 
 template<class T>
 struct Reader<vector<T>>
@@ -34,21 +41,9 @@ struct Reader<pair<T, U>>
 
 };
 
-template<class T>
-struct Reader<T>
-{
-    static T _read(){
-        T res;
-        (*pSTDIN) >> res;
-        return res;
-    }
-};
-
 template<class T, class... Input>
 T read(Input&&... args){
     return Reader<T>::_read(forward<Input>(args)...);
 }
-
-
 
 
