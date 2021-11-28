@@ -683,10 +683,17 @@ TEST(IO, reader_pair_vector){
 }
 
 TEST(IO, reader_pair_vector2){
-    stringstream input("1 2 3 4");
+    stringstream input("1 2 3 4 5 6");
     pSTDIN = &input;
-    auto out = read<pair<vll, vll>>(tuple{1},tuple{3});
-    EXPECT_EQ(out, (make_pair(vll{1},vll{2,3,4})) );
+    auto [out1,out2] = read<pair<vll, vvll>>(tuple{2},tuple{2,2});
+    EXPECT_EQ(out1, (vll{1,2}));
+    EXPECT_EQ(out2, (vvll{{3,4},{5,6}}));
+    {
+        stringstream strout;
+        pSTDOUT = &strout;
+        write(make_pair(out1,out2), "\n", tuple{"-"}, tuple{":", "="});
+        EXPECT_EQ(strout.str(), "1-2\n3=4:5=6\n");
+    }
 }
 
 TEST(IO, reader_vector_of_pair){

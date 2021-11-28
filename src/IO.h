@@ -74,7 +74,7 @@ struct Writer<pair<T, U>>
     static void _write(const pair<T, U>& arg, const string& del = "\n", tuple<Del1...> del1= tuple<>{}, tuple<Del2...> del2 = tuple<>{}){
         apply([&](auto &&... dels) { Writer<T>::_write(arg.first, dels...); }, del1);
         (*pSTDOUT) << del;
-        apply([&](auto &&... dels) { Writer<T>::_write(arg.second, dels...); }, del2);
+        apply([&](auto &&... dels) { Writer<U>::_write(arg.second, dels...); }, del2);
     }
     static void _write(const pair<T, U>& arg, const string& del, const string& del1, const string& del2){
         _write(arg, del, forward_as_tuple(del1), forward_as_tuple(del2));
