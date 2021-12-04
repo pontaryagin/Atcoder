@@ -30,13 +30,13 @@ template<class T, class U>
 struct Reader<pair<T, U>>
 {
     template<class... Input1, class... Input2>
-    static pair<T, U> _read(tuple<Input1...> args1 = tuple<>{}, tuple<Input2...> args2 = tuple<>{}){
+    static pair<T, U> _read(const tuple<Input1...>& args1 = tuple<>{}, const tuple<Input2...>& args2 = tuple<>{}){
         auto l = apply([](auto &&... args) { return Reader<T>::_read(move(args)...); }, args1);
         auto r = apply([](auto &&... args) { return Reader<U>::_read(move(args)...); }, args2);
         return make_pair(move(l), move(r));
     }
     template<class Input1, class Input2>
-    static pair<T, U> _read(Input1&& arg1, Input2&& arg2){
+    static pair<T, U> _read(const Input1& arg1, const Input2& arg2){
         return _read(forward_as_tuple(arg1), forward_as_tuple(arg2));
     }
 
