@@ -23,6 +23,13 @@ endif
 oj-t: build oj-d
 	oj test -d $(TEST_DIR) -c $(BIN_PATH)
 
+# # For Python
+# oj-s-py: oj-t-py
+# 	oj submit $(URL) ./src/main.bundle.cpp -y
+
+# oj-s-py: oj-t-py
+# 	oj submit $(URL) ./src/main.bundle.cpp -y
+
 oj-d:
 	oj download $(URL) -d $(TEST_DIR) $(DL_FLAGS) || true
 
